@@ -33,6 +33,6 @@ Railway Private Networking does not filter outbound traffic. An agent can still 
 
 ## Pages deployment controls
 
-The repository's Pages source is configured for **GitHub Actions**. The `Documentation` workflow builds on pull requests and changes to `main`. Pull requests never receive Pages deployment permissions. Only the `github-pages` deployment job can publish, and it runs for `main`. If the workflow cannot deploy, check **Settings → Pages → Build and deployment → Source → GitHub Actions**. The site is public even if repository visibility later changes, so only reviewed documentation is included.
+The repository's Pages source is configured for **GitHub Actions**. The `Documentation` workflow builds on pull requests and changes to `main` using a pinned Ubuntu 24.04 runner. Pull requests never receive Pages deployment permissions. Only the `github-pages` deployment job can publish, and it runs for `main`. If the workflow cannot deploy, check **Settings → Pages → Build and deployment → Source → GitHub Actions**. The current Pages helper actions emit Node 20 deprecation warnings that GitHub forces onto Node 24. Update the SHA pins when their upstreams publish Node 24-native releases. The site is public even if repository visibility later changes, so only reviewed documentation is included.
 
 Material for MkDocs 9.8.0 is pinned in `docs-site/uv.lock`. Its upstream support ends on 2027-05-05. Review its security notices and evaluate Zensical before that date. The site generator does not update itself.
