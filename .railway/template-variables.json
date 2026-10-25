@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "generatedSecrets": [
+    {
+      "service": "clouddev-ide",
+      "name": "CODE_SERVER_PASSWORD",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Password for the authenticated workspace browser sign-in. Read this once during deployment, store it safely, then seal the Railway variable."
+    },
+    {
+      "service": "clouddev-ide",
+      "name": "CLOUDDEV_WORKSPACE_AUTH_SECRET",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent signing secret for workspace cookies and the private Caddy authentication check. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-git",
+      "name": "FORGEJO_POSTGRES_PASSWORD",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Password for Forgejo's dedicated PostgreSQL role. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-git",
+      "name": "FORGEJO_ADMIN_PASSWORD",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Bootstrap password for the initial Forgejo administrator. Read it for first sign-in, then change the account password and remove or seal the bootstrap variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "INITIAL_PASSWORD",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Bootstrap password for OmniRoute's native dashboard login. Read it for first sign-in, change the password, then remove this bootstrap variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "JWT_SECRET",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent OmniRoute JWT signing secret. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "API_KEY_SECRET",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent secret used by OmniRoute to protect its API keys. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "STORAGE_ENCRYPTION_KEY",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent OmniRoute data-encryption key. Seal this Railway variable and preserve it in protected backups."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "MACHINE_ID_SALT",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent OmniRoute machine identity salt. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "OMNIROUTE_WS_BRIDGE_SECRET",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Independent secret for the private OmniRoute WebSocket bridge. Seal this Railway variable."
+    }
+  ],
+  "operatorInputs": [
+    {
+      "service": "clouddev-ide",
+      "name": "SSH_AUTHORIZED_KEYS",
+      "kind": "ed25519-public-key-lines",
+      "required": true,
+      "description": "Enter one or more operator Ed25519 public keys, one per line. Never enter a private key."
+    }
+  ],
+  "postDeploySetup": [
+    {
+      "name": "Provider credentials",
+      "location": "Authenticated OmniRoute dashboard",
+      "description": "The operator connects their own provider account after deployment. No provider key is preloaded or passed to the IDE."
+    },
+    {
+      "name": "Scoped inference credential",
+      "location": "OmniRoute dashboard, then ai-setup",
+      "description": "Create a restricted inference key after provider setup. ai-setup stores it in the persistent workspace configuration used by the coding agents."
+    }
+  ]
+}

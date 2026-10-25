@@ -1,0 +1,14 @@
+{
+  "name": "@clouddev/ide",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:omniroute": "node --test test/omniroute-run.integration.test.mjs",
+    "test:cloudcli": "node --test test/cloudcli-runtime.integration.test.mjs",
+    "check": "node --check src/ai-cli.mjs && node --check src/write-server-config.mjs && node --check src/write-caddy-config.mjs && node --check src/codex-config.mjs && node --check src/task-registry.mjs && node --check src/cloudcli-runtime-hook.mjs && node --check src/cloudcli-gateway-refresh.mjs && node --check src/cloudcli-bootstrap.mjs && node --check src/install-authorized-keys.mjs && node --check src/service-environment.mjs && node --check src/run-service.mjs && node --check src/supervisor.mjs && node --check src/healthcheck.mjs && node --check src/terminal-agent.mjs && node --check src/list-tasks.mjs && node --check test/caddy-proxy.integration.test.mjs && node --check test/cloudcli-gateway-refresh.integration.test.mjs && sh -n entrypoint.sh && sh -n scripts/run-launchpad && sh -n scripts/ai-codex && sh -n scripts/ai-claude && sh -n scripts/ai-status && sh -n scripts/ai-models && sh -n scripts/ai-setup && sh -n scripts/git-setup && sh -n scripts/clouddev-tasks"
+  },
+  "engines": {
+    "node": ">=24.22.0 <25"
+  }
+}

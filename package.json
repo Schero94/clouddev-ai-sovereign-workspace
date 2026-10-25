@@ -1,0 +1,25 @@
+{
+  "name": "clouddev-ai-sovereign-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Single-user browser IDE with Forgejo and OmniRoute for local use and Railway",
+  "engines": {
+    "node": ">=24.22.0 <25"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:forgejo": "python3 services/forgejo/test_entrypoint.py",
+    "test:forgejo-roundtrip": "node scripts/verify-forgejo-roundtrip.mjs",
+    "test:security": "sh scripts/security-check.sh",
+    "test:cross-device": "docker compose exec -T -e CLOUDDEV_CADDY_BIN=/usr/bin/caddy clouddev-ide node --test /opt/clouddev-ide/test/caddy-proxy.integration.test.mjs",
+    "test:session-handoff": "docker compose exec -T clouddev-ide node --test /opt/clouddev-ide/test/cloudcli-runtime.integration.test.mjs",
+    "test:recovery": "CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs",
+    "test:mock-provider": "node scripts/verify-mock-llm.mjs",
+    "check:compose": "docker compose config --quiet && docker compose -f docker-compose.yml -f docker-compose.mock.yml --profile integration config --quiet",
+    "check:railway": "./scripts/check-railway-iac.sh",
+    "check:railway-template": "node --test tests/unit/railway-template-contract.test.mjs",
+    "check:launchpad": "node --check services/launchpad/src/server.mjs && node --check services/launchpad/public/app.js",
+    "verify:local": "./scripts/verify-local.sh"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@clouddev/railway-iac",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit --project tsconfig.json"
+  },
+  "devDependencies": {
+    "railway": "3.16.0",
+    "typescript": "7.0.2"
+  }
+}

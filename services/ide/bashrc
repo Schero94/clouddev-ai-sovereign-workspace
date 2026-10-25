@@ -1,0 +1,13 @@
+export PATH="/opt/clouddev-ide/agent-tools/node_modules/.bin:/opt/clouddev-ide/omniroute-cli/node_modules/.bin:/usr/local/bin:$HOME/.local/bin:/usr/bin:/bin:$PATH"
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+export OMNIROUTE_CLI_HOME="${OMNIROUTE_CLI_HOME:-$HOME/.config/omniroute}"
+export CLOUDDEV_OMNIROUTE_BASE_URL="${CLOUDDEV_OMNIROUTE_BASE_URL:-http://127.0.0.1:20129}"
+
+if [ -f "$HOME/.config/clouddev-ai/gateway.json" ]; then
+  export CLOUDDEV_AI_CONFIGURED=1
+else
+  case $- in
+    *i*) echo "CloudDev AI setup needed. Run ai-setup to connect a scoped OmniRoute inference key." ;;
+  esac
+fi

@@ -1,0 +1,12 @@
+{
+  "name": "@clouddev/launchpad",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test src/server.test.mjs",
+    "start": "node src/server.mjs"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

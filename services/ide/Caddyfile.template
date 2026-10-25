@@ -1,0 +1,68 @@
+{
+	admin off
+	auto_https off
+}
+
+:@@PORT@@ {
+	route {
+		@health path /healthz
+		handle @health {
+			respond "ok" 200
+		}
+		@authPublic path /auth/login /auth/login.css /auth/logout
+		handle @authPublic {
+			reverse_proxy @@AUTH_UPSTREAM@@ {
+				header_up X-CloudDev-Auth-Key @@AUTH_LOGIN_KEY@@
+			}
+		}
+		@authPrivate path /auth/verify
+		handle @authPrivate {
+			respond "Not found" 404
+		}
+		forward_auth @@AUTH_CHECK_UPSTREAM@@ {
+			method GET
+			uri /auth/verify
+			header_up -Connection
+			header_up -Upgrade
+			header_up X-CloudDev-Auth-Key @@AUTH_CHECK_KEY@@
+		}
+		@vscode-root path /vscode
+		redir @vscode-root /vscode/ 308
+		@launchpad-root path /launchpad
+		redir @launchpad-root /launchpad/ 308
+		@omniroute-root path /omniroute
+		redir @omniroute-root /omniroute/ 308
+		handle_path /vscode/* {
+			reverse_proxy @@VSCODE_UPSTREAM@@
+		}
+		handle /omniroute/* {
+			reverse_proxy @@OMNIROUTE_DASHBOARD_PUBLIC_UPSTREAM@@ {
+				header_up X-Forwarded-Prefix /omniroute
+			}
+		}
+		handle_path /launchpad/* {
+			reverse_proxy @@LAUNCHPAD_UPSTREAM@@ {
+				header_up X-Forwarded-Prefix /launchpad
+			}
+		}
+		handle {
+			reverse_proxy @@CLOUDCLI_UPSTREAM@@
+		}
+	}
+}
+
+http://127.0.0.1:@@OMNIROUTE_PROXY_PORT@@ {
+	@omniroute-health path /api/monitoring/health
+	handle @omniroute-health {
+		rewrite /omniroute{uri}
+		reverse_proxy @@OMNIROUTE_DASHBOARD_HEALTH_UPSTREAM@@
+	}
+	@omniroute-openai-api path /v1 /v1/*
+	handle @omniroute-openai-api {
+		rewrite * /omniroute/api{uri}
+		reverse_proxy @@OMNIROUTE_DASHBOARD_CATALOG_UPSTREAM@@
+	}
+	handle {
+		respond "Not found" 404
+	}
+}

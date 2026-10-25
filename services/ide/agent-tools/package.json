@@ -1,0 +1,14 @@
+{
+  "name": "@clouddev/ide-agent-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Pinned coding CLIs for the CloudDev AI IDE image.",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "2.1.310",
+    "@openai/codex": "0.164.0",
+    "pnpm": "10.34.8"
+  },
+  "engines": {
+    "node": ">=24.22.0 <25"
+  }
+}

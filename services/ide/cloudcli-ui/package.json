@@ -1,0 +1,13 @@
+{
+  "name": "@clouddev/ide-cloudcli-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Pinned CloudCLI upstream dependency for the CloudDev IDE runtime",
+  "engines": {
+    "node": ">=24.22.0 <25"
+  },
+  "dependencies": {
+    "@cloudcli-ai/cloudcli": "1.37.5"
+  }
+}

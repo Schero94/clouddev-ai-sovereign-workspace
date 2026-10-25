@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <title>CloudDev AI | Sovereign Workspace</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="wordmark" href="./" aria-label="CloudDev AI home"><span class="mark">C</span><span>CloudDev AI</span></a>
+        <div class="topbar-actions">
+          <a class="privacy-link" href="privacy">Privacy &amp; security</a>
+          <form action="/auth/logout" method="post"><button class="lock-button" type="submit">Lock workspace</button></form>
+        </div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">SOVEREIGN WORKSPACE</p>
+        <h1>Your tools, in one place.</h1>
+        <p class="intro">A private development workspace for your code, repositories and AI providers.</p>
+      </section>
+
+      <section class="section" aria-labelledby="workspace-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">WORKSPACE</p><h2 id="workspace-heading">Open a service</h2></div>
+          <span class="health-summary" id="health-summary" role="status">Checking services…</span>
+        </div>
+        <div class="cards">
+          <a class="card primary" data-link="cloudcli" aria-disabled="true" tabindex="-1">
+            <span class="card-icon" aria-hidden="true">&gt;_</span><span class="card-title">Open CloudCLI</span>
+            <span class="card-copy">Workspace home and task history</span><span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="card" data-link="vscode" aria-disabled="true" tabindex="-1">
+            <span class="card-icon" aria-hidden="true">&lt;/&gt;</span><span class="card-title">Browser VS Code</span>
+            <span class="card-copy">Editor and integrated terminal</span><span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="card" data-link="git" aria-disabled="true" tabindex="-1">
+            <span class="card-icon git-icon" aria-hidden="true">G</span><span class="card-title">Open Forgejo</span>
+            <span class="card-copy">Private repositories. Sign in with Forgejo.</span><span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="card" data-link="router" aria-disabled="true" tabindex="-1">
+            <span class="card-icon ai-icon" aria-hidden="true">✳</span><span class="card-title">Manage AI providers</span>
+            <span class="card-copy">OmniRoute settings. Sign in with OmniRoute.</span><span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+          <button class="card agent-card" data-agent="codex" type="button">
+            <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Codex</span>
+            <span class="card-copy">Open Browser VS Code and run <code>ai-codex</code></span><span class="card-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="card agent-card" data-agent="claude" type="button">
+            <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Claude</span>
+            <span class="card-copy">Open Browser VS Code and run <code>ai-claude</code></span><span class="card-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+        <p class="notice" id="agent-notice" role="status" hidden></p>
+      </section>
+
+      <section class="section remote-section" aria-labelledby="remote-heading">
+        <div class="section-heading"><div><p class="eyebrow">DESKTOP</p><h2 id="remote-heading">Connect with VS Code Remote-SSH</h2></div></div>
+        <p class="remote-copy">Use the private key file supplied by the operator. The key stays on your computer.</p>
+        <p class="notice" id="ssh-status" role="status">SSH proxy details are not configured. The operator can map the IDE TCP proxy domain and port to <code>IDE_SSH_PROXY_HOST</code> and <code>IDE_SSH_PROXY_PORT</code>.</p>
+        <pre class="ssh-config" id="ssh-config" hidden><code></code></pre>
+        <p class="remote-copy fingerprint" id="ssh-fingerprint" hidden></p>
+        <p class="remote-copy">Paste the block into your local SSH config. In VS Code, choose <code>Remote-SSH: Connect to Host…</code> from the Command Palette, then select <code>clouddev</code>.</p>
+      </section>
+
+      <section class="section git-ssh-section" aria-labelledby="git-ssh-heading">
+        <div class="section-heading"><div><p class="eyebrow">FORGEJO</p><h2 id="git-ssh-heading">Connect Git over SSH</h2></div></div>
+        <p class="remote-copy">Git uses the separate Ed25519 key created by <code>git-setup</code>. The key stays in the shared workspace, and its contents are never shown here.</p>
+        <p class="notice" id="git-ssh-status" role="status">Git SSH proxy details are not configured. Forgejo browser access and sign-in remain on HTTPS.</p>
+        <pre class="ssh-config" id="git-ssh-config" hidden><code></code></pre>
+        <p class="remote-copy">Save the block in the shared workspace's <code>~/.ssh/config</code>. Clone with <code>git@forgejo:&lt;owner&gt;/&lt;repo&gt;.git</code>. Use the Forgejo link above to sign in in your browser.</p>
+      </section>
+
+      <section class="section status-section" aria-labelledby="status-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">SYSTEM</p><h2 id="status-heading">System health</h2></div>
+          <button class="refresh" id="refresh" type="button">Refresh</button>
+        </div>
+        <p class="workspace-health" id="workspace-health" role="status">Workspace: checking</p>
+        <ul class="status-list" id="service-status" aria-live="polite">
+          <li class="status-row"><span class="status-dot pending"></span><span>Waiting for checks</span><span class="status-state">Checking</span></li>
+        </ul>
+      </section>
+
+      <section class="section recovery-section" aria-labelledby="recovery-heading">
+        <div class="section-heading"><div><p class="eyebrow">RECOVERY</p><h2 id="recovery-heading">After a restart</h2></div></div>
+        <p class="recovery-copy" id="recovery-state" role="status">Recovery is manual. Check CloudCLI for interrupted work and resume only through an action supported by the provider.</p>
+        <p class="recovery-copy" id="recovery-summary" role="status" hidden></p>
+      </section>
+
+      <section class="section setup-section" aria-labelledby="setup-heading">
+        <div class="section-heading"><div><p class="eyebrow">FIRST RUN</p><h2 id="setup-heading">Finish your setup</h2></div></div>
+        <ol class="setup-list">
+          <li><span class="step-number">01</span><span><strong>Set your Git identity</strong><small>In the IDE terminal, run <code>git config --global user.name</code> and <code>git config --global user.email</code>.</small></span></li>
+          <li><span class="step-number">02</span><span><strong>Connect Forgejo</strong><small>Create a regular, non-admin Forgejo account and a private repository. In the IDE, run <code>git-setup</code> and add its public SSH key to that account.</small></span></li>
+          <li><span class="step-number">03</span><span><strong>Connect an AI provider</strong><small>Open OmniRoute, add your provider credentials, then create a scoped inference key.</small></span></li>
+          <li><span class="step-number">04</span><span><strong>Connect the IDE to OmniRoute</strong><small>In the IDE terminal, run <code>ai-setup</code> and follow the prompts. It stores only the scoped gateway key.</small></span></li>
+          <li><span class="step-number">05</span><span><strong>Test an agent</strong><small>Run <code>ai-status</code>, then start an agent with <code>ai-codex</code> or <code>ai-claude</code>.</small></span></li>
+        </ol>
+      </section>
+
+      <footer><span>CloudDev AI · Single-user instance</span><span>Provider traffic leaves Railway and follows your provider's terms.</span></footer>
+    </main>
+  </body>
+</html>

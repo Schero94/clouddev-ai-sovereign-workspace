@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -eq 0 ]; then
+  echo "A launchpad start command is required." >&2
+  exit 2
+fi
+
+exec /usr/local/bin/node /opt/clouddev-ide/src/run-service.mjs launchpad -- "$@"

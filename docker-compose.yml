@@ -1,0 +1,162 @@
+name: clouddev-ai-sovereign-workspace-local
+
+services:
+  clouddev-postgres:
+    image: postgres:18.1-alpine3.22
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Run ./scripts/dev-env.sh first}
+      POSTGRES_USER: ${POSTGRES_USER:?Run ./scripts/dev-env.sh first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run ./scripts/dev-env.sh first}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+  clouddev-git:
+    build:
+      context: ./services/forgejo
+      dockerfile: Dockerfile
+    environment:
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: clouddev-postgres:5432
+      FORGEJO_POSTGRES_ADMIN_HOST: clouddev-postgres
+      FORGEJO_POSTGRES_ADMIN_PORT: "5432"
+      FORGEJO_POSTGRES_ADMIN_DATABASE: ${POSTGRES_DB:?Run ./scripts/dev-env.sh first}
+      FORGEJO_POSTGRES_ADMIN_USER: ${POSTGRES_USER:?Run ./scripts/dev-env.sh first}
+      FORGEJO_POSTGRES_ADMIN_PASSWORD: ${POSTGRES_PASSWORD:?Run ./scripts/dev-env.sh first}
+      FORGEJO_POSTGRES_ROLE: ${FORGEJO_POSTGRES_ROLE:?Run ./scripts/dev-env.sh first}
+      FORGEJO_POSTGRES_DATABASE: ${FORGEJO_POSTGRES_DATABASE:?Run ./scripts/dev-env.sh first}
+      FORGEJO_POSTGRES_PASSWORD: ${FORGEJO_POSTGRES_PASSWORD:?Run ./scripts/dev-env.sh first}
+      FORGEJO_ADMIN_USERNAME: ${FORGEJO_ADMIN_USERNAME:?Run ./scripts/dev-env.sh first}
+      FORGEJO_ADMIN_EMAIL: ${FORGEJO_ADMIN_EMAIL:?Run ./scripts/dev-env.sh first}
+      FORGEJO_ADMIN_PASSWORD: ${FORGEJO_ADMIN_PASSWORD:?Run ./scripts/dev-env.sh first}
+      FORGEJO_ROOT_URL: ${FORGEJO_ROOT_URL:-http://localhost:3000/}
+      FORGEJO_SSH_DOMAIN: ${FORGEJO_SSH_DOMAIN:-localhost}
+      FORGEJO_SSH_PORT: ${FORGEJO_SSH_PORT:-2223}
+      FORGEJO_SSH_LISTEN_PORT: ${FORGEJO_SSH_LISTEN_PORT:-2222}
+      FORGEJO__server__DISABLE_SSH: "false"
+      FORGEJO__server__START_SSH_SERVER: "true"
+      FORGEJO__server__SSH_LISTEN_PORT: "2222"
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:2223:2222"
+    volumes:
+      - forgejo-data:/var/lib/gitea
+    depends_on:
+      clouddev-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/usr/bin/curl", "--fail", "--silent", "--show-error", "--max-time", "5", "http://127.0.0.1:3000/api/healthz"]
+      interval: 20s
+      timeout: 8s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+  clouddev-router:
+    build:
+      context: .
+      dockerfile: services/omniroute/Dockerfile
+    environment:
+      DATA_DIR: /app/data
+      PORT: "20128"
+      DASHBOARD_PORT: "20128"
+      API_PORT: "20131"
+      API_HOST: "127.0.0.1"
+      OMNIROUTE_BASE_PATH: /omniroute
+      NEXT_PUBLIC_OMNIROUTE_BASE_PATH: /omniroute
+      INITIAL_PASSWORD: ${INITIAL_PASSWORD:?Run ./scripts/dev-env.sh first}
+      JWT_SECRET: ${JWT_SECRET:?Run ./scripts/dev-env.sh first}
+      API_KEY_SECRET: ${API_KEY_SECRET:?Run ./scripts/dev-env.sh first}
+      STORAGE_ENCRYPTION_KEY: ${STORAGE_ENCRYPTION_KEY:?Run ./scripts/dev-env.sh first}
+      STORAGE_ENCRYPTION_KEY_VERSION: ${STORAGE_ENCRYPTION_KEY_VERSION:-v1}
+      MACHINE_ID_SALT: ${MACHINE_ID_SALT:?Run ./scripts/dev-env.sh first}
+      OMNIROUTE_WS_BRIDGE_SECRET: ${OMNIROUTE_WS_BRIDGE_SECRET:?Run ./scripts/dev-env.sh first}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      REQUIRE_API_KEY: "true"
+      APP_LOG_LEVEL: ${APP_LOG_LEVEL:-warn}
+      APP_LOG_TO_FILE: ${APP_LOG_TO_FILE:-false}
+      APP_LOG_RETENTION_DAYS: ${APP_LOG_RETENTION_DAYS:-1}
+      CALL_LOG_RETENTION_DAYS: ${CALL_LOG_RETENTION_DAYS:-1}
+      ENABLE_REQUEST_LOGS: ${ENABLE_REQUEST_LOGS:-false}
+      CALL_LOG_PIPELINE_CAPTURE_STREAM_CHUNKS: ${CALL_LOG_PIPELINE_CAPTURE_STREAM_CHUNKS:-false}
+      PROXY_LOG_INCLUDE_IPS: ${PROXY_LOG_INCLUDE_IPS:-false}
+      PROXY_LOG_FIRST_CHUNK_TIMING: ${PROXY_LOG_FIRST_CHUNK_TIMING:-false}
+      ARENA_ELO_SYNC_ENABLED: ${ARENA_ELO_SYNC_ENABLED:-false}
+      MODELS_DEV_SYNC_ENABLED: ${MODELS_DEV_SYNC_ENABLED:-false}
+    ports:
+      - "127.0.0.1:20128:20128"
+    volumes:
+      - router-data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "/opt/clouddev-healthcheck.mjs"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
+    restart: unless-stopped
+
+  clouddev-ide:
+    build:
+      context: .
+      dockerfile: services/ide/Dockerfile
+    environment:
+      CODE_SERVER_PASSWORD: ${CODE_SERVER_PASSWORD:?Run ./scripts/dev-env.sh first}
+      CLOUDDEV_WORKSPACE_AUTH_SECRET: ${CLOUDDEV_WORKSPACE_AUTH_SECRET:?Run ./scripts/dev-env.sh first}
+      SSH_AUTHORIZED_KEYS: ${SSH_AUTHORIZED_KEYS:?Run ./scripts/dev-env.sh first}
+      CLOUDDEV_HTTP_PORT: ${CLOUDDEV_HTTP_PORT:-8080}
+      CLOUDDEV_CODE_SERVER_PORT: ${CLOUDDEV_CODE_SERVER_PORT:-8081}
+      CLOUDDEV_CLOUDCLI_PORT: ${CLOUDDEV_CLOUDCLI_PORT:-3001}
+      CLOUDDEV_PROJECTS_DIR: ${CLOUDDEV_PROJECTS_DIR:-/workspace/projects}
+      CLOUDDEV_OMNIROUTE_HOST: ${CLOUDDEV_OMNIROUTE_HOST:-clouddev-router}
+      CLOUDDEV_OMNIROUTE_PORT: ${CLOUDDEV_OMNIROUTE_PORT:-20128}
+      CLOUDDEV_OMNIROUTE_PROXY_PORT: "20129"
+      CLOUDDEV_OMNIROUTE_BASE_URL: http://127.0.0.1:20129
+      CLOUDDEV_FORGEJO_HOST: ${CLOUDDEV_FORGEJO_HOST:-clouddev-git}
+      CLOUDDEV_FORGEJO_PORT: ${CLOUDDEV_FORGEJO_PORT:-3000}
+      LAUNCHPAD_PORT: ${LAUNCHPAD_PORT:-3002}
+      LAUNCHPAD_BASE_PATH: ${LAUNCHPAD_BASE_PATH:-/launchpad}
+      WORKSPACE_PUBLIC_URL: ${WORKSPACE_PUBLIC_URL:-http://localhost:8080}
+      GIT_PUBLIC_URL: ${GIT_PUBLIC_URL:-http://localhost:3000}
+      ROUTER_PUBLIC_URL: ${ROUTER_PUBLIC_URL:-http://localhost:8080/omniroute}
+      FORGEJO_ROOT_URL: ${FORGEJO_ROOT_URL:-http://localhost:3000/}
+      IDE_SSH_PROXY_HOST: ${IDE_SSH_PROXY_HOST:-localhost}
+      IDE_SSH_PROXY_PORT: ${IDE_SSH_PROXY_PORT:-2222}
+      GIT_SSH_PROXY_HOST: ${GIT_SSH_PROXY_HOST:-localhost}
+      GIT_SSH_PROXY_PORT: ${GIT_SSH_PROXY_PORT:-2223}
+      IDE_PRIVATE_HOST: 127.0.0.1
+      IDE_PRIVATE_PORT: "8080"
+      GIT_PRIVATE_HOST: clouddev-git
+      GIT_PRIVATE_PORT: "3000"
+      POSTGRES_HOST: clouddev-postgres
+      POSTGRES_PORT: "5432"
+      ROUTER_PRIVATE_HOST: clouddev-router
+      ROUTER_PRIVATE_PORT: "20128"
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:2222:2222"
+    volumes:
+      - workspace-data:/workspace
+    depends_on:
+      clouddev-git:
+        condition: service_healthy
+      clouddev-router:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "/opt/clouddev-ide/src/healthcheck.mjs"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+volumes:
+  workspace-data:
+  forgejo-data:
+  postgres-data:
+  router-data:

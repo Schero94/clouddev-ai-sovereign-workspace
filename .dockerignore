@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+!.env.example
+secrets/
+backups/
+node_modules
+**/node_modules
+**/__pycache__
+coverage
+test-results
+output
+.DS_Store

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <title>Privacy and security | CloudDev AI</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="wordmark" href="./" aria-label="CloudDev AI home"><span class="mark">C</span><span>CloudDev AI</span></a>
+        <a class="privacy-link" href="./">Back to launchpad</a>
+      </header>
+      <section class="hero">
+        <p class="eyebrow">PRIVACY &amp; SECURITY</p>
+        <h1>Your instance, your choices.</h1>
+        <p class="intro">This page describes the technical boundaries of the workspace. It is not a compliance certificate or legal advice.</p>
+      </section>
+      <section class="section">
+        <div class="section-heading"><div><p class="eyebrow">DATA FLOW</p><h2>Where information goes</h2></div></div>
+        <ul class="setup-list privacy-list">
+          <li><span class="step-number">01</span><span><strong>Workspace files</strong><small>Files and terminal commands are stored on this instance's IDE volume. Coding agents can read and change files available to the IDE user.</small></span></li>
+          <li><span class="step-number">02</span><span><strong>Git repositories</strong><small>Forgejo stores repositories on its persistent volume and uses the private PostgreSQL service. Public registration is disabled and sign-in is required to browse.</small></span></li>
+          <li><span class="step-number">03</span><span><strong>Provider credentials</strong><small>OmniRoute stores provider configuration in its persistent database. The IDE receives only an inference key configured by the operator.</small></span></li>
+          <li><span class="step-number">04</span><span><strong>Prompts and code context</strong><small>Agent requests pass from the IDE to OmniRoute and then to the selected provider. Provider processing may occur outside Railway EU West. Review that provider's terms and data controls.</small></span></li>
+          <li><span class="step-number">05</span><span><strong>Network access</strong><small>Private networking limits inbound service access. It does not restrict outbound connections. Repository code and agent commands can make outbound requests from the IDE.</small></span></li>
+        </ul>
+      </section>
+      <section class="section">
+        <div class="section-heading"><div><p class="eyebrow">OPERATOR CHECKS</p><h2>Before using this instance</h2></div></div>
+        <ul class="setup-list privacy-list">
+          <li><span class="step-number">A</span><span><strong>Use separate credentials</strong><small>Keep IDE, Forgejo, and OmniRoute passwords distinct. The launchpad uses the shared workspace sign-in. Do not give coding agents administrative service credentials.</small></span></li>
+          <li><span class="step-number">B</span><span><strong>Protect scoped keys</strong><small>A coding agent must be able to use its inference key. Code running as the IDE user may also read it, so revoke and replace it if that user context is compromised.</small></span></li>
+          <li><span class="step-number">C</span><span><strong>Back up and restore</strong><small>Backups are the operator's responsibility. A backup is not verified until a restore has been run and the restored data checked.</small></span></li>
+          <li><span class="step-number">D</span><span><strong>Check legal duties</strong><small>Region selection and technical controls do not establish GDPR compliance. Review subprocessors, DPAs, retention, access requests, and provider transfer terms for your use case.</small></span></li>
+        </ul>
+      </section>
+      <footer><span>CloudDev AI · Single-user instance</span><span>See the repository privacy and security documents for the full operator guide.</span></footer>
+    </main>
+  </body>
+</html>
