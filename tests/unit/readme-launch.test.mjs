@@ -162,6 +162,17 @@ test("README contains no fabricated Railway template URL or unsafe marketing cla
   }
 });
 
+test("public Markdown does not describe creator income or reward programs", () => {
+  const files = execFileSync("git", ["ls-files", "-z"], { cwd: root })
+    .toString("utf8")
+    .split("\0")
+    .filter(file => /\.(?:md|markdown|mdx)$/i.test(file));
+  const incomeLanguage = /\b(?:kickbacks?|payouts?|commissions?|earn(?:ed|ing|ings)?|revenue|profits?|moneti[sz](?:e|ed|ation|ing)|affiliates?|template queue|support bonus|open source\s*&\s*technology partners?)\b/i;
+  const matchingFiles = files.filter(file => incomeLanguage.test(readFileSync(path.join(root, file), "utf8")));
+
+  assert.deepEqual(matchingFiles, [], "remove creator income and reward language from public Markdown");
+});
+
 test("all README-relative Markdown links point to files that exist", () => {
   const links = [...readme.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]);
 

@@ -1,11 +1,11 @@
-# Railway Marketplace and kickback release
+# Railway Marketplace release
 
 The source repository is public at
 [github.com/Schero94/clouddev-ai-sovereign-workspace](https://github.com/Schero94/clouddev-ai-sovereign-workspace).
-There is no Railway template ID yet. The Railway CLI is linked to a shared
-business workspace, not to the personal workspace required for this release.
-No Railway services or template have been created from this checkout. The
-product is not one-click verified.
+No Railway template ID or deploy URL exists until Railway creates and publishes
+a reviewed draft. Check the [current release status](RELEASE_STATUS.md) before
+each publication step. A successful local build or IaC plan is not proof of a
+live deployment. The product is not one-click verified.
 
 The Railway documentation was checked on 2026-10-25. The current documented
 flow is to create a template from a tested Railway project or start in the
@@ -73,41 +73,22 @@ does not publish a Marketplace template by itself.
 9. Create the template draft only after the configuration is complete. Then
    deploy that draft into a second fresh project and run the release checks.
 
-## Publish and apply for kickbacks
+## Publish the tested template
 
 1. From Railway's Template page, choose **Publish** on the reviewed draft and
    complete the Marketplace form. Include the overview, deployment instructions,
-   support contact, source license, and images. Use the `AI/ML` category if it
-   is still offered in the Composer.
+   support contact, source license, and images. Choose `AI/ML` if it is still
+   offered in the Composer.
    The prepared overview text is in
    [RAILWAY_TEMPLATE_OVERVIEW.md](RAILWAY_TEMPLATE_OVERVIEW.md).
-2. Railway's current template docs say the kickback requires a Marketplace-
-   published template and compliance with Railway's Terms of Service and Fair
-   Use Policy. Unpublished and private templates do not qualify.
-3. The current kickback documentation describes 15% of template usage costs,
-   plus a 10% support bonus for actively answering questions in the Template
-   Queue, for up to 25% total. This program is separate from Railway's Open
-   Source & Technology Partners program.
-   The linked [Open Source Kickback page](https://railway.com/open-source-kickback)
-   currently headlines 25% and says there is no minimum payout, while the
-   detailed [Template Kickbacks docs](https://docs.railway.com/templates/kickbacks)
-   describe 15% plus the support bonus and a $0.01 minimum payout. These
-   first-party pages do not fully agree. Do not promise a specific rate or
-   payout until the current eligibility and terms are confirmed in the owner's
-   Railway account. The landing page describes publishing a working Marketplace
-   template as the route to eligibility; it does not present a separate
-   application form.
-4. The separate partner program is applied for at
-   [railway.com/partners](https://railway.com/partners). Its documented open
-   source onboarding includes template verification, a standalone deployment
-   guide in the project's documentation, and a social promotion step. Partner
-   verification and a verified badge are Railway decisions, not something the
-   repository or CLI can grant.
-5. After Railway returns a published template URL, add that exact URL to the
-   Deploy on Railway button in `README.md`. Do not invent a code or claim
-   verification before Railway confirms both.
-6. Watch the Template Queue and respond to support requests. This is required
-   for the additional support bonus under the current kickback rules.
+2. Keep the template private until the security, cross-device, restore, and
+   fresh-project deployment gates pass. The publication form does not replace
+   those tests.
+3. Railway controls whether it marks a template as verified. Do not claim a
+   badge unless Railway has granted it on the published template page.
+4. After publication, copy the exact template URL Railway provides into the
+   Deploy on Railway section in `README.md`. Do not invent a template code or
+   URL.
 
 The current CLI also supports publishing template metadata after Railway has
 created a draft and returned its real code. Do not run this example until the
@@ -141,9 +122,6 @@ The Template Composer remains available for the same publication workflow.
 - [Create a template](https://docs.railway.com/templates/create)
 - [Template best practices](https://docs.railway.com/templates/best-practices)
 - [Publish and share templates](https://docs.railway.com/templates/publish-and-share)
-- [Template kickbacks](https://docs.railway.com/templates/kickbacks)
-- [Open Source & Technology Partners](https://docs.railway.com/templates/partners)
-- [Open Source Kickback](https://railway.com/open-source-kickback)
 - [Infrastructure as Code](https://docs.railway.com/infrastructure-as-code)
 - [Infrastructure as Code reference](https://docs.railway.com/infrastructure-as-code/reference)
 - [Variables and sealed values](https://docs.railway.com/variables)

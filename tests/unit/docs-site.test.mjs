@@ -36,6 +36,8 @@ test("docs check generates the ignored release-status page before link tests run
 
   assert.ok(generateIndex >= 0 && generateIndex < testsIndex,
     "docs:check must create the generated local link target before tests that validate it");
+  assert.ok(command.includes("tests/unit/readme-launch.test.mjs"),
+    "the Pages build must run README and public Markdown release-copy checks");
 });
 
 test("parses gate identifiers, status, and labels without reading evidence lines", () => {

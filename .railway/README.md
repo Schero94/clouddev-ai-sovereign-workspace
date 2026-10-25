@@ -121,13 +121,10 @@ to be retrieved. Never print them in logs.
    the template verified. Publish from the Railway Template Composer. Add the
    deploy button only after Railway assigns the actual template URL.
 
-The current Railway CLI session is linked to an empty validation project in a
-shared business workspace, not the personal workspace this product targets.
-The earlier `railway config plan --json` proposed seven service, database, and
-volume creations. No services or paid resources have been applied. The public
-GitHub source is available, but the linked Railway project is still in the
-shared business workspace. Keep it untouched until a dedicated personal-account
-test workspace is available.
+Use a dedicated empty validation project in the operator's personal Railway
+workspace. Do not apply the plan to any existing project. Record the current
+plan review, deployment, and live read-back in `GATES.md` before calling Railway
+validation complete.
 
 ## Official references
 
@@ -136,7 +133,6 @@ test workspace is available.
 - [Create a Template](https://docs.railway.com/templates/create)
 - [Template best practices](https://docs.railway.com/templates/best-practices)
 - [Publish and share templates](https://docs.railway.com/templates/publish-and-share)
-- [Template kickbacks](https://docs.railway.com/templates/kickbacks)
 - [Variables and sealed values](https://docs.railway.com/variables)
 - [Regions](https://docs.railway.com/deployments/regions)
 - [Volumes](https://docs.railway.com/reference/volumes)
