@@ -2,10 +2,11 @@
 
 ## Scope and method
 
-On 2026-10-25, Trivy 0.76.1 scanned the four images used by the running local
-Compose stack. The scan enabled the vulnerability scanner and did not filter by
-severity or suppress unfixed findings. Trivy downloaded its vulnerability
-database from `mirror.gcr.io/aquasec/trivy-db:2` during the first scan.
+On 2026-10-25, Trivy 0.76.1 scanned the local Compose images that were running
+at the time of the initial scan, then scanned a rebuilt IDE candidate and two
+PostgreSQL 18.6 candidates. The scanner did not filter by severity or suppress
+unfixed findings. Trivy downloaded its vulnerability database from
+`mirror.gcr.io/aquasec/trivy-db:2` during the first scan.
 
 These are findings in the local image artifacts below. They are not a scan of a
 Railway deployment or a substitute for scanning the exact release images again
@@ -14,15 +15,15 @@ in several installed packages. Trivy can also report kernel/header or embedded
 Go toolchain records that need a reachability review. Do not treat the counts
 as exploitability scores.
 
-| Local image | Image ID | Critical package findings / unique IDs | High package findings / unique IDs | Other findings |
+| Local image or candidate | Image ID or registry digest | Critical package findings / unique IDs | High package findings / unique IDs | Other findings |
 | --- | --- | ---: | ---: | --- |
 | `clouddev-ai-sovereign-workspace-local-clouddev-router:latest` | `sha256:b8a2191a8b9c5b4287fe329e9662b436b2e874c34766dc9e0613b9ef3d089bcc` | 2 / 2 | 48 / 12 | 68 medium, 65 low, 2 unknown package findings |
-| `clouddev-ai-sovereign-workspace-local-clouddev-ide:latest` | `sha256:d60b1f7ab4a91fee6f1d7c04407953c10a00d11ecc5cb8c56f26c743b2245432` | 8 / 6 | 252 / 122 | 910 medium, 1,081 low, 60 unknown package findings |
-| IDE candidate after shell-quote patch | `sha256:7e20e7c4fd50487e75c717f64aa3385d75c200c318f8a70402d870515a19b045` | 7 / 5 | 252 / 122 | 910 medium, 1,081 low, 60 unknown package findings |
+| IDE image running before shell-quote patch | `sha256:d60b1f7ab4a91fee6f1d7c04407953c10a00d11ecc5cb8c56f26c743b2245432` | 8 / 6 | 252 / 122 | 910 medium, 1,081 low, 60 unknown package findings |
+| `clouddev-ai-sovereign-workspace-local-clouddev-ide:latest` after shell-quote patch | `sha256:7e20e7c4fd50487e75c717f64aa3385d75c200c318f8a70402d870515a19b045` | 7 / 5 | 252 / 122 | 910 medium, 1,081 low, 60 unknown package findings |
 | `clouddev-ai-sovereign-workspace-local-clouddev-git:latest` | `sha256:9c7edcf4ddcc7bac6cc25930968bca44def6898adea458f138c50e7e10eb2405` | 0 / 0 | 4 / 3 | 3 medium, 4 unknown package findings |
 | `postgres:18.1-alpine3.22` | `sha256:270579ee277a572fa8cfdbaec0e1ff588bb7247da92d25165c7237c483e565d9` | 3 / 2 | 47 / 40 | 56 medium, 35 low, 3 unknown package findings |
-| `postgres:18.6-alpine3.24` candidate, `linux/amd64` | `sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503` | 1 / 1 | 26 / 26 | 31 medium, 3 low, 1 unknown package finding |
-| `postgres:18.6-alpine3.24` candidate, `linux/arm64` | `sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5` | 1 / 1 | 26 / 26 | 31 medium, 3 low, 1 unknown package finding |
+| `postgres:18.6-alpine3.24` candidate, amd64 platform manifest | `sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503` | 1 / 1 | 26 / 26 | 31 medium, 3 low, 1 unknown package finding |
+| `postgres:18.6-alpine3.24` multi-platform index, arm64 selected locally | `sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5` | 1 / 1 | 26 / 26 | 31 medium, 3 low, 1 unknown package finding |
 
 The router image's two critical findings are Next.js 16.3.8 advisories
 `GHSA-2464-fhr4-w9xw` and `GHSA-673q-mjm6-r5xr`. Trivy reports fixes in Next.js
@@ -68,10 +69,12 @@ with evidence rather than hiding them with broad suppressions.
 ## Reproduce the local scan
 
 Install Trivy from the official package source for the host. Build and start the
-Compose services, then run the release gate:
+Compose services, then run the release gate. Large images need several gigabytes
+of temporary space. Set `CLOUDDEV_TRIVY_TMP_DIR` to a writable volume with enough
+free space if the system temporary directory is small:
 
 ```sh
-npm run scan:images
+CLOUDDEV_TRIVY_TMP_DIR=/path/to/large-temp-volume npm run scan:images
 ```
 
 The script scans the image IDs of the four running Compose services and exits
