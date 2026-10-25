@@ -5,6 +5,7 @@ import test from "node:test";
 const source = readFileSync(new URL("../../.railway/railway.ts", import.meta.url), "utf8");
 const manifest = JSON.parse(readFileSync(new URL("../../.railway/template-variables.json", import.meta.url), "utf8"));
 const variableDocumentation = readFileSync(new URL("../../docs/operations/RAILWAY_TEMPLATE_VARIABLES.md", import.meta.url), "utf8");
+const compose = readFileSync(new URL("../../docker-compose.yml", import.meta.url), "utf8");
 
 function variablesByService() {
   const variables = new Map();
@@ -70,4 +71,15 @@ test("every stateful service has persistent data, and the Composer does not embe
   assert.match(source, /volumeMounts:\s*\{\s*"\/app\/data":\s*routerData/);
   assert.doesNotMatch(JSON.stringify(manifest), /(?:sk-[A-Za-z0-9]{20,}|OPENAI_API_KEY|ANTHROPIC_API_KEY|OMNIROUTE_MASTER_KEY)/);
   assert.match(source, /sleepApplication:\s*false/);
+  assert.match(compose, /image:\s*postgres:18\.6-alpine3\.24@sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5/);
+});
+
+test("Railway IaC builds all three GitHub-backed services from the published main branch", () => {
+  assert.equal((source.match(/source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace"/g) ?? []).length, 3);
+  assert.match(source, /const router = service\("clouddev-router",\s*\{\s*source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main"\s*\}\)/s);
+  assert.match(source, /const ide = service\("clouddev-ide",\s*\{\s*source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main"\s*\}\)/s);
+  assert.match(source, /source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main",\s*rootDirectory:\s*"services\/forgejo",\s*\}\)/);
+  assert.match(source, /dockerfilePath:\s*"services\/omniroute\/Dockerfile"/);
+  assert.match(source, /dockerfilePath:\s*"services\/ide\/Dockerfile"/);
+  assert.match(source, /dockerfilePath:\s*"Dockerfile"/);
 });

@@ -1,5 +1,6 @@
 import {
   defineRailway,
+  github,
   postgres,
   preserve,
   project,
@@ -26,6 +27,7 @@ export default defineRailway(() => {
   });
 
   const router = service("clouddev-router", {
+    source: github("Schero94/clouddev-ai-sovereign-workspace", { branch: "main" }),
     build: { builder: "DOCKERFILE", dockerfilePath: "services/omniroute/Dockerfile" },
     replicas: ONE_REPLICA,
     volumeMounts: { "/app/data": routerData },
@@ -66,7 +68,10 @@ export default defineRailway(() => {
   });
 
   const forgejo = service("clouddev-git", {
-    rootDirectory: "services/forgejo",
+    source: github("Schero94/clouddev-ai-sovereign-workspace", {
+      branch: "main",
+      rootDirectory: "services/forgejo",
+    }),
     build: { builder: "DOCKERFILE", dockerfilePath: "Dockerfile" },
     replicas: ONE_REPLICA,
     volumeMounts: { "/var/lib/gitea": forgejoData },
@@ -101,6 +106,7 @@ export default defineRailway(() => {
   });
 
   const ide = service("clouddev-ide", {
+    source: github("Schero94/clouddev-ai-sovereign-workspace", { branch: "main" }),
     build: { builder: "DOCKERFILE", dockerfilePath: "services/ide/Dockerfile" },
     replicas: ONE_REPLICA,
     volumeMounts: { "/workspace": workspaceData },

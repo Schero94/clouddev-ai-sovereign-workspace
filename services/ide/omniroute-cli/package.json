@@ -6,6 +6,11 @@
   "dependencies": {
     "omniroute": "3.8.52"
   },
+  "overrides": {
+    "dompurify": "3.4.17",
+    "next": "16.4.3",
+    "zod": "4.6.6"
+  },
   "engines": {
     "node": ">=24.0.0 <27"
   }

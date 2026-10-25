@@ -11,12 +11,12 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [x] G2: IDE, CloudCLI, Codex, Claude Code, SSH, agent configuration, projects and task state use one persistent `/workspace` mount; application processes other than sshd/supervisor run as UID 1000 without capabilities.
   CHECK: npm test
   EXPECT: pass
-  EVIDENCE: `npm test` passed: 113 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
+  EVIDENCE: `npm test` passed: 114 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
 
 - [x] G3: Every browser route is authenticated, SSH accepts keys only, and no shared service port or administrator secret is exposed to agent processes.
   CHECK: npm run test:security
   EXPECT: pass
-  EVIDENCE: `npm run test:security` passed across 85 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
+  EVIDENCE: `npm run test:security` passed across 86 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
 
 - [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work.
   CHECK: npm run test:cross-device
@@ -57,15 +57,20 @@ The always-on cross-device flow is a release-blocking product requirement.
   EVIDENCE: pending
 
 - [ ] G13: Restore drills prove the workspace, Forgejo, PostgreSQL and OmniRoute data can be recovered from documented backups.
-  EVIDENCE: pending
+  EVIDENCE: Partial local evidence on 2026-10-25. A logical dump of the local Forgejo database was restored into an isolated PostgreSQL 18.6 container, and 131 application tables matched. The test did not include role state, the Forgejo volume, workspace files, or OmniRoute; see `docs/security/BACKUP_RESTORE.md`. G13 remains open.
 
 - [ ] G14: Marketplace template is created, published, and successfully test-deployed. No template ID or verified badge is claimed before Railway confirms it.
   EVIDENCE: pending
 
 - [ ] G15: OmniRoute dashboard dependency vulnerabilities are patched in a rebuilt upstream image and authenticated runtime checks pass before its public domain is enabled.
-  EVIDENCE: Open on 2026-10-25. `npm audit --json` on the pinned OmniRoute CLI lock reported 10 advisories: 6 low, 1 moderate, 1 high, and 2 critical. The current upstream package and image remain at `3.8.52`; the published package declares Next.js `16.3.8` and DOMPurify `^3.4.14`. No Docker image vulnerability scanner is installed, so the full published image has not been scanned. A runtime-only Next.js overlay failed startup and was removed. See `services/omniroute/README.md`; do not deploy publicly until upstream ships a patched image or a full source rebuild passes the stated gates.
+  EVIDENCE: Open on 2026-10-25. Trivy 0.76.1 scanned the built local router image and found 2 critical and 48 high package findings, including two unique critical Next.js advisories in pinned Next.js 16.3.8. The public OmniRoute release remains 3.8.52, and upstream main still declares Next.js 16.3.8. Full results and image ID are in `docs/security/IMAGE_SCAN.md`. No patched router image or full source rebuild has passed health, authentication, inference, and dependency checks.
 
 - [x] G16: Every IaC `preserve()` variable has an explicit Railway Template Composer value or a documented operator input. Generated credentials use per-deployment `secret()` functions; provider master keys are excluded.
   CHECK: npm run check:railway-template
   EXPECT: pass
-  EVIDENCE: `npm run check:railway-template` passed on 2026-10-25. The test matches all 11 `preserve()` entries against `.railway/template-variables.json`, validates the generated-secret expression and required SSH public-key input, checks declared persistent mounts, and rejects provider master-key fields. Live Composer configuration remains unverified.
+  EVIDENCE: `npm run check:railway-template` passed 3 tests on 2026-10-25. They match all 11 `preserve()` entries against `.railway/template-variables.json`, validate the generated-secret expression and required SSH public-key input, check all 57 IaC application variable names against the guide and declared persistent mounts, reject provider master-key fields, and verify GitHub sources for the three app services. Live Composer configuration remains unverified.
+
+- [ ] G17: All four local Compose images are scanned, high and critical findings are triaged, and the exact release images pass the documented deployment security criteria.
+  CHECK: npm run scan:images
+  EXPECT: exit 0 after each local image has no remaining high or critical findings.
+  EVIDENCE: Open on 2026-10-25. Trivy 0.76.1 scanned all four running local Compose images. The rebuilt IDE candidate moved `shell-quote` from 1.10.0 to 1.11.0 and removed that critical finding; it still has 5 unique critical and 122 unique high CVEs, including Next.js/DOMPurify and OS findings. The CLI lockfile overrides Next.js 16.4.3, DOMPurify 3.4.17, and Zod 4.6.6; its npm audit reports zero high/critical advisories, but the lockfile has not been rebuilt into the image. PostgreSQL 18.6 is pinned in Compose and passed an isolated startup check. The running database remains 18.1; its logical dump restored to a temporary 18.6 target with 131 matching Forgejo tables. Full image scans, the managed Railway database, and complete four-store restore remain open. See `docs/security/IMAGE_SCAN.md` and `docs/security/BACKUP_RESTORE.md`.

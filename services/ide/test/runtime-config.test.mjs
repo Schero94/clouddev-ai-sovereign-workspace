@@ -12,7 +12,8 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   const cloudcli = JSON.parse(read("cloudcli-ui/package.json"));
   assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim AS node-runtime$/m);
   assert.match(dockerfile, /^FROM caddy:2\.11\.6-alpine AS caddy-runtime$/m);
-  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1$/m);
+  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
+  assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.5");
   assert.match(dockerfile, /VOLUME \["\/workspace"\]/);
   assert.doesNotMatch(dockerfile, /VOLUME \[[^\]]*\/home\/coder/);

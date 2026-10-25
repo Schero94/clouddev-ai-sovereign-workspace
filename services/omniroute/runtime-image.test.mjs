@@ -23,7 +23,7 @@ test("Compose and Railway build the router overlay instead of mounting a host he
   const railway = readFileSync(railwayPath, "utf8");
   assert.match(compose, /dockerfile:\s*services\/omniroute\/Dockerfile/);
   assert.match(railway, /dockerfilePath:\s*["']services\/omniroute\/Dockerfile["']/);
-  assert.match(railway, /service\("clouddev-git",\s*\{\s*rootDirectory:\s*["']services\/forgejo["']/s);
+  assert.match(railway, /service\("clouddev-git",\s*\{\s*source:\s*github\([\s\S]*?rootDirectory:\s*["']services\/forgejo["']/s);
   assert.doesNotMatch(compose, /healthcheck\.mjs:ro/);
   assert.ok(compose.includes("/opt/clouddev-healthcheck.mjs"));
   assert.match(compose, /API_HOST:\s*"127\.0\.0\.1"/);

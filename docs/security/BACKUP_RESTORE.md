@@ -65,6 +65,14 @@ production without an approved maintenance window and a reviewed destination.
 Restore into an isolated, empty Compose project or a fresh Railway test project.
 Do not overwrite the original production volume.
 
+Partial local evidence, 2026-10-25: a logical dump of the running local Forgejo
+database was streamed directly into an isolated PostgreSQL 18.6 container. The
+restored database contained 131 application tables, matching the source. The
+ephemeral target had no mounted data volume and was removed after the check.
+This verifies a narrow database-data restore path only. It did not restore
+roles, a saved encrypted backup file, the Forgejo data volume, the workspace,
+or OmniRoute. G13 remains open.
+
 1. Record checksums and sizes for all four backup artifacts.
 2. Create empty target volumes and a fresh database.
 3. Restore PostgreSQL data first, including the Forgejo role and database using

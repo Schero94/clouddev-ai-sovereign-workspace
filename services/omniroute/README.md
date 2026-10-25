@@ -10,27 +10,33 @@ OmniRoute's published project is now maintained at [cheaper-inference/OmniRoute]
 
 ## Security release hold
 
-The pinned image contains Next.js `16.3.8`. The official Next.js security
-update dated 2026-10-14 lists `16.0.0` through `16.4.0` as affected by critical
-advisories and provides patched releases from `16.4.1`. The pinned OmniRoute
-source package declares DOMPurify `^3.4.14`; current npm advisory data reports
-critical and high findings for versions through `3.4.16`. The separate CLI
-dependency audit reported 10 advisories, including two critical and one high.
-That package audit is not a complete scan of the published router image.
+The pinned router image contains Next.js `16.3.8`. Trivy 0.76.1 reports two
+critical Next.js advisories. The fixed Next.js release listed in the scan data
+is `16.4.1` or later. The pinned OmniRoute source package declares DOMPurify
+`^3.4.14`; npm reports critical/high DOMPurify findings through `3.4.16`.
+
+CloudDev's separate OmniRoute CLI dependency tree now overrides Next.js to
+`16.4.3`, DOMPurify to `3.4.17`, and Zod to `4.6.6`. `npm run
+audit:omniroute-cli` reports zero high or critical advisories in that lockfile
+(7 low remain). These overrides have not yet been rebuilt into the IDE image.
+They do not modify the router's published image or app source.
 
 The inspected upstream Next.js configuration sets `cacheComponents: false`,
 `images.unoptimized: true`, and `dangerouslyAllowSVG: false`. The router image
 contains Sharp `0.35.5`, the workaround named in the Next.js SVG optimizer
 advisory. These settings mitigate specific advisory paths. They do not update
-the vulnerable dependency ranges. This checkout has not completed an image
-vulnerability scan.
+the vulnerable dependency ranges. The local router image was scanned with
+Trivy 0.76.1 on 2026-10-25. It contains two critical Next.js advisories and 48
+high package findings. See [the image scan record](../../docs/security/IMAGE_SCAN.md)
+for the scanned image ID and the results for all local service images.
 
-On 2026-10-25, `npm audit --json` in `services/ide/omniroute-cli` reported 10
-advisories for the pinned CLI dependency tree: 6 low, 1 moderate, 1 high, and 2
-critical. The same audit reported 20 advisories for CloudCLI's pinned package
+On 2026-10-25, the original CLI lockfile audit reported 10 advisories: 6 low,
+1 moderate, 1 high, and 2 critical. After the lockfile overrides, the CLI audit
+reports 7 low and no high or critical advisories. The same audit reported 20
+advisories for CloudCLI's pinned package
 tree (5 low and 15 moderate), and none for the direct Codex, Claude Code, and
 pnpm tool manifest. These are npm lockfile audits, not scans of the final
-container images. No image scanner was available in the environment.
+container images. The exact image scans are in `docs/security/IMAGE_SCAN.md`.
 
 A runtime-only replacement of Next.js `16.3.8` with `16.4.3` failed at startup
 because the prebuilt application artifacts did not match the newer runtime.

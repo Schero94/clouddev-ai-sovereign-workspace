@@ -20,8 +20,8 @@ does not publish a Marketplace template by itself.
    with Gitleaks before the source push and returned no findings.
 2. Run the unit, security, Compose, image-build, mock-provider, SSH, Git, and
    session recovery checks. Record the actual output in `GATES.md`.
-3. Close the OmniRoute image security hold in G15. Keep the router dashboard
-   and inference endpoints private.
+3. Close image-security gates G15 and G17. Keep the router dashboard and
+   inference endpoints private.
 4. Sign in to the intended personal Railway workspace and create a fresh test
    project in that workspace. Do not use an existing personal or company
    project for the release test.
@@ -42,10 +42,12 @@ does not publish a Marketplace template by itself.
    new template in Workspace Settings is also documented. Confirm the final
    draft contains only `clouddev-ide`, `clouddev-git`, `clouddev-postgres`,
    and `clouddev-router`.
-2. Connect the public repository above. Set `clouddev-ide` to repository root `.`
-   and Dockerfile `services/ide/Dockerfile`. Set `clouddev-git` to root
-   `services/forgejo` and Dockerfile `Dockerfile`. Keep the pinned OmniRoute
-   image declared by IaC.
+2. Verify the GitHub source and Dockerfile settings that IaC declares for all
+   three app services. The workspace uses repository root `.` with Dockerfile
+   `services/ide/Dockerfile`. Forgejo uses root `services/forgejo` with
+   Dockerfile `Dockerfile`. The router overlay uses repository root `.` with
+   Dockerfile `services/omniroute/Dockerfile`, which pulls the pinned upstream
+   image.
 3. Set every service and volume to `europe-west4-drams3a`. Keep the workspace,
    Forgejo, and router data volumes at their declared mount paths. Leave each
    stateful service at one replica.

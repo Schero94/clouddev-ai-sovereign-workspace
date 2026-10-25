@@ -1,7 +1,7 @@
 FROM node:24.22.0-bookworm-slim AS node-runtime
 FROM caddy:2.11.6-alpine AS caddy-runtime
 
-FROM codercom/code-server:4.143.1
+FROM codercom/code-server:4.143.1@sha256:377b66bec5645510ed52549bb00e648c273edc604d230a3f90fd2b2433afcb97
 
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
@@ -82,6 +82,22 @@ RUN chmod 0755 /opt/clouddev-ide/entrypoint.sh /opt/clouddev-ide/scripts/* \
   && install -m 0755 /opt/clouddev-ide/scripts/git-setup /usr/local/bin/git-setup \
   && install -m 0755 /opt/clouddev-ide/scripts/clouddev-tasks /usr/local/bin/clouddev-tasks \
   && install -m 0755 /opt/clouddev-ide/entrypoint.sh /usr/local/bin/clouddev-ide-entrypoint
+
+# code-server 4.143.1 vendors shell-quote 1.10.0 in its VS Code dependency
+# tree. Replace that compatible runtime dependency with patched 1.11.0. Verify
+# the immutable npm tarball before extracting it, and do not run lifecycle code.
+RUN set -eu; \
+  curl -fsSL https://registry.npmjs.org/shell-quote/-/shell-quote-1.11.0.tgz -o /tmp/shell-quote-1.11.0.tgz; \
+  actual_sha512=$(sha512sum /tmp/shell-quote-1.11.0.tgz | cut -d ' ' -f 1); \
+  expected_sha512=25dc433c3d03053caed3ca6ad243c2d3148d7adfeab14d3ba93e88b17d404bca0ed8808d458e2574d6bc38023a3eec001fcb46de5c4485baa6ca9e03c38d37ea; \
+  [ "$actual_sha512" = "$expected_sha512" ] || { echo "shell-quote integrity check failed" >&2; exit 1; }; \
+  mkdir -p /tmp/clouddev-shell-quote; \
+  tar -xzf /tmp/shell-quote-1.11.0.tgz -C /tmp/clouddev-shell-quote; \
+  node -e "if(require('/tmp/clouddev-shell-quote/package/package.json').version !== '1.11.0') process.exit(1)"; \
+  rm -rf /usr/lib/code-server/lib/vscode/node_modules/shell-quote; \
+  mv /tmp/clouddev-shell-quote/package /usr/lib/code-server/lib/vscode/node_modules/shell-quote; \
+  node -e "if(require('/usr/lib/code-server/lib/vscode/node_modules/shell-quote/package.json').version !== '1.11.0') process.exit(1)"; \
+  rm -rf /tmp/clouddev-shell-quote /tmp/shell-quote-1.11.0.tgz
 
 ENV HOME=/workspace/home \
     USER=coder \

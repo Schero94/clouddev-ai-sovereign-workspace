@@ -15,9 +15,9 @@ the upstream provider.
 > drills are reported separately in [GATES.md](GATES.md). Do not describe this
 > template as one-click verified until the fresh-project Railway test passes.
 >
-> Release hold: the pinned OmniRoute image still needs an upstream security
-> rebuild. Keep its public dashboard domain disabled until gate G15 records a
-> patched image that passes auth and runtime checks.
+> Release hold: the pinned OmniRoute image still has unresolved high/critical
+> advisories. Keep the dashboard and inference endpoints private until G15 and
+> G17 are closed on the exact release images.
 
 ## Architecture
 
@@ -253,6 +253,7 @@ are not an off-project copy.
 npm test
 npm run test:forgejo
 npm run test:security
+npm run scan:images
 npm run check:compose
 npm run check:railway
 docker compose build

@@ -14,6 +14,7 @@ images. Verify license and version changes whenever a dependency is updated.
 | PostgreSQL | Railway managed service | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |
 | Caddy | 2.11.6 Alpine image | Apache-2.0 | [Caddy](https://github.com/caddyserver/caddy/tree/v2.11.6) |
 | Node.js | 24.22.0 | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v24.22.0) |
+| shell-quote | 1.11.0, patched into code-server 4.143.1's bundled VS Code dependency tree | MIT | [npm package](https://www.npmjs.com/package/shell-quote) |
 | Git | Distribution package | GPL-2.0-or-later | [Git](https://github.com/git/git) |
 | OpenSSH | Distribution package | BSD-style license and notices | [OpenSSH](https://www.openssh.com/) |
 | Python | Distribution package | PSF-2.0 and bundled notices | [Python](https://github.com/python/cpython) |

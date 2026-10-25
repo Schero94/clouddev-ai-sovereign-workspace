@@ -57,13 +57,14 @@ deployment and read the service-specific `RAILWAY_TCP_PROXY_DOMAIN` and
 Remote-SSH. The workspace SSH key and Forgejo Git key are separate identities.
 
 The public source repository is
-`https://github.com/Schero94/clouddev-ai-sovereign-workspace`. Bind it to
-`clouddev-ide` with repository root `.` and Dockerfile
-`services/ide/Dockerfile`; bind it to `clouddev-git` with root
-`services/forgejo` and Dockerfile `Dockerfile`. The OmniRoute image source is
-already pinned in IaC. Generated HTTPS domains are created in the Composer or
-service networking settings. No generated domain or template ID is fabricated
-here.
+`https://github.com/Schero94/clouddev-ai-sovereign-workspace`. IaC now binds it
+to `clouddev-ide` at repository root `.` with Dockerfile
+`services/ide/Dockerfile`, and to `clouddev-git` at root `services/forgejo`
+with Dockerfile `Dockerfile`. The `clouddev-router` health overlay uses the same
+repository root and Dockerfile `services/omniroute/Dockerfile`; its upstream
+image remains pinned by that Dockerfile. Verify these settings in Composer.
+Generated HTTPS domains are still created there. No generated domain or
+template ID is fabricated here.
 
 ## Secrets and first login
 

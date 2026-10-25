@@ -95,7 +95,13 @@
       process arguments, stdout, or build logs.
 - [ ] No privileged container, Docker socket, or unexpected capability exists.
 - [ ] Railway app sleeping is disabled and the live setting is read back.
-- [ ] `rg` secret scan, image scanner, dependency audit, and penetration checks
-      have recorded outputs for the release.
+- [x] Gitleaks scanned all committed Git history and reported no leaks on
+      2026-10-25. The source repository was rechecked after pushing.
+- [ ] `npm run scan:images` has been run against every image that would ship,
+      and the remaining high and critical findings have been resolved or
+      formally assessed before the template is published.
+- [ ] Dependency audits and live penetration checks have recorded outputs for
+      the release. The current router and IDE image security hold is documented
+      in [IMAGE_SCAN.md](IMAGE_SCAN.md).
 
 Passing a local static check does not prove a corresponding Railway setting.
