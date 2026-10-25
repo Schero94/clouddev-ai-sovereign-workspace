@@ -19,9 +19,9 @@ the upstream provider.
 > advisories. Keep the dashboard and inference endpoints private until G15 and
 > G17 are closed on the exact release images.
 
-The documentation source is in [`docs/`](docs/index.md). GitHub Pages is
-configured for Actions publishing. The public link will be added after the first
-deployment is verified.
+Read the [CloudDev AI operator documentation](https://schero94.github.io/clouddev-ai-sovereign-workspace/)
+for setup, deployment, security, privacy, restore, troubleshooting, and current
+release readiness. The source is in [`docs/`](docs/index.md).
 
 ## Architecture
 
@@ -325,6 +325,6 @@ below with the real code and remove this comment wrapper.
 
 ### Unreleased
 
-- Searchable GitHub Pages documentation and an automatically generated release-status page are being prepared. The public site link will be added after the Pages deployment is verified.
+- Searchable documentation, a generated release-status page, and the GitHub Pages workflow are in place. Final publication evidence is tracked in `GATES.md`.
 - Cross-device workspace runtime and Railway Marketplace publication are under
   active implementation and verification.

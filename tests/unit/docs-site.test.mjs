@@ -66,6 +66,7 @@ test("artifact checker accepts a small static site and rejects hidden or secret-
 test("documentation content and navigation cover the operator workflow", () => {
   const navigation = readFileSync(path.join(root, "mkdocs.yml"), "utf8");
   const guide = readFileSync(path.join(root, "docs/operations/CONTROL_PLANE.md"), "utf8");
+  const readme = readFileSync(path.join(root, "README.md"), "utf8");
 
   for (const section of ["Start here", "Railway:", "Operations:", "Security and privacy:", "Release status"]) {
     assert.ok(navigation.includes(section), `navigation is missing ${section}`);
@@ -75,6 +76,7 @@ test("documentation content and navigation cover the operator workflow", () => {
   }
   assert.doesNotMatch(navigation, /^repo_(?:name|url):/m, "repository header metadata calls the GitHub Releases API on every page view");
   assert.match(navigation, /name: Source repository/, "the repository link should be a static social link instead");
+  assert.match(readme, /https:\/\/schero94\.github\.io\/clouddev-ai-sovereign-workspace\//);
 });
 
 test("Pages workflow pins actions, isolates write permissions, and never deploys a pull request", () => {

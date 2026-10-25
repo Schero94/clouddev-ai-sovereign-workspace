@@ -7,6 +7,17 @@ strict: true
 exclude_docs: |
   plans/**
 
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    unrecognized_links: warn
+    anchors: warn
+    absolute_links: warn
+
 theme:
   name: material
   language: en
