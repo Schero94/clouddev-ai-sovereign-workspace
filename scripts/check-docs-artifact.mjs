@@ -50,6 +50,31 @@ export function inspectDocsArtifact(siteDirectory) {
   if (!entries.some(entry => entry.kind === "file" && entry.relative === "index.html")) {
     errors.push("Artifact is missing index.html at its root.");
   }
+  for (const required of ["robots.txt", "sitemap.xml", "assets/clouddev-social-preview.png"]) {
+    if (!entries.some(entry => entry.kind === "file" && entry.relative === required)) {
+      errors.push(`Artifact is missing required discovery asset: ${required}`);
+    }
+  }
+
+  const socialImage = entries.find(entry => entry.kind === "file" && entry.relative === "assets/clouddev-social-preview.png");
+  if (socialImage && lstatSync(socialImage.absolute).size > 1_000_000) {
+    errors.push("Social preview image exceeds the 1 MB upload limit.");
+  }
+
+  for (const page of entries.filter(entry => entry.kind === "file" && path.extname(entry.relative).toLowerCase() === ".html" && entry.relative !== "404.html")) {
+    const html = readFileSync(page.absolute, "utf8");
+    for (const [label, pattern] of [
+      ["Open Graph title", /<meta\s+property="og:title"\s+content="[^"]+"/i],
+      ["Open Graph description", /<meta\s+property="og:description"\s+content="[^"]+"/i],
+      ["Open Graph URL", /<meta\s+property="og:url"\s+content="https:\/\//i],
+      ["Open Graph image", /<meta\s+property="og:image"\s+content="https:\/\//i],
+      ["Open Graph image alternative text", /<meta\s+property="og:image:alt"\s+content="[^"]+"/i],
+      ["Twitter summary card", /<meta\s+name="twitter:card"\s+content="summary_large_image"/i],
+      ["Canonical URL", /<link\s+rel="canonical"\s+href="https:\/\//i],
+    ]) {
+      if (!pattern.test(html)) errors.push(`${label} is missing from ${page.relative}`);
+    }
+  }
 
   for (const entry of entries) {
     const segments = entry.relative.split("/");

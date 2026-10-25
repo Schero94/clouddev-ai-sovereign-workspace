@@ -12,8 +12,8 @@ images. Verify license and version changes whenever a dependency is updated.
 | code-server | 4.143.1 | MIT | [Release](https://github.com/coder/code-server/tree/v4.143.1) |
 | Forgejo | 17.0.0 rootless | GPL-3.0-or-later | [Release](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.0) |
 | PostgreSQL | Railway managed service; local Compose 18.6-alpine3.24 pinned by multi-platform digest | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |
-| Caddy | 2.11.6 Alpine image | Apache-2.0 | [Caddy](https://github.com/caddyserver/caddy/tree/v2.11.6) |
-| Node.js | 24.22.0 | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v24.22.0) |
+| Caddy | 2.11.7 Alpine image | Apache-2.0 | [Caddy](https://github.com/caddyserver/caddy/tree/v2.11.7) |
+| Node.js | 24.22.0 bookworm-slim, pinned by digest | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v24.22.0) |
 | shell-quote | 1.11.0, patched into code-server 4.143.1's bundled VS Code dependency tree | MIT | [npm package](https://www.npmjs.com/package/shell-quote) |
 | Git | Distribution package | GPL-2.0-or-later | [Git](https://github.com/git/git) |
 | OpenSSH | Distribution package | BSD-style license and notices | [OpenSSH](https://www.openssh.com/) |
@@ -24,6 +24,7 @@ images. Verify license and version changes whenever a dependency is updated.
 | Red Hat YAML | 2.1.2026102308 | MIT | [Open VSX listing](https://open-vsx.org/extension/redhat/vscode-yaml) |
 | Error Lens | 3.30.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/usernamehw/errorlens) |
 | Even Better TOML | 0.21.2 | MIT | [Open VSX listing](https://open-vsx.org/extension/tamasfe/even-better-toml) |
+| age CLI | 1.3.2 on the maintainer test host; optional operator tool for local encrypted backups, not included in runtime images | BSD-3-Clause | [Source](https://github.com/FiloSottile/age) |
 
 ## Distribution notes
 

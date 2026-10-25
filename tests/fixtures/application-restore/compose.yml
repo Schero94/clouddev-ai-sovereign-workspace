@@ -1,0 +1,105 @@
+services:
+  clouddev-postgres:
+    image: ${CLOUDDEV_POSTGRES_IMAGE:?the test must supply a locally present image ID}
+    pull_policy: never
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?}
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 2s
+      timeout: 2s
+      retries: 45
+    restart: "no"
+
+  clouddev-git:
+    image: ${CLOUDDEV_FORGEJO_IMAGE:?the test must supply a locally present image ID}
+    pull_policy: never
+    environment:
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: clouddev-postgres:5432
+      FORGEJO_POSTGRES_ADMIN_HOST: clouddev-postgres
+      FORGEJO_POSTGRES_ADMIN_PORT: "5432"
+      FORGEJO_POSTGRES_ADMIN_DATABASE: postgres
+      FORGEJO_POSTGRES_ADMIN_USER: ${FORGEJO_POSTGRES_ADMIN_USER:?}
+      FORGEJO_POSTGRES_ADMIN_PASSWORD: ${FORGEJO_POSTGRES_ADMIN_PASSWORD:?}
+      FORGEJO_POSTGRES_ROLE: ${FORGEJO_POSTGRES_ROLE:?}
+      FORGEJO_POSTGRES_DATABASE: ${FORGEJO_POSTGRES_DATABASE:?}
+      FORGEJO_POSTGRES_PASSWORD: ${FORGEJO_POSTGRES_PASSWORD:?}
+      FORGEJO_ADMIN_USERNAME: ${FORGEJO_ADMIN_USERNAME:?}
+      FORGEJO_ADMIN_EMAIL: ${FORGEJO_ADMIN_EMAIL:?}
+      FORGEJO_ADMIN_PASSWORD: ${FORGEJO_ADMIN_PASSWORD:?}
+      FORGEJO_ROOT_URL: http://localhost:3000/
+      FORGEJO__server__DISABLE_SSH: "true"
+      FORGEJO__server__START_SSH_SERVER: "false"
+    volumes:
+      - forgejo-data:/var/lib/gitea
+    depends_on:
+      clouddev-postgres:
+        condition: service_healthy
+    restart: "no"
+
+  clouddev-router:
+    image: ${CLOUDDEV_ROUTER_IMAGE:?the test must supply a locally present image ID}
+    pull_policy: never
+    environment:
+      DATA_DIR: /app/data
+      PORT: "20128"
+      DASHBOARD_PORT: "20128"
+      API_PORT: "20131"
+      API_HOST: 127.0.0.1
+      OMNIROUTE_BASE_PATH: /omniroute
+      NEXT_PUBLIC_OMNIROUTE_BASE_PATH: /omniroute
+      INITIAL_PASSWORD: ${INITIAL_PASSWORD:?}
+      JWT_SECRET: ${JWT_SECRET:?}
+      API_KEY_SECRET: ${API_KEY_SECRET:?}
+      STORAGE_ENCRYPTION_KEY: ${STORAGE_ENCRYPTION_KEY:?}
+      STORAGE_ENCRYPTION_KEY_VERSION: v1
+      MACHINE_ID_SALT: ${MACHINE_ID_SALT:?}
+      OMNIROUTE_WS_BRIDGE_SECRET: ${OMNIROUTE_WS_BRIDGE_SECRET:?}
+      AUTH_COOKIE_SECURE: "false"
+      REQUIRE_API_KEY: "true"
+      APP_LOG_TO_FILE: "false"
+      ENABLE_REQUEST_LOGS: "false"
+      CALL_LOG_PIPELINE_CAPTURE_STREAM_CHUNKS: "false"
+      ARENA_ELO_SYNC_ENABLED: "false"
+      MODELS_DEV_SYNC_ENABLED: "false"
+    volumes:
+      - router-data:/app/data
+    restart: "no"
+
+  clouddev-ide:
+    image: ${CLOUDDEV_IDE_IMAGE:?the test must supply a locally present image ID}
+    pull_policy: never
+    entrypoint: ["/bin/sh", "-ec"]
+    command: ["exec sleep infinity"]
+    user: "0:0"
+    environment:
+      TEST_FORGEJO_ADMIN_USERNAME: ${FORGEJO_ADMIN_USERNAME:?}
+      TEST_FORGEJO_ADMIN_PASSWORD: ${FORGEJO_ADMIN_PASSWORD:?}
+      TEST_FORGEJO_USERNAME: ${TEST_FORGEJO_USERNAME:?}
+      TEST_FORGEJO_PASSWORD: ${TEST_FORGEJO_PASSWORD:?}
+      TEST_FORGEJO_EMAIL: ${TEST_FORGEJO_EMAIL:?}
+      TEST_FORGEJO_REPO: ${TEST_FORGEJO_REPO:?}
+      TEST_OMNIROUTE_PASSWORD: ${INITIAL_PASSWORD:?}
+      TEST_OMNIROUTE_PROVIDER_NAME: ${TEST_OMNIROUTE_PROVIDER_NAME:?}
+      TEST_PROVIDER_API_KEY: ${TEST_PROVIDER_API_KEY:?}
+      TEST_GATEWAY_API_KEY: ${TEST_GATEWAY_API_KEY:?}
+    volumes:
+      - workspace-data:/workspace
+    healthcheck:
+      disable: true
+    restart: "no"
+
+volumes:
+  workspace-data:
+  forgejo-data:
+  postgres-data:
+  router-data:
+
+networks:
+  default:
+    internal: true

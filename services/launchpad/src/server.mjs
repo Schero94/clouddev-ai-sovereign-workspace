@@ -79,6 +79,16 @@ function routePathFor(path, basePath) {
   return path.startsWith(`${basePath}/`) ? path.slice(basePath.length) : path;
 }
 
+function providerDashboardUrl(value, production) {
+  const normalized = validateUrl(value, "router public URL", production, true, true);
+  if (!normalized) return undefined;
+  const url = new URL(normalized);
+  const base = url.pathname.replace(/\/+$/, "");
+  const providerPath = "/dashboard/providers";
+  url.pathname = base.endsWith(providerPath) ? base : `${base}${providerPath}`;
+  return url.href.replace(/\/+$/, "");
+}
+
 function validateUrl(value, label, production, optional, publicLink = false) {
   if ((value === undefined || value === "") && optional) return null;
   if (typeof value !== "string") throw new Error(`${label} is invalid.`);
@@ -218,7 +228,7 @@ async function getStatus(config, fetchImpl) {
       cloudcli: serviceRoot(ideUrl),
       vscode: ideUrl ? `${ideUrl.replace(/\/+$/, "")}/vscode/` : null,
       git: serviceRoot(config.publicUrls.git),
-      router: serviceRoot(config.publicUrls.router),
+      router: config.publicUrls.router,
       ssh: config.sshProxy,
       sshHostFingerprint: config.sshHostFingerprint,
       gitSsh: config.gitSshProxy,
@@ -305,6 +315,7 @@ export function configFromEnvironment(env) {
       routerPublicUrl = undefined;
     }
   }
+  routerPublicUrl = providerDashboardUrl(routerPublicUrl, production);
   const httpTarget = (host, port, path) => host && port
     ? { type: "http", url: `http://${host}:${port}${path}` }
     : undefined;

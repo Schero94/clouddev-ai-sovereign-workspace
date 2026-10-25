@@ -18,6 +18,8 @@ CloudDev AI is a single-user, always-on cross-device workspace. Native VS Code R
 - Set Railway IaC `deploy.sleepApplication` to `false` for the always-on workspace and verify the live setting after deployment. Configure the explicit SSH TCP Proxy through the IaC `tcpProxies` field when the current pinned DSL type-checks it; verify the live proxy endpoint after deployment.
 - Treat repositories and coding-agent commands as untrusted. Do not automatically run cloned repository scripts.
 - Keep all user state on declared persistent mounts. Do not claim backup success until a restore has been run.
+- Exported local backups are encrypted to the operator's public age recipient. Keep the private identity outside Railway, this repository, `/workspace`, and agent environments. `STORAGE_ENCRYPTION_KEY` remains a separate OmniRoute recovery secret. Railway volume snapshots remain provider-managed and must not be called customer-key encrypted.
+- The local encrypted backup command requires the operator to confirm workspace and Git writes are quiesced. It must not stop, restart, or write to an existing Compose project. Restore tests use a fresh, uniquely named project and remove only resources they created.
 - Pin production images and CLI dependencies. Do not use `latest` in production configuration.
 - Do not claim EU-only processing, GDPR compliance, tested performance, One-Click verification, or successful deployment without direct evidence.
 - Keep Railway IaC in `.railway/railway.ts`. Do not add `railway.toml` or `railway.json`.
@@ -31,6 +33,7 @@ CloudDev AI is a single-user, always-on cross-device workspace. Native VS Code R
 - `npm run test:security`
 - `docker compose config --quiet`
 - `docker compose build`
+- `npm run scan:images` (rebuilds the three Compose Dockerfile candidates and pulls pinned PostgreSQL without starting or restarting existing services; scans the resulting immutable image IDs)
 - `./scripts/verify-local.sh` (requires a working Docker Engine)
 
 See `GATES.md` for acceptance evidence and unresolved items.

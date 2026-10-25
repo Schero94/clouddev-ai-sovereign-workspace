@@ -2,7 +2,7 @@ FROM node:24.22.0-bookworm-slim
 
 USER root
 RUN install -d -o 1000 -g 1000 /opt/clouddev-mock-llm
-COPY --chown=1000:1000 tests/mock-llm/server.mjs /opt/clouddev-mock-llm/server.mjs
+COPY --chown=1000:1000 server.mjs /opt/clouddev-mock-llm/server.mjs
 
 USER 1000:1000
 WORKDIR /opt/clouddev-mock-llm

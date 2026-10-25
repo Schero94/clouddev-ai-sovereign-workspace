@@ -18,6 +18,7 @@ output/
 playwright-report/
 .playwright-cli/
 .playwright/cli.config.json
+.lurus/
 *.log
 *.sqlite
 *.sqlite-shm

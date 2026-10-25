@@ -1,11 +1,20 @@
 site_name: "CloudDev AI: Sovereign Workspace"
-site_description: Deployment, operations, security, and privacy documentation for the single-user Sovereign Workspace.
+site_description: Guides for deploying and operating a single-user CloudDev AI workspace with browser VS Code, VS Code Remote-SSH, CloudCLI, Forgejo, and OmniRoute.
 site_url: https://schero94.github.io/clouddev-ai-sovereign-workspace/
+site_author: CloudDev AI maintainers
+copyright: "Copyright © CloudDev AI contributors"
 docs_dir: docs
 site_dir: .docs-site/site
 strict: true
 exclude_docs: |
   plans/**
+  assets/screenshots/browser-vscode-empty-local.png
+  assets/screenshots/cloudcli-first-run-desktop.png
+  assets/screenshots/forgejo-login-local-desktop.png
+  assets/screenshots/forgejo-login-mobile.png
+  assets/screenshots/omniroute-onboarding-wizard-desktop.png
+  assets/screenshots/omniroute-onboarding-wizard-mobile.png
+  assets/screenshots/omniroute-provider-catalog-desktop.png
 
 validation:
   nav:
@@ -20,6 +29,7 @@ validation:
 
 theme:
   name: material
+  custom_dir: .docs-overrides
   language: en
   font: false
   logo: assets/clouddev-mark.svg
@@ -49,6 +59,7 @@ plugins:
   - search
 
 extra:
+  generator: false
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Schero94/clouddev-ai-sovereign-workspace
@@ -75,6 +86,15 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Product:
+      - Features: features.md
+  - How to:
+      - Deploy on Railway: how-to/deploy-on-railway.md
+      - First login: how-to/first-login.md
+      - Connect clients: how-to/connect-clients.md
+  - AI providers:
+      - Connect a provider: how-to/providers.md
+      - Provider compatibility: providers/COMPATIBILITY.md
   - Start here: getting-started.md
   - Architecture: architecture.md
   - Railway:

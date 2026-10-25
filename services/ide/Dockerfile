@@ -1,5 +1,5 @@
-FROM node:24.22.0-bookworm-slim AS node-runtime
-FROM caddy:2.11.6-alpine AS caddy-runtime
+FROM node:24.22.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime
+FROM caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime
 
 FROM codercom/code-server:4.143.1@sha256:377b66bec5645510ed52549bb00e648c273edc604d230a3f90fd2b2433afcb97
 
@@ -54,7 +54,7 @@ RUN npm ci --prefix /opt/clouddev-ide/esbuild-runtime --no-audit --no-fund \
     *) echo "Unsupported architecture for the pinned OmniRoute CLI runtime." >&2; exit 1 ;; \
   esac \
   && /opt/clouddev-ide/omniroute-cli/node_modules/.bin/omniroute --version >/dev/null \
-  && /usr/bin/caddy version | grep -F 'v2.11.6' >/dev/null
+  && /usr/bin/caddy version | grep -F 'v2.11.7' >/dev/null
 
 RUN install -d -o root -g root -m 0755 /opt/clouddev-ide/extension-seed \
   && code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension redhat.vscode-yaml@2.1.2026102308 \

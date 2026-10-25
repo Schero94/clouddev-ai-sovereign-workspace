@@ -7,12 +7,20 @@ import test from "node:test";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const rootIgnore = readFileSync(path.join(root, ".dockerignore"), "utf8");
+const rootGitIgnore = readFileSync(path.join(root, ".gitignore"), "utf8");
 const forgejoIgnorePath = path.join(root, "services/forgejo/.dockerignore");
+const mockIgnorePath = path.join(root, "tests/mock-llm/.dockerignore");
 let forgejoIgnore;
+let mockIgnore;
 try {
   forgejoIgnore = readFileSync(forgejoIgnorePath, "utf8");
 } catch {
   forgejoIgnore = "";
+}
+try {
+  mockIgnore = readFileSync(mockIgnorePath, "utf8");
+} catch {
+  mockIgnore = "";
 }
 
 const contexts = {
@@ -20,6 +28,8 @@ const contexts = {
   forgejo: readFileSync(path.join(root, "services/forgejo/Dockerfile"), "utf8"),
   router: readFileSync(path.join(root, "services/omniroute/Dockerfile"), "utf8"),
   compose: readFileSync(path.join(root, "docker-compose.yml"), "utf8"),
+  mockCompose: readFileSync(path.join(root, "docker-compose.mock.yml"), "utf8"),
+  mockDockerfile: readFileSync(path.join(root, "tests/mock-llm/Dockerfile"), "utf8"),
   railway: readFileSync(path.join(root, ".railway/railway.ts"), "utf8"),
 };
 
@@ -40,12 +50,13 @@ test("every current Docker context excludes Markdown from its outbound build con
     assert.ok(forgejoPatterns.includes(`**/*.${extension}`), `Forgejo build context must exclude **/*.${extension}`);
   }
   assert.ok(rootPatterns.includes("docs/"), "root contexts should omit the documentation tree entirely");
-  for (const localOnly of ["docs-site/.venv/", "**/.venv/", "tests/", "gates/"]) {
+  for (const localOnly of ["docs-site/", "docs-site/.venv/", "**/.venv/", "tests/", "gates/", "scripts/", "examples/", ".github/", ".railway/", ".agents/", ".claude/", ".codex/", ".cursor/", ".vscode/", ".docs-overrides/"]) {
     assert.ok(rootPatterns.includes(localOnly), `root contexts should omit ${localOnly}`);
   }
   assert.ok(rootPatterns.includes(".playwright-cli/"), "root contexts should not send local browser traces and tokens");
   assert.ok(rootPatterns.includes(".lurus/"), "root contexts should not send local agent metadata");
   assert.ok(rootPatterns.includes(".git") || rootPatterns.includes(".git/"), "root contexts should not send Git metadata");
+  assert.ok(patterns(rootGitIgnore).includes(".lurus/"), "the local encrypted assistant index must not be committed to the public repository");
   assert.ok(forgejoPatterns.includes(".git/"), "Forgejo context should not send Git metadata");
 
   const forgejoMarkdown = markdownFiles.filter(file => file.startsWith("services/forgejo/"));
@@ -63,6 +74,33 @@ test("Compose and Railway use only the documented root and Forgejo subdirectory 
     if (name === "compose" || name === "railway") continue;
     assert.doesNotMatch(dockerfile, /COPY\s+(?:--from=[^\s]+\s+)?(?:\.|\.\/|\/workspace)(?:\s|$)/i,
       `${name} Dockerfile must not copy the entire build context into the image`);
+  }
+});
+
+test("the mock-provider image uses a minimal nested context with its own Markdown exclusions", () => {
+  const mockPatterns = patterns(mockIgnore);
+  const extensions = ["md", "MD", "markdown", "MARKDOWN", "mdx", "MDX"];
+
+  assert.match(contexts.mockCompose, /clouddev-mock-llm:\s*\n\s+profiles:\s*\[[^\]]*integration[^\]]*\]\s*\n\s+image:[^\n]+\n\s+build:\s*\n\s+context:\s*\.\/tests\/mock-llm\s*\n\s+dockerfile:\s*Dockerfile/);
+  assert.match(contexts.mockDockerfile, /COPY\s+--chown=1000:1000\s+server\.mjs\s+/);
+  assert.doesNotMatch(contexts.mockDockerfile, /COPY\s+tests\//);
+  for (const extension of extensions) {
+    assert.ok(mockPatterns.includes(`**/*.${extension}`), `mock build context must exclude **/*.${extension}`);
+  }
+  assert.ok(mockPatterns.includes(".git/"));
+  assert.ok(mockPatterns.includes("node_modules/"));
+  assert.ok(!mockPatterns.some(pattern => /^!.*\.(?:md|markdown|mdx)$/i.test(pattern)));
+});
+
+test("local Compose host ports can be changed for an isolated docs-preview project", () => {
+  for (const [name, port] of [
+    ["CLOUDDEV_HTTP_PUBLISH_PORT", "8080"],
+    ["CLOUDDEV_SSH_PUBLISH_PORT", "2222"],
+    ["FORGEJO_HTTP_PUBLISH_PORT", "3000"],
+    ["FORGEJO_SSH_PUBLISH_PORT", "2223"],
+    ["OMNIROUTE_DASHBOARD_PUBLISH_PORT", "20128"],
+  ]) {
+    assert.ok(contexts.compose.includes(`\${${name}:-${port}}`), `Compose should preserve port ${port} by default while allowing a preview override for ${name}`);
   }
 });
 

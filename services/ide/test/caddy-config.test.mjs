@@ -32,9 +32,11 @@ test("routes browser paths through cookie forward-auth and disables the admin AP
   assert.match(caddyfile, /:8080/);
   assert.match(caddyfile, /handle_path \/vscode\/\*/);
   assert.match(caddyfile, /reverse_proxy 127\.0\.0\.1:8081/);
-  assert.match(caddyfile, /handle \/omniroute\/\*/);
+  assert.match(caddyfile, /@omniroute path \/omniroute \/omniroute\/\*\s+handle @omniroute \{/);
   assert.match(caddyfile, /reverse_proxy clouddev-router:20128/);
   assert.match(caddyfile, /127\.0\.0\.1:20129/);
+  assert.match(caddyfile, /header \{\s*defer\s*\+Content-Security-Policy "img-src 'self' data: blob:"\s*\}/s,
+    "OmniRoute must not make browser requests to arbitrary third-party image hosts");
   const redactedCaddyfile = caddyfile.replace(/header_up X-CloudDev-Auth-Key [A-Za-z0-9_-]+/g, "header_up X-CloudDev-Auth-Key [redacted]");
   assert.match(redactedCaddyfile, /@omniroute-openai-api path \/v1 \/v1\/\*/);
   assert.match(redactedCaddyfile, /handle @omniroute-openai-api \{\s*rewrite \* \/omniroute\/api\{uri\}\s*reverse_proxy clouddev-router:20128/s);
@@ -55,14 +57,15 @@ test("Caddy checks health and login routes separately before applying the shared
   const authPrivate = caddyfile.indexOf("handle @authPrivate");
   const vscodeRedirect = caddyfile.indexOf("redir @vscode-root");
   const launchpadRedirect = caddyfile.indexOf("redir @launchpad-root");
-  const omnirouteRedirect = caddyfile.indexOf("redir @omniroute-root");
+  const omnirouteRoot = caddyfile.indexOf("handle @omniroute {");
   const vscode = caddyfile.indexOf("reverse_proxy 127.0.0.1:8081");
   const launchpad = caddyfile.indexOf("handle_path /launchpad/*");
-  const omniroute = caddyfile.indexOf("handle /omniroute/*");
+  const omniroute = caddyfile.indexOf("handle @omniroute {");
   const cloudcli = caddyfile.indexOf("reverse_proxy 127.0.0.1:3001");
   assert.ok(health >= 0 && health < login);
   assert.ok(login >= 0 && login < authPrivate && authPrivate < authCheck);
-  assert.ok(authCheck >= 0 && authCheck < vscodeRedirect && authCheck < launchpadRedirect && authCheck < omnirouteRedirect);
+  assert.ok(authCheck >= 0 && authCheck < vscodeRedirect && authCheck < launchpadRedirect && authCheck < omnirouteRoot);
+  assert.ok(omnirouteRoot >= 0 && !caddyfile.includes("redir @omniroute-root"));
   assert.ok(authCheck < vscode && authCheck < launchpad && authCheck < omniroute && authCheck < cloudcli);
 });
 

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">CloudDev AI: Sovereign Workspace</title>
+  <desc id="description">An illustration of one persistent workspace shared by VS Code Desktop, browser VS Code, and CloudCLI mobile, with separate Forgejo and OmniRoute services.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#081310"/>
+      <stop offset="1" stop-color="#122520"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.16" r="0.8">
+      <stop offset="0" stop-color="#1ccba4" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#1ccba4" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#a7d7c9" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" rx="28" fill="url(#background)"/>
+  <rect width="1200" height="630" rx="28" fill="url(#glow)"/>
+  <rect width="1200" height="630" rx="28" fill="url(#grid)"/>
+
+  <g font-family="Inter, Avenir Next, Arial, sans-serif">
+    <rect x="72" y="64" width="170" height="34" rx="17" fill="#133c31" stroke="#2f8f76" stroke-opacity="0.65"/>
+    <circle cx="92" cy="81" r="5" fill="#5ee4c2"/>
+    <text x="108" y="87" font-size="13" font-weight="700" letter-spacing="1.4" fill="#a9f0de">SINGLE-USER WORKSPACE</text>
+
+    <text x="72" y="172" font-size="56" font-weight="750" letter-spacing="-2" fill="#f2f7f4">CloudDev AI</text>
+    <text x="74" y="220" font-size="30" font-weight="600" fill="#8de6cf">Sovereign Workspace</text>
+    <text x="74" y="274" font-size="19" fill="#d0e1da">One persistent project tree across desktop, browser, and mobile.</text>
+
+    <g transform="translate(72 322)">
+      <rect width="168" height="44" rx="22" fill="#172e27" stroke="#3d6559"/>
+      <text x="84" y="28" text-anchor="middle" font-size="15" font-weight="600" fill="#e4f1eb">VS Code Desktop</text>
+      <rect x="180" width="160" height="44" rx="22" fill="#172e27" stroke="#3d6559"/>
+      <text x="260" y="28" text-anchor="middle" font-size="15" font-weight="600" fill="#e4f1eb">Browser VS Code</text>
+      <rect x="352" width="142" height="44" rx="22" fill="#172e27" stroke="#3d6559"/>
+      <text x="423" y="28" text-anchor="middle" font-size="15" font-weight="600" fill="#e4f1eb">CloudCLI mobile</text>
+    </g>
+
+    <text x="74" y="426" font-size="14" letter-spacing="1.4" font-weight="700" fill="#85a99b">PRIVATE SERVICES</text>
+    <g transform="translate(72 444)">
+      <rect width="147" height="50" rx="12" fill="#101d19" stroke="#355348"/>
+      <text x="73" y="31" text-anchor="middle" font-size="16" font-weight="650" fill="#e6f1eb">Forgejo Git</text>
+      <rect x="159" width="150" height="50" rx="12" fill="#101d19" stroke="#355348"/>
+      <text x="234" y="31" text-anchor="middle" font-size="16" font-weight="650" fill="#e6f1eb">OmniRoute</text>
+      <rect x="321" width="141" height="50" rx="12" fill="#101d19" stroke="#355348"/>
+      <text x="391" y="31" text-anchor="middle" font-size="16" font-weight="650" fill="#e6f1eb">PostgreSQL</text>
+    </g>
+
+    <g transform="translate(674 92)">
+      <rect width="454" height="408" rx="20" fill="#111b18" stroke="#4f7a6b" stroke-width="1.5"/>
+      <path d="M0 58H454" stroke="#345147"/>
+      <circle cx="28" cy="29" r="5" fill="#5ee4c2"/>
+      <circle cx="48" cy="29" r="5" fill="#739286"/>
+      <circle cx="68" cy="29" r="5" fill="#739286"/>
+      <text x="99" y="34" font-size="14" fill="#9fbab0">Shared project workspace</text>
+
+      <g transform="translate(28 88)">
+        <rect width="398" height="190" rx="12" fill="#0a1310" stroke="#293e35"/>
+        <text x="20" y="32" font-size="13" font-weight="650" fill="#8de6cf">/workspace/projects</text>
+        <text x="28" y="74" font-size="15" fill="#e0ece6">▸ clouddev-app</text>
+        <text x="56" y="106" font-size="14" fill="#a9c0b6">README.md</text>
+        <text x="56" y="136" font-size="14" fill="#a9c0b6">src/</text>
+        <text x="56" y="166" font-size="14" fill="#a9c0b6">.git/</text>
+        <rect x="244" y="51" width="132" height="48" rx="9" fill="#163b31" stroke="#2e9377"/>
+        <text x="310" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#a9f0de">AGENT TASK</text>
+        <text x="310" y="89" text-anchor="middle" font-size="12" fill="#e4f1eb">supported history</text>
+      </g>
+
+      <g transform="translate(28 302)">
+        <rect width="398" height="74" rx="12" fill="#10241e" stroke="#2b5c4c"/>
+        <path d="M22 24h14v26H22zM45 24h14v26H45zM68 24h14v26H68z" fill="#4bd4b0" opacity="0.9"/>
+        <text x="104" y="33" font-size="14" font-weight="650" fill="#e6f1eb">Same files, separate editor views</text>
+        <text x="104" y="54" font-size="12" fill="#9db7ad">Illustration only. Not a product screenshot.</text>
+      </g>
+    </g>
+
+    <text x="72" y="574" font-size="12" letter-spacing="0.7" fill="#7e9c90">BROWSER IDE  ·  REMOTE-SSH  ·  MOBILE AGENT SESSIONS</text>
+  </g>
+</svg>

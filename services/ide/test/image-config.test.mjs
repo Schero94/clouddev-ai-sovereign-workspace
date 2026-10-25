@@ -12,8 +12,10 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   const gatewayCli = JSON.parse(readFileSync(path.join(root, "omniroute-cli/package.json"), "utf8"));
   const gatewayLock = JSON.parse(readFileSync(path.join(root, "omniroute-cli/package-lock.json"), "utf8"));
   const esbuildRuntime = JSON.parse(readFileSync(path.join(root, "esbuild-runtime/package.json"), "utf8"));
-  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim AS node-runtime/m);
+  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime$/m);
+  assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
+  assert.match(dockerfile, /grep -F 'v2\.11\.7'/);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.match(dockerfile, /expected_sha512=25dc433c3d03053caed3ca6ad243c2d3148d7adfeab14d3ba93e88b17d404bca0ed8808d458e2574d6bc38023a3eec001fcb46de5c4485baa6ca9e03c38d37ea/);
   assert.equal(agentTools.dependencies["@openai/codex"], "0.164.0");

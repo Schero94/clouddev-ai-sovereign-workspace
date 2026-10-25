@@ -47,6 +47,7 @@ test("serves the launchpad below its base path without creating a second auth ch
   assert.equal(response.headers.get("x-powered-by"), null);
   const html = await response.text();
   assert.match(html, /CloudDev AI/);
+  assert.match(html, /<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/);
   assert.match(html, /href="styles\.css"/);
   assert.match(html, /src="app\.js"/);
   assert.doesNotMatch(html, /(?:href|src)="\/(?:styles\.css|app\.js)"/);
@@ -126,6 +127,7 @@ test("serves a local favicon and privacy page beneath the base path", async () =
   const privacy = await fetch(`${baseUrl}${defaultBasePath}/privacy`);
   assert.equal(privacy.status, 200);
   const html = await privacy.text();
+  assert.match(html, /<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/);
   assert.match(html, /href="styles\.css"/);
   assert.match(html, /href="\.\/"/);
   assert.match(html, /shared workspace sign-in/i);
@@ -158,7 +160,7 @@ test("status API returns only non-secret health, link, SSH config, and recovery 
     cloudcli: "http://127.0.0.1:3001/",
     vscode: "http://127.0.0.1:3001/vscode/",
     git: "http://127.0.0.1:3002/",
-    router: "http://127.0.0.1:3003/",
+    router: "http://127.0.0.1:3003",
     ssh: null,
     sshHostFingerprint: null,
     gitSsh: null,
@@ -373,20 +375,26 @@ test("routes the OmniRoute dashboard link through the authenticated workspace or
     RAILWAY_PUBLIC_DOMAIN: "clouddev-ide.up.railway.app",
     GIT_PUBLIC_URL: "clouddev-git.up.railway.app",
   }));
-  assert.equal(railway.publicUrls.router, "https://clouddev-ide.up.railway.app/omniroute");
+  assert.equal(railway.publicUrls.router, "https://clouddev-ide.up.railway.app/omniroute/dashboard/providers");
 
   const local = validateConfig(configFromEnvironment({
     NODE_ENV: "development",
     WORKSPACE_PUBLIC_URL: "http://localhost:8080",
   }));
-  assert.equal(local.publicUrls.router, "http://localhost:8080/omniroute");
+  assert.equal(local.publicUrls.router, "http://localhost:8080/omniroute/dashboard/providers");
 
   const explicit = validateConfig(configFromEnvironment({
     NODE_ENV: "production",
     RAILWAY_PUBLIC_DOMAIN: "clouddev-ide.up.railway.app",
     ROUTER_PUBLIC_URL: "https://router.example.test/",
   }));
-  assert.equal(explicit.publicUrls.router, "https://router.example.test");
+  assert.equal(explicit.publicUrls.router, "https://router.example.test/dashboard/providers");
+
+  const prefixed = validateConfig(configFromEnvironment({
+    NODE_ENV: "production",
+    ROUTER_PUBLIC_URL: "https://workspace.example.test/omniroute/",
+  }));
+  assert.equal(prefixed.publicUrls.router, "https://workspace.example.test/omniroute/dashboard/providers");
 });
 
 test("sets HSTS only when the instance is configured for production HTTPS", async () => {

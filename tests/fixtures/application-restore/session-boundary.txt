@@ -1,0 +1,3 @@
+CloudCLI native session recovery is not verified by this application restore acceptance.
+
+The fixture creates no CloudCLI account, provider transcript, or provider session and does not invent a resumable session identifier. It verifies only the real CloudDev gateway configuration and Codex routing configuration stored in the workspace archive. Authentic resume would require creating a genuine session through the pinned CloudCLI runtime, backing up that resulting session state, and verifying the supported manual resume flow after restore. This test makes no paid provider request, so that session-recovery claim remains unverified.

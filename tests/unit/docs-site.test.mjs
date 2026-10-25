@@ -9,6 +9,25 @@ import { inspectDocsArtifact } from "../../scripts/check-docs-artifact.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
+function readDoc(relativePath) {
+  return readFileSync(path.join(root, "docs", relativePath), "utf8");
+}
+
+function localMarkdownLinks(markdown) {
+  const content = markdown.replace(/^```[\s\S]*?^```/gm, "");
+  return [...content.matchAll(/\]\(([^)\s]+)(?:\s+[^)]*)?\)/g)]
+    .map(match => match[1])
+    .filter(href => !/^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(href));
+}
+
+function assertPageMetadata(markdown, route) {
+  const frontmatter = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  assert.ok(frontmatter, `${route} needs YAML front matter`);
+  assert.match(frontmatter[1], /^title:\s*\S.+$/m, `${route} needs a useful title`);
+  assert.match(frontmatter[1], /^description:\s*\S.+$/m, `${route} needs a page-specific description`);
+  assert.match(frontmatter[1], /^tags:\s*\n(?:\s+-\s+\S.+\n?){2,}/m, `${route} needs at least two descriptive tags`);
+}
+
 test("parses gate identifiers, status, and labels without reading evidence lines", () => {
   const gates = parseGates([
     "# Release gates",
@@ -47,9 +66,29 @@ test("artifact checker accepts a small static site and rejects hidden or secret-
   const site = path.join(temp, "site");
   try {
     mkdirSync(path.join(site, "operations", "release-status"), { recursive: true });
-    writeFileSync(path.join(site, "index.html"), "<!doctype html><title>CloudDev Docs</title>");
-    writeFileSync(path.join(site, "operations", "release-status", "index.html"), "status");
+    mkdirSync(path.join(site, "assets"), { recursive: true });
+    const validIndex = `<!doctype html><html><head><title>CloudDev Docs</title>
+      <link rel="canonical" href="https://example.com/">
+      <meta property="og:title" content="CloudDev Docs">
+      <meta property="og:description" content="Public documentation">
+      <meta property="og:url" content="https://example.com/">
+      <meta property="og:image" content="https://example.com/assets/clouddev-social-preview.png">
+      <meta property="og:image:alt" content="Illustration of the workspace">
+      <meta name="twitter:card" content="summary_large_image">
+      </head><body></body></html>`;
+    writeFileSync(path.join(site, "index.html"), validIndex);
+    writeFileSync(path.join(site, "robots.txt"), "User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml\n");
+    writeFileSync(path.join(site, "sitemap.xml"), "<urlset><url><loc>https://example.com/</loc></url></urlset>");
+    writeFileSync(path.join(site, "assets", "clouddev-social-preview.png"), Buffer.from("png-fixture"));
+    writeFileSync(path.join(site, "operations", "release-status", "index.html"), validIndex.replace(/https:\/\/example\.com\//g, "https://example.com/operations/release-status/"));
     assert.deepEqual(inspectDocsArtifact(site), []);
+
+    writeFileSync(path.join(site, "index.html"), "<!doctype html><title>missing social tags</title>");
+    assert.match(inspectDocsArtifact(site).join("\n"), /Open Graph title is missing/);
+    writeFileSync(path.join(site, "index.html"), validIndex);
+    rmSync(path.join(site, "robots.txt"));
+    assert.match(inspectDocsArtifact(site).join("\n"), /missing required discovery asset: robots\.txt/);
+    writeFileSync(path.join(site, "robots.txt"), "User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml\n");
 
     writeFileSync(path.join(site, ".env"), "NOT_A_SECRET=example");
     assert.match(inspectDocsArtifact(site).join("\n"), /forbidden path/i);
@@ -83,6 +122,7 @@ test("documentation landing page explains the shared workspace and routes users 
   const configuration = readFileSync(path.join(root, "mkdocs.yml"), "utf8");
   const home = readFileSync(path.join(root, "docs/index.md"), "utf8");
   const stylesheetPath = path.join(root, "docs/stylesheets/landing.css");
+  const stylesheet = readFileSync(stylesheetPath, "utf8");
   const brandPath = path.join(root, "docs/assets/clouddev-mark.svg");
 
   assert.ok(existsSync(stylesheetPath), "the local landing-page stylesheet should exist");
@@ -92,12 +132,21 @@ test("documentation landing page explains the shared workspace and routes users 
   assert.match(configuration, /favicon:\s*assets\/clouddev-mark\.svg/);
   assert.match(configuration, /scheme: slate[\s\S]*?name: Switch to light mode[\s\S]*?scheme: default[\s\S]*?name: Switch to dark mode/);
   assert.match(configuration, /plugins:\s*\n\s*- search/);
+  const titleRule = stylesheet.match(/body:has\(\.cd-home-title\) \.cd-home-title\s*{([^}]+)}/)?.[1] ?? "";
+  const titleTracking = Number(titleRule.match(/letter-spacing:\s*(-?[\d.]+)em/)?.[1]);
+  assert.ok(Number.isFinite(titleTracking) && titleTracking > -0.06, "hero title tracking should preserve visible word spacing");
 
   for (const label of ["VS Code Desktop", "Browser IDE", "CloudCLI mobile", "/workspace"]) {
     assert.ok(home.includes(label), `the landing page is missing ${label}`);
   }
-  for (const route of ["getting-started.md", "operations/RELEASE_STATUS.md", "architecture.md", "operations/CONTROL_PLANE.md"]) {
+  assert.match(home, /One workspace\. <br>/, "the hero heading should keep a text separator before its visual line break");
+  for (const route of ["getting-started.md", "features.md", "how-to/deploy-on-railway.md", "how-to/first-login.md", "how-to/connect-clients.md", "operations/RELEASE_STATUS.md", "architecture.md", "operations/CONTROL_PLANE.md"]) {
     assert.ok(home.includes(route), `the landing page is missing the ${route} route`);
+  }
+  assert.doesNotMatch(home, /href="[^"]+\.md"/i, "local content links must use Markdown so MkDocs rewrites them to published routes");
+  for (const href of localMarkdownLinks(home)) {
+    const destination = decodeURIComponent(href.split(/[?#]/, 1)[0]);
+    assert.ok(existsSync(path.resolve(path.dirname(path.join(root, "docs/index.md")), destination)), `broken local landing-page link: ${href}`);
   }
   assert.match(home, /do not share UI state/i);
   assert.match(home, /interrupted/i);
@@ -105,7 +154,6 @@ test("documentation landing page explains the shared workspace and routes users 
   assert.equal((home.match(/<div class="cd-client">/g) ?? []).length, 3, "all three cross-device clients should be visible markup, not a code sample");
   assert.doesNotMatch(home, /[—–]/, "landing-page copy should use plain punctuation");
 
-  const stylesheet = readFileSync(stylesheetPath, "utf8");
   assert.match(stylesheet, /prefers-reduced-motion/);
   assert.match(stylesheet, /:focus-visible/);
   assert.match(stylesheet, /@media[^\{]*max-width/);
@@ -113,6 +161,154 @@ test("documentation landing page explains the shared workspace and routes users 
   assert.match(stylesheet, /grid-template-columns:\s*2\.1rem minmax\(0,\s*1fr\)/, "mobile release note should reserve a fixed icon column and leave room for its copy");
   assert.match(stylesheet, /\.cd-release-note > p:last-child\s*\{\s*grid-column:\s*2/s, "the release-status link should sit below the message on narrow screens");
   assert.doesNotMatch(stylesheet, /@import\s+url|fonts\.googleapis\.com/i);
+});
+
+test("public documentation journey registers feature and how-to routes with page metadata", () => {
+  const configuration = readFileSync(path.join(root, "mkdocs.yml"), "utf8");
+  const home = readDoc("index.md");
+  const routes = [
+    ["features.md", /- Features:\s*features\.md/],
+    ["how-to/deploy-on-railway.md", /- Deploy on Railway:\s*how-to\/deploy-on-railway\.md/],
+    ["how-to/first-login.md", /- First login:\s*how-to\/first-login\.md/],
+    ["how-to/connect-clients.md", /- Connect clients:\s*how-to\/connect-clients\.md/],
+  ];
+
+  assert.match(configuration, /^site_name:\s*\S.+$/m);
+  assert.match(configuration, /^site_description:\s*\S.+$/m);
+  assert.match(configuration, /^site_url:\s*https:\/\//m);
+  assert.match(configuration, /^site_author:\s*\S.+$/m);
+  assert.match(configuration, /^copyright:\s*\S.+$/m);
+  assert.match(configuration, /AI providers:[\s\S]*Connect a provider:\s*how-to\/providers\.md[\s\S]*Provider compatibility:\s*providers\/COMPATIBILITY\.md/);
+  assert.match(configuration, /generator:\s*false/);
+  assert.match(configuration, /font:\s*false/);
+  assert.doesNotMatch(configuration, /googleapis\.com|googletagmanager|google-analytics/i, "the docs site must not load remote fonts or tracking scripts");
+  assertPageMetadata(home, "index.md");
+
+  for (const [route, navigationPattern] of routes) {
+    const file = path.join(root, "docs", route);
+    assert.ok(existsSync(file), `${route} should exist`);
+    assert.match(configuration, navigationPattern, `${route} should have a named navigation entry`);
+    assertPageMetadata(readFileSync(file, "utf8"), route);
+  }
+
+  for (const [route, navigationPattern] of [
+    ["how-to/providers.md", /Connect a provider:\s*how-to\/providers\.md/],
+    ["providers/COMPATIBILITY.md", /Provider compatibility:\s*providers\/COMPATIBILITY\.md/],
+  ]) {
+    assert.ok(existsSync(path.join(root, "docs", route)), `${route} should exist`);
+    assert.match(configuration, navigationPattern, `${route} should be discoverable without changing its content`);
+  }
+});
+
+test("landing page uses only the supplied real launchpad captures with accessible captions", () => {
+  const home = readDoc("index.md");
+  const images = [...home.matchAll(/<img\b[^>]*>/gi)].map(match => match[0]);
+  const approvedCaptures = [
+    "assets/screenshots/launchpad-services-desktop.png",
+    "assets/screenshots/launchpad-services-mobile.png",
+  ];
+
+  assert.equal(images.length, approvedCaptures.length, "show the two supplied launchpad captures without adding mock imagery");
+  for (const capture of approvedCaptures) {
+    assert.ok(home.includes(capture), `landing page should reference ${capture}`);
+    assert.ok(existsSync(path.join(root, "docs", capture)), `real screenshot ${capture} must exist in the fork`);
+  }
+  for (const image of images) {
+    assert.match(image, /\bsrc="assets\/screenshots\/launchpad-services-(?:desktop|mobile)\.png"/);
+    assert.match(image, /\balt="[^"\s][^"]*"/, "each screenshot needs a useful alt description");
+    assert.match(image, /\bwidth="\d+"/);
+    assert.match(image, /\bheight="\d+"/);
+    assert.match(image, /\bloading="lazy"/);
+    assert.match(image, /\bdecoding="async"/);
+  }
+  assert.equal((home.match(/<figure\b/g) ?? []).length, images.length, "each screenshot belongs to a semantic figure");
+  assert.equal((home.match(/<figcaption\b/g) ?? []).length, images.length, "each screenshot needs a visible caption");
+  assert.match(home, /local launchpad build/i, "captions must distinguish local captures from live Railway evidence");
+  assert.doesNotMatch(home, /screenshot placeholder|image coming soon|src=""/i);
+});
+
+test("Railway guide gives a click-by-click path without claiming a live template or one-click verification", () => {
+  const guide = readDoc("how-to/deploy-on-railway.md");
+  const releaseStatus = readDoc("operations/RELEASE_STATUS.md");
+
+  for (const phrase of ["Templates", "New Template", "Template Composer", "Create Template", "Publish", "Deploy Now", "Deploy"]) {
+    assert.ok(guide.includes(phrase), `Railway guide is missing the ${phrase} action or state`);
+  }
+  assert.match(guide, /not (?:yet )?(?:published|verified)|no (?:live )?Railway template ID/i);
+  assert.match(guide, /one-click.{0,80}(?:not|unverified)|not.{0,80}one-click/i);
+  assert.match(guide, /clouddev-ide[\s\S]*clouddev-git[\s\S]*clouddev-postgres[\s\S]*clouddev-router/);
+  assert.match(guide, /europe-west4-drams3a/);
+  assert.match(guide, /Serverless|App Sleeping/i);
+  assert.match(guide, /SSH_AUTHORIZED_KEYS/);
+  assert.match(guide, /secret\(64/);
+  assert.match(guide, /provider credentials.{0,100}(?:not|never).{0,60}template/i);
+  assert.doesNotMatch(guide, /railway\.com\/new\/template\/[A-Za-z0-9]{6,}/, "do not invent a Railway template code");
+  assert.match(releaseStatus, /not|open|pending/i);
+
+  for (const href of localMarkdownLinks(guide)) {
+    const destination = decodeURIComponent(href.split(/[?#]/, 1)[0]);
+    assert.ok(existsSync(path.resolve(path.dirname(path.join(root, "docs", "how-to/deploy-on-railway.md")), destination)), `broken local link in Railway guide: ${href}`);
+  }
+  for (const capture of [
+    "railway-template-composer-services.png",
+    "railway-first-deploy-variables.png",
+    "railway-marketplace-listing.png",
+  ]) {
+    assert.ok(guide.includes(capture), `name the future real Railway capture ${capture} without embedding a placeholder`);
+    assert.ok(!existsSync(path.join(root, "docs/assets/screenshots", capture)), `${capture} should only be added after an actual capture exists`);
+  }
+});
+
+test("first-login and client guides explain the supported shared workspace and recovery boundaries", () => {
+  const firstLogin = readDoc("how-to/first-login.md");
+  const clients = readDoc("how-to/connect-clients.md");
+  const combined = `${firstLogin}\n${clients}`;
+
+  for (const phrase of ["CODE_SERVER_PASSWORD", "Open CloudCLI", "Browser VS Code", "Open Forgejo", "Manage AI providers", "Start Codex", "Start Claude", "ai-setup"]) {
+    assert.ok(combined.includes(phrase), `first-run journey is missing ${phrase}`);
+  }
+  assert.match(clients, /Remote-SSH/);
+  assert.match(clients, /SSH_AUTHORIZED_KEYS/);
+  assert.match(clients, /iPhone[\s\S]*Android|Android[\s\S]*iPhone/i);
+  assert.match(combined, /single-user/i);
+  assert.match(combined, /same (?:persistent )?(?:project tree|filesystem|files)/i);
+  assert.match(combined, /do not share UI state|editor-window UI state is not shared/i);
+  assert.match(combined, /restart[\s\S]{0,160}(?:stop|interrupt|kill)[\s\S]{0,160}(?:manual|user-initiated|supported).{0,60}resume/i);
+  assert.match(clients, /ChatGPT.{0,160}(?:subscription|plan).{0,160}(?:API usage|API billing|API credits)/i);
+  assert.match(clients, /DeepSeek/i);
+  assert.match(clients, /free.{0,100}(?:not guaranteed|not guaranteed|subject to|provider)/i);
+  assert.match(clients, /rate limits|usage limits|provider limits/i);
+  assert.match(clients, /does not.{0,120}(?:bypass|circumvent)|do not.{0,120}(?:bypass|circumvent)/i);
+  assert.match(clients, /no.{0,60}universal.{0,40}(?:provider|model)|not every.{0,60}(?:provider|model)/i);
+
+  for (const page of [firstLogin, clients]) {
+    assertPageMetadata(page, "client onboarding guide");
+    for (const href of localMarkdownLinks(page)) {
+      const destination = decodeURIComponent(href.split(/[?#]/, 1)[0]);
+      assert.ok(existsSync(path.resolve(path.dirname(path.join(root, "docs", "how-to/first-login.md")), destination)) || existsSync(path.resolve(path.dirname(path.join(root, "docs", "how-to/connect-clients.md")), destination)), `broken local guide link: ${href}`);
+    }
+  }
+
+  const firstLoginImages = [...firstLogin.matchAll(/<img\b[^>]*>/gi)].map(match => match[0]);
+  const expectedFirstLoginImages = new Set([
+    "launchpad-services-desktop.png",
+    "launchpad-services-mobile.png",
+    "cloudcli-first-run-mobile.png",
+    "forgejo-login-desktop.png",
+  ]);
+  assert.equal(firstLoginImages.length, expectedFirstLoginImages.size, "first login should show launchpad, CloudCLI and Forgejo screens");
+  for (const image of firstLoginImages) {
+    const source = image.match(/\bsrc="([^"]+)"/)?.[1];
+    assert.ok(source, "first-login screenshot needs a source");
+    assert.match(source, /^\.\.\/\.\.\/assets\/screenshots\/[a-z0-9-]+\.png$/, "nested how-to pages must resolve image URLs from the MkDocs site root");
+    assert.ok(expectedFirstLoginImages.has(path.basename(source)), `unexpected first-login screenshot: ${source}`);
+    assert.ok(existsSync(path.join(root, "docs/assets/screenshots", path.basename(source))), `missing first-login screenshot: ${source}`);
+    assert.match(image, /\balt="[^"\s][^"]*"/);
+    assert.match(image, /\bloading="lazy"/);
+    assert.match(image, /\bdecoding="async"/);
+  }
+  assert.equal((firstLogin.match(/<figure\b/g) ?? []).length, expectedFirstLoginImages.size);
+  assert.equal((firstLogin.match(/<figcaption\b/g) ?? []).length, expectedFirstLoginImages.size);
 });
 
 test("Pages workflow pins actions, isolates write permissions, and never deploys a pull request", () => {

@@ -10,8 +10,8 @@ const read = relative => readFileSync(path.join(root, relative), "utf8");
 test("pins images and CLI dependencies and declares one persistent workspace volume", () => {
   const dockerfile = read("Dockerfile");
   const cloudcli = JSON.parse(read("cloudcli-ui/package.json"));
-  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim AS node-runtime$/m);
-  assert.match(dockerfile, /^FROM caddy:2\.11\.6-alpine AS caddy-runtime$/m);
+  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime$/m);
+  assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.5");

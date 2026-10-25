@@ -43,8 +43,8 @@ services:
       FORGEJO__server__START_SSH_SERVER: "true"
       FORGEJO__server__SSH_LISTEN_PORT: "2222"
     ports:
-      - "127.0.0.1:3000:3000"
-      - "127.0.0.1:2223:2222"
+      - "127.0.0.1:${FORGEJO_HTTP_PUBLISH_PORT:-3000}:3000"
+      - "127.0.0.1:${FORGEJO_SSH_PUBLISH_PORT:-2223}:2222"
     volumes:
       - forgejo-data:/var/lib/gitea
     depends_on:
@@ -90,7 +90,7 @@ services:
       ARENA_ELO_SYNC_ENABLED: ${ARENA_ELO_SYNC_ENABLED:-false}
       MODELS_DEV_SYNC_ENABLED: ${MODELS_DEV_SYNC_ENABLED:-false}
     ports:
-      - "127.0.0.1:20128:20128"
+      - "127.0.0.1:${OMNIROUTE_DASHBOARD_PUBLISH_PORT:-20128}:20128"
     volumes:
       - router-data:/app/data
     healthcheck:
@@ -123,7 +123,7 @@ services:
       LAUNCHPAD_BASE_PATH: ${LAUNCHPAD_BASE_PATH:-/launchpad}
       WORKSPACE_PUBLIC_URL: ${WORKSPACE_PUBLIC_URL:-http://localhost:8080}
       GIT_PUBLIC_URL: ${GIT_PUBLIC_URL:-http://localhost:3000}
-      ROUTER_PUBLIC_URL: ${ROUTER_PUBLIC_URL:-http://localhost:8080/omniroute}
+      ROUTER_PUBLIC_URL: ${ROUTER_PUBLIC_URL:-http://localhost:8080/omniroute/dashboard/providers}
       FORGEJO_ROOT_URL: ${FORGEJO_ROOT_URL:-http://localhost:3000/}
       IDE_SSH_PROXY_HOST: ${IDE_SSH_PROXY_HOST:-localhost}
       IDE_SSH_PROXY_PORT: ${IDE_SSH_PROXY_PORT:-2222}
@@ -138,8 +138,8 @@ services:
       ROUTER_PRIVATE_HOST: clouddev-router
       ROUTER_PRIVATE_PORT: "20128"
     ports:
-      - "127.0.0.1:8080:8080"
-      - "127.0.0.1:2222:2222"
+      - "127.0.0.1:${CLOUDDEV_HTTP_PUBLISH_PORT:-8080}:8080"
+      - "127.0.0.1:${CLOUDDEV_SSH_PUBLISH_PORT:-2222}:2222"
     volumes:
       - workspace-data:/workspace
     depends_on:

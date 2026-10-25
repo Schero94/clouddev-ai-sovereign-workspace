@@ -1,95 +1,133 @@
-# Backup and restore
+# Local encrypted backup and restore
 
-This runbook describes a backup design. A backup is not verified until a
-restore has been completed and the restored data has been checked. No complete
-four-store restore drill has been run for this project yet.
+This runbook covers encrypted exports of the four local Compose state stores. It
+does not change Railway-managed volume snapshots. Railway snapshots remain
+provider-managed and are not encrypted with the operator's age key.
 
-## Stores and consistency requirements
+## Key material
 
-| Store | Contents | Required handling |
-| --- | --- | --- |
-| Workspace volume `/workspace` | Projects, user home, Git identity, agent transcripts/configuration, CloudCLI SQLite DB, task registry, SSH host key | Railway volume backup or an encrypted off-platform archive. Quiesce writes where practical. Never include operator private SSH keys from client computers. |
-| Forgejo volume `/var/lib/gitea` | Repositories, attachments, LFS data, app configuration, Forgejo SSH host key | Back up the full volume and Forgejo database as a coordinated set. |
-| PostgreSQL | Forgejo database and role-related state | Use `pg_dump` or Railway-supported database backup/recovery. Keep credentials and dump encrypted. |
-| OmniRoute volume `/app/data` | SQLite state, provider connections, keys, usage, dashboard settings | Stop OmniRoute before a file-level archive, or use SQLite-aware backup. Back up `STORAGE_ENCRYPTION_KEY` separately and securely. |
+The backup command needs only an age public recipient. Keep the matching
+private identity in operator-controlled storage outside Railway, this
+repository, `/workspace`, and coding-agent environments. Do not copy it into a
+Compose volume or the backup directory. Set its file mode to `0400` or `0600`
+when it is available on the local host.
 
-Railway volume backups can be manual or scheduled daily, weekly, or monthly.
-Railway documents retention of 6 days for daily, 27 days for weekly, and 89
-days for monthly schedules. Restoring a Railway backup stages a replacement
-volume in the same project and environment, keeps the prior volume unmounted,
-and requires review and deployment. Newer backups remain attached to the old
-volume. Wiping a volume deletes its backups. Railway volume backups are not an
-off-project copy.
+OmniRoute's `STORAGE_ENCRYPTION_KEY` is a separate recovery secret. Retain it
+in a protected secret store. It is not included in the age manifest and must
+not be replaced with the age identity or recipient. Losing this key can leave
+the restored OmniRoute database unreadable.
 
-Railway permits one volume per service and no replicas for volume-backed
-services. A redeploy can involve downtime while the previous deployment
-releases the volume. Do not depend on an active task continuing through that
-operation.
+## Create a backup
 
-## Local Compose backup example
-
-Run these commands from the repository root after confirming the Compose
-project name and destination. Use an encrypted destination with restrictive
-permissions. Commands below use the default Compose project name.
+Run this from the repository root with the intended Compose project selected.
+Before continuing, stop agent tasks and other workspace or Git writes. The
+required `--acknowledge-quiesced` flag records that operator check. The script
+does not inspect whether an agent is still writing. All four source services
+must already be running. The script reads them with `docker compose ps` and
+`docker compose exec`; it never starts, stops, or restarts a source service.
+Choose a new absolute destination outside the repository and `/workspace`. Its
+parent directory must already exist.
 
 ```sh
-umask 077
-mkdir -p backups
-docker compose stop clouddev-ide clouddev-git clouddev-router
-docker compose exec -T clouddev-postgres pg_dump \
-  --format=custom --no-owner --username="$POSTGRES_USER" --dbname=forgejo \
-  > backups/forgejo.dump
-docker compose run --rm --no-deps clouddev-ide \
-  tar -C /workspace -czf - . > backups/workspace.tar.gz
-docker compose run --rm --no-deps clouddev-git \
-  tar -C /var/lib/gitea -czf - . > backups/forgejo-volume.tar.gz
-docker compose run --rm --no-deps clouddev-router \
-  tar -C /app/data -czf - . > backups/omniroute.tar.gz
-docker compose start clouddev-router clouddev-git clouddev-ide
+AGE_RECIPIENT='age1...replace-with-your-public-recipient' \
+  bash scripts/backup-encrypted.sh --acknowledge-quiesced \
+  '/Volumes/Offline Backups/clouddev-2026-10-25'
 ```
 
-The postgres command assumes local environment variables are loaded by
-Compose. If the target database name differs, change the dump target after
-verifying it. Do not put the database password in command arguments. The
-archives contain provider credentials, Git private keys, application
-configuration, and session transcripts. Encrypt them before moving them off the
-machine. Keep the OmniRoute encryption key in a separate secrets manager.
+The command writes five encrypted artifacts:
 
-The `docker compose run --rm` commands can create containers with the volume
-mounted. Verify exact service names and run `docker compose config` before
-using this example. For Railway, do not run these ad hoc commands against
-production without an approved maintenance window and a reviewed destination.
+- `workspace.tar.gz.age`
+- `forgejo-volume.tar.gz.age`
+- `postgres.dump.age`
+- `postgres-globals.sql.age`
+- `omniroute.tar.gz.age`
 
-## Restore drill
+It also writes `SHA256SUMS` for the encrypted artifacts and a non-secret
+`manifest.txt` with the format, creation time, source revision, and store
+names. The destination must not exist. If export or encryption fails, the
+script removes the new destination. It does not leave a plaintext archive on
+the host.
 
-Restore into an isolated, empty Compose project or a fresh Railway test project.
-Do not overwrite the original production volume.
+Workspace and Forgejo data stream from their running containers through
+[`age`](https://age-encryption.org), which reads standard input and writes the
+encrypted result to a file.
+PostgreSQL uses a custom-format `pg_dump` stream for application data and a
+separate `pg_dumpall --globals-only` stream for roles and memberships. The role
+dump can contain password hashes, so it is encrypted before it reaches the
+backup directory. The database dump omits ownership and privileges; restore
+the globals before the database.
 
-Partial local evidence, 2026-10-25: a logical dump of the running local Forgejo
-database was streamed directly into an isolated PostgreSQL 18.6 container. The
-restored database contained 131 application tables, matching the source. The
-ephemeral target had no mounted data volume and was removed after the check.
-This verifies a narrow database-data restore path only. It did not restore
-roles, a saved encrypted backup file, the Forgejo data volume, the workspace,
-or OmniRoute. G13 remains open.
+OmniRoute uses Node's
+[`sqlite.backup()` API](https://nodejs.org/api/sqlite.html#sqlitebackupsourcedb-path-options)
+to take a consistent database snapshot while the service remains running. The
+snapshot and a copy of any other `/app/data` files live briefly in the
+container's `/dev/shm` tmpfs. The
+script tars that temporary directory directly into the age stream and removes
+it when the command finishes. The tmpfs must have enough free space for the
+OmniRoute data directory.
 
-1. Record checksums and sizes for all four backup artifacts.
-2. Create empty target volumes and a fresh database.
-3. Restore PostgreSQL data first, including the Forgejo role and database using
-   the approved role-provisioning process.
-4. Restore `/var/lib/gitea`, `/workspace`, and `/app/data` into their matching
-   target mounts. Restore with original owner IDs and restrictive permissions.
-5. Provide the exact OmniRoute `STORAGE_ENCRYPTION_KEY` used when the backup was
-   taken. A different key will make encrypted SQLite data unreadable.
-6. Start the test services and verify: Forgejo admin login and a private Git
-   fetch, database connectivity, OmniRoute login and provider connection
-   metadata, workspace files, code-server settings, CloudCLI session history,
-   task status, SSH host-key fingerprint, and Git key files.
-7. Verify at least one supported provider session can be manually resumed. Do
-   not replay prompts automatically.
-8. Record the source checksum, target deployment ID, test results, data loss
-   window, and any failure. Remove the isolated test environment only after
-   preserving the evidence needed for audit.
+These five artifacts do not share one transaction boundary. PostgreSQL
+provides a logical database dump and a separate cluster-global dump, while
+OmniRoute's SQLite snapshot is database
+consistent. The quiescence flag is an operator acknowledgement, not an enforced
+write lock. If workspace or Forgejo files change during export, the result can
+contain a mixed-time copy. For a strict cross-store point-in-time backup,
+arrange a separate reviewed snapshot procedure. This script will not stop or
+restart running Compose projects.
 
-Do not mark the restore gate complete until each required store has been
-restored and verified in a separate test target.
+## Test a restore
+
+The restore test checks the encrypted files and their hashes, then decrypts
+them directly into fresh test volumes. It creates a uniquely named Compose
+project with no published ports. It does not mount or modify any existing
+project's volumes. Cleanup runs only against that generated project name and
+its volumes. The script does not build images, pull images, or run `prune`.
+
+The age identity must be outside the repository and `/workspace`, and have
+mode `0400` or `0600`:
+
+```sh
+AGE_IDENTITY='/Volumes/Offline Keys/clouddev-age-identity.txt' \
+  bash scripts/test-encrypted-backup-restore.sh \
+  '/Volumes/Offline Backups/clouddev-2026-10-25'
+```
+
+The restore test requires Docker Engine, `age`, and the pinned Alpine 3.22.2,
+Node 24.22.0 bookworm-slim, and PostgreSQL 18.6 Alpine 3.24 images to be
+available locally. It does not fetch missing images. It checks the
+restored file stores, runs `PRAGMA quick_check` on the OmniRoute database, and
+confirms that PostgreSQL contains user tables. It is a data-level restore
+drill, not proof of a successful Forgejo or OmniRoute login, private Git fetch,
+provider reconnection, CloudCLI session resume, or production recovery.
+
+The automated integration test creates its own disposable source project. It
+requires a dedicated test identity and public recipient. Keep the identity
+outside the repository, `/workspace`, Railway, and agent environments. Pass
+only its path and the public recipient to the test:
+
+```sh
+AGE_TEST_IDENTITY='/Volumes/Offline Keys/clouddev-test-identity.txt' \
+AGE_TEST_RECIPIENT='age1...replace-with-your-test-recipient' \
+  npm run test:encrypted-backup
+```
+
+The test skips when `age`, Docker Engine, the dedicated key pair, or the pinned
+test images are unavailable. It does not generate or copy a private identity.
+
+## Scope and limits
+
+These files are local, off-platform backups. They do not use a Railway Bucket
+and do not add the operator's age encryption to Railway volume snapshots.
+Railway snapshot encryption and key custody remain separate provider-managed
+matters.
+
+The archives contain application state and may include credentials, private
+repository data, Git keys, session history, and provider connection metadata.
+Store the encrypted artifacts and the matching age identity separately. Keep
+old identities until every artifact encrypted to them has expired or has been
+re-encrypted and successfully restored. Retain OmniRoute's
+`STORAGE_ENCRYPTION_KEY` separately as well.
+
+A completed test of these backup scripts does not by itself close the product's
+full restore gate. The gate also requires application-level checks and any
+other acceptance evidence listed in `GATES.md`.

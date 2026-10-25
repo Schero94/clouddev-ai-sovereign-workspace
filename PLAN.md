@@ -29,6 +29,41 @@ Decided from the user requirements and verified CloudCLI/Railway documentation.
     - 1.4.1 native VS Code, mobile handoff, restart and Git acceptance owned by driver
     - 1.4.2 privacy, security, licensing and Marketplace documentation owned by driver
 
+## Resumed release execution tree
+
+The root `GATES.md` is the authoritative product release ledger. Existing
+`gates/*.md` files are workstream evidence and must be reconciled against
+current test output rather than treated as independent product counts.
+
+- 1 CloudDev AI release completion
+  - 1.1 Image and build-context security .......... `gates/security-release.md`
+    - 1.1.1 Reconcile Docker contexts, including local examples, against the regression test.
+    - 1.1.2 Update images only from supported upstream sources, then scan and test health/auth behavior.
+  - 1.2 Durable data protection .......... `gates/encrypted-backups.md`
+    - 1.2.1 Stream the local four-store backup through operator-recipient encryption without plaintext staging.
+    - 1.2.2 Decrypt and restore every store into a separately named isolated Compose project.
+    - 1.2.3 Restore a realistic private Git repository, PostgreSQL roles, OmniRoute provider metadata, and workspace session/configuration in a separate application-level acceptance fixture .......... `gates/application-restore.md`
+  - 1.3 Public docs and provider onboarding .......... `gates/product-docs.md` and `gates/readme-discovery.md`
+    - 1.3.1 Reconcile screenshots, click-through instructions, provider sources, README and Pages status.
+    - 1.3.2 Verify public repository metadata and match claims to the evidence ledger.
+  - 1.4 Fresh Railway validation and publication .......... `gates/railway-marketplace.md`
+    - 1.4.1 Use only the confirmed personal account and a new validation project.
+    - 1.4.2 Review a non-destructive IaC plan before any apply; deploy only after image-security gates pass.
+    - 1.4.3 Run live SSH, authenticated browser, persistence, restart, restore and Marketplace checks.
+  - 1.5 Cross-device acceptance .......... `gates/cross-device-acceptance.md`
+    - 1.5.1 Verify native VS Code desktop to mobile CloudCLI to desktop on Railway, with shared files and resumable history.
+    - 1.5.2 Record device, browser, restart and provider limits without marking unavailable hardware as passed.
+
+### Ownership and safety contract
+
+- The driver owns `GATES.md`, `PLAN.md`, Railway changes, public GitHub metadata, integration acceptance and final evidence reconciliation.
+- The backup leaf owns `scripts/backup-encrypted.sh`, its backup tests and `docs/security/BACKUP_RESTORE.md`.
+- The application-restore leaf owns its integration test and test-only fixtures. It may add one `npm run test:application-restore` script but must not edit existing backup scripts, application source, Compose or root gate ledgers.
+- Image work is split by service Dockerfile and dependency tree. Workers must not edit `GATES.md`, `PLAN.md`, `.dockerignore`, README or another worker's files.
+- Never apply a Railway plan to either existing personal project. Use a new, clearly named validation project. Do not deploy while G15 or G17 has unresolved release-blocking findings.
+- Never publish an image or mark a scan clean until the exact candidate image has been built and scanned. Do not delete registry images until exact tags and digests are identified and a deletion plan is reviewed.
+- Encrypted backups use an operator-controlled public recipient. The private identity must stay outside Railway, this repository, `/workspace` and agent environments. Railway volume snapshots remain provider-managed and are not called customer-key-encrypted.
+
 ## Status log
 
 Append-only. One line per event.
@@ -62,3 +97,9 @@ Append-only. One line per event.
 - 2026-10-25: The latest public Pages acceptance is run `40180791106` for commit `3116f9ca3ccee4ff8b35a8db811c093f890c7b77`. Both jobs succeeded. The live release-status page showed 12/20 gates at a 390px viewport, without horizontal overflow or console errors. GitHub Pages gate G20 is now complete.
 - 2026-10-25: The user asked that project Markdown never enter Docker publication. The root and nested Forgejo `.dockerignore` files now exclude Markdown variants, docs, local browser traces, `.lurus` metadata, and docs virtualenvs. A test checks the declared Compose/Railway contexts and rejects broad `COPY .` instructions. It passes 3 tests. There is no container-publishing workflow; the expected Docker Hub repository lookup returns 404. GitHub Packages inventory is unverified because the active token lacks `read:packages`. The Docker CLI currently points at an unavailable Colima socket, so no post-change image build was run. These rules exclude source files from build contexts, not README/license files contained in upstream base images or dependencies. The GitHub source and Pages remain public as requested. The separate Pages visual redesign awaits approval of the proposed art direction.
 - 2026-10-25: User approved the product launch readiness design and asked to begin. Official Railway create/publish/best-practice docs, Google Search generative-content guidance, GitHub topic rules, OmniRoute CLI/provider docs, OpenAI Codex auth docs, and DeepSeek API docs were checked. Context7 is over quota. The Railway CLI/MCP identity still resolves only to Joulee Tech, not the Schero94 personal workspace. Do not create Railway resources or claim Marketplace readiness until that boundary is resolved and the image-security gates pass.
+- 2026-10-25: The user resumed the release goal and approved operator-key-encrypted backup artifacts. `gate-check --status` reports 13/21 root gates met and 8 open; the lower-level ledgers contain 42 unmet checks, including entries that need reconciliation against current evidence. `npm test` ran before changes: 145 passed, 1 failed, 3 skipped. The failure expects `examples/` to be excluded from the root Docker build context. Railway MCP and CLI `whoami` now resolve the personal Schero D. workspace. The checkout's old Railway link returns an access error. No Railway resources were created or changed. Context7 remains over quota; current Railway IaC and Marketplace pages were checked through official docs via Tavily. Safari Computer Use still times out before exposing a controllable window.
+- 2026-10-25: A new empty private validation project was created in the confirmed personal Railway workspace. A non-destructive IaC plan read back 4 service/database creates and 3 volume creates in EU West, with private references, TCP proxies and sleeping disabled. The plan had no diagnostics or deletes and was not applied. The primary checkout's old Railway link was left unchanged by linking only a temporary detached worktree.
+- 2026-10-25: Resumed acceptance in `/Volumes/DATA/Railway Templates`. Railway CLI 5.70.0 and MCP read-back identify the Schero D. personal workspace and its empty `clouddev-validation-20261025` project; no plan was applied and no Railway resources were changed. The project was opened in Safari via its project URL, but native Safari inspection still timed out. Context7 returned its monthly quota error; current Railway docs were read with the Railway docs connector and Tavily-backed fetch.
+- 2026-10-25: Local verification after the resumed changes: `npm test` passed 160 tests with 0 failures and 4 skips; static security checks passed across 95 source files; Compose config, IaC type-check, Template Composer contract (4/4), Docker-context contract (5/5), launchpad syntax, and strict docs build/artifact scan (16/16 contracts) passed. The encrypted backup and isolated restore integration passed 9/9, and application-level four-store restore passed 4/4 in 44.5 seconds. Exact candidate IDE tests passed Caddy authentication/WebSocket (1/1) and CloudCLI session indexing/recovery (1/1) in disposable containers. Local Playwright checks at 390px and 1440px found no horizontal overflow, both launchpad screenshots loaded, and no console errors.
+- 2026-10-25: A red/green regression test found that `scan-local-images.sh` inspected running Compose containers instead of the current image candidates, and would therefore scan stale PostgreSQL 18.1 rather than pinned 18.6. It now builds the three Dockerfile services sequentially, pulls the pinned database, resolves the current Compose image references to immutable IDs, and scans those IDs without restarting containers. The exact candidate scan still exits 1: OmniRoute 2 critical/48 high, IDE 4/250, Forgejo 0/4, PostgreSQL 18.6 1/26. G15/G17 remain open. An isolated apt-index check found no newer Debian candidate for the IDE's OpenSSH or kernel-header packages. OmniRoute's `release/v3.8.53` sources contain patched Next.js/DOMPurify versions, but its release acceptance workflow was still pending and no stable 3.8.53 image was available; the pinned release remains 3.8.52.
+- 2026-10-25: The public Pages deployment remains commit `37aebf55836d209aedc0b2727758be7b4fed4904` (Actions run `40185011774`). Local sources and the local generated status page are ahead at 16/24 gates, but have not been committed or deployed. GitHub's repository social-preview image has no documented API/CLI setter and still requires the Settings UI. The local assistant index `.lurus/` is now Git-ignored as well as Docker-ignored; the 5-test Docker-context suite passes.

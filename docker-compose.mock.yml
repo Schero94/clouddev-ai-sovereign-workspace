@@ -3,8 +3,8 @@ services:
     profiles: [integration]
     image: clouddev-mock-llm:test
     build:
-      context: .
-      dockerfile: tests/mock-llm/Dockerfile
+      context: ./tests/mock-llm
+      dockerfile: Dockerfile
     command: ["node", "/opt/clouddev-mock-llm/server.mjs"]
     user: "1000:1000"
     environment:

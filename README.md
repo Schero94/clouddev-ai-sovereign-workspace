@@ -1,123 +1,116 @@
 # CloudDev AI: Sovereign Workspace
 
-CloudDev AI is a single-user development workspace built around one shared
-remote filesystem. Native VS Code Remote-SSH, browser VS Code, and the
-CloudCLI mobile interface connect to the same Railway service, project files,
-Git configuration, and provider session artifacts.
+CloudDev AI gives one developer a persistent workspace on Railway. VS Code
+Desktop, the browser IDE, and CloudCLI's mobile web interface connect to the
+same persistent project tree and supported agent-session history.
 
-This is not a multi-tenant service. Every operator deploys an isolated copy to
-their own Railway project. The product does not promise matching editor-window
-state across clients. It shares files and only the agent history supported by
-the upstream provider.
+This is a single-user deployment, not a shared SaaS service. Clients share the
+filesystem, not editor-window state. A Railway restart stops running processes;
+the workspace records interrupted tasks and exposes only provider-supported
+resume actions.
 
-> Status: implementation is in progress. Local checks, fresh Railway
-> deployment, iPhone/Windows acceptance, Marketplace publication, and restore
-> drills are reported separately in [GATES.md](GATES.md). Do not describe this
-> template as one-click verified until the fresh-project Railway test passes.
->
-> Release hold: the pinned OmniRoute image still has unresolved high/critical
-> advisories. Keep the dashboard and inference endpoints private until G15 and
-> G17 are closed on the exact release images.
+![Illustration of the CloudDev AI single-user workspace across VS Code Desktop, browser VS Code, and CloudCLI mobile.](docs/assets/clouddev-social-preview.png)
 
-Read the [CloudDev AI operator documentation](https://schero94.github.io/clouddev-ai-sovereign-workspace/)
-for setup, deployment, security, privacy, restore, troubleshooting, and current
-release readiness. The source is in [`docs/`](docs/index.md).
+This illustration is not a product screenshot. Product captures are shown in the documentation.
+
+**Release status: 16 of 24 gates complete.** The Railway Marketplace release
+is not ready. The exact image security gates, fresh Railway deployment,
+application-level Railway restore, and parts of the cross-device acceptance remain open. See
+[the current release status](docs/operations/RELEASE_STATUS.md) before using
+this project beyond local evaluation.
+
+[Documentation](https://schero94.github.io/clouddev-ai-sovereign-workspace/) ·
+[Features](docs/features.md) ·
+[Provider setup](docs/how-to/providers.md) ·
+[Start here](docs/getting-started.md) ·
+[Security hold](docs/security/IMAGE_SCAN.md) ·
+[License](LICENSE)
+
+## Overview
+
+The workspace service keeps the editor, terminal CLIs, mobile interface, SSH
+server, and launchpad together. Forgejo, PostgreSQL, and OmniRoute run as
+separate services. Each deployment has its own data and credentials.
+
+The checked-in Railway configuration describes the four services and their
+private references. It is not a published Marketplace template. A real template
+URL, a verified badge, and a successful fresh-project Railway deployment do
+not exist yet. This is not a published or one-click-verified template.
+
+## Verified features
+
+The following features have local test evidence in this repository. Local
+checks do not establish that Railway, physical devices, or Marketplace
+publication have passed acceptance.
+
+| Capability | Current evidence and boundary |
+| --- | --- |
+| Shared development workspace | One persistent `/workspace` volume holds projects, home data, editor settings, CLI configuration, and session artifacts. Runtime tests check the mount and unprivileged application processes. |
+| Browser and mobile clients | The workspace provides code-server, CloudCLI, and an authenticated launchpad. Local proxy tests cover cookie checks, CloudCLI bearer-token handling, and WebSocket upgrades. Railway HTTPS and physical-device acceptance remain open. |
+| Native VS Code connection | An explicit key-only OpenSSH service is configured for Remote-SSH. Local SSH checks pass. The desktop-to-phone-to-desktop flow on a live Railway deployment is not verified. |
+| Codex and Claude Code routing | Both CLIs are installed in the workspace. Mock LLM provider tests verify authenticated model listing and request forwarding through OmniRoute without paid API calls. |
+| Forgejo Git | A private repository round-trip has been tested with a regular, non-admin user. The test clones, commits, pushes, fetches, and checks data after a local restart. |
+| Task recovery | A local restart test verifies that running task records become interrupted and that supported session history remains available. The process itself does not survive a restart and prompts are not replayed automatically. |
+| Local service stack | Docker Compose checks cover the IDE, Forgejo, PostgreSQL, and OmniRoute services with local health and persistence checks. This is not a live Railway deployment. |
+
+See [GATES.md](GATES.md) for the evidence and limits behind each result.
+
+## Docker build contexts
+
+The IDE, OmniRoute overlay, and Forgejo application build contexts exclude
+repository Markdown, documentation assets, local browser traces, and local
+agent state through their `.dockerignore` rules. PostgreSQL uses an upstream
+image and has no application build context. These rules only affect future
+build inputs. They do not remove files from Git history, purge existing image
+layers, or remove files already present in upstream images and dependencies.
+
+The repository has no container-publishing workflow. The expected Docker Hub
+repository lookup returned 404, and the current GitHub token could not inspect
+Packages because it lacks `read:packages`. An image in an unqueried registry
+has not been ruled out. See the [Docker context record](docs/operations/CONTROL_PLANE.md#docker-contexts).
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  D["Native VS Code"] -->|SSH key| W["Shared workspace service"]
-  B["Browser VS Code"] -->|HTTPS and workspace cookie| W
-  M["CloudCLI mobile UI"] -->|HTTPS and workspace cookie| W
-  W -->|private API key| O["OmniRoute"]
-  O -->|provider request| P["Chosen AI provider"]
-  W -->|Git HTTPS or SSH| F["Forgejo"]
-  F -->|private database connection| DB["PostgreSQL"]
-  W -->|one persistent volume| V["Workspace files and session data"]
+  Desktop["VS Code Desktop"] -->|"key-only SSH"| Workspace
+  Browser["Browser VS Code"] -->|"HTTPS and session cookie"| Workspace
+  Mobile["CloudCLI mobile web"] -->|"HTTPS and session cookie"| Workspace
+
+  subgraph Workspace["clouddev-ide: shared runtime"]
+    Launchpad["Authenticated launchpad"]
+    CodeServer["code-server"]
+    CloudCLI["CloudCLI"]
+    Agents["Codex CLI and Claude Code CLI"]
+    Disk["Persistent /workspace volume"]
+  end
+
+  Agents -->|"scoped inference credential"| Router["clouddev-router: OmniRoute"]
+  Router --> Provider["Operator-selected provider"]
+  Workspace -->|"private Git connection"| Forgejo["clouddev-git: Forgejo"]
+  Forgejo -->|"private database connection"| PostgreSQL["clouddev-postgres"]
+  Workspace --- Disk
 ```
 
-Railway services:
+Railway service responsibilities:
 
-- `clouddev-ide`: code-server, CloudCLI, Codex CLI, Claude Code CLI, Caddy,
-  key-only OpenSSH, and the small authenticated launchpad.
-- `clouddev-git`: rootless Forgejo with registration disabled and its own
-  optional built-in Git SSH listener.
-- `clouddev-postgres`: managed PostgreSQL with no public domain.
-- `clouddev-router`: pinned OmniRoute with a persistent encrypted SQLite
-  database.
+- `clouddev-ide` runs code-server, CloudCLI, Codex CLI, Claude Code CLI, Caddy,
+  key-only OpenSSH, and the launchpad.
+- `clouddev-git` runs rootless Forgejo. Public registration is disabled.
+- `clouddev-postgres` stores Forgejo's relational data and has no public domain.
+- `clouddev-router` runs the pinned OmniRoute release with persistent SQLite
+  state. Keep its listeners private.
 
-CloudCLI is at the workspace root. Browser VS Code is under `/vscode/`, the
-launchpad is under `/launchpad/`, and the OmniRoute dashboard is under
-`/omniroute/`. Caddy checks a signed, HttpOnly workspace cookie through the
-launchpad before proxying browser requests. This leaves the `Authorization`
-header free for CloudCLI's own Bearer token. The dashboard then uses
-OmniRoute's native sign-in. A loopback-only adapter in the workspace routes
-CLI health checks to the private dashboard listener and `/v1/*` calls to the
-private inference listener. Native VS Code Remote-SSH uses the explicit TCP
-proxy to OpenSSH on port 2222. Forgejo and OmniRoute keep separate accounts.
+The workspace has one Railway volume mounted at `/workspace`. Its subdirectories
+hold the user's home, projects, persistent settings, agent state, and task
+registry. Railway volume-backed services cannot be horizontally replicated.
+See [the architecture guide](docs/architecture.md) for the data paths.
 
-The workspace service has one persistent Railway volume at `/workspace`:
+## Quick start
 
-| Path | Use |
-| --- | --- |
-| `/workspace/home` | User home, settings, persistent CLI configuration and CloudCLI state |
-| `/workspace/projects` | Git repositories and project files |
-| `/workspace/system` | Service-owned persistent system identity data |
-| `/workspace/public-status` | Non-secret aggregate recovery status for the launchpad |
-
-The single mounted volume is required by Railway and ensures all clients see
-the same live tree. Volume-backed services cannot use horizontal replicas.
-
-## Features
-
-- Full browser VS Code based on the pinned code-server release.
-- Native VS Code Remote-SSH for macOS and Windows over a key-only SSH endpoint.
-- CloudCLI's responsive self-hosted interface for mobile browser access and
-  provider session management.
-- Codex CLI and Claude Code CLI in the same runtime as the workspace.
-- OmniRoute as a separately hosted model gateway with OpenAI, Anthropic, and
-  other upstream-supported providers.
-- Private Forgejo repositories, Git over HTTPS and optional Git SSH, issues,
-  pull requests, and protected branches.
-- Persistent user home, project files, agent configuration, provider session
-  artifacts, and task state.
-- Startup recovery metadata that marks prior `running` tasks as `interrupted`.
-  It does not replay prompts or claim a killed process continued.
-
-## Railway variables are preconfigured
-
-Service defaults and private service references are declared in
-`.railway/railway.ts`. When preparing the public template, the Composer must
-include ten independent `secret()` values and one required
-`SSH_AUTHORIZED_KEYS` field for the deployer's Ed25519 public key. Railway
-generates those secrets for each deployment. The complete list and descriptions
-are in [RAILWAY_TEMPLATE_VARIABLES.md](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md).
-
-Codex, Claude Code, and their OmniRoute connection are preconfigured. The
-deployer does not need to write gateway URLs or CLI settings. Provider API keys
-are deliberately not template variables. After deployment, the owner adds them
-in OmniRoute, creates a scoped inference key, and runs `ai-setup` once.
-
-## Documentation
-
-The documentation source is in [`docs/`](docs/index.md). Preview it locally
-with `npm run docs:check`. That command runs the documentation tests, builds in
-strict mode, and checks the generated public artifact for private files and
-credential-shaped values. Pull requests run the same check. GitHub Pages only
-deploys the reviewed artifact from `main`.
-
-## Requirements
-
-- Docker Engine with Docker Compose v2 for local development.
-- Node.js 24.22 or later for repository checks.
-- Python 3.13 and `uv` to build and check the documentation site.
-- A Railway account for deployment. A fresh project should be used for the
-  first deployment test.
-- The operator must provide AI provider credentials through OmniRoute. Paid
-  provider requests are not part of the local test suite.
-
-## Local quick start
+Local development needs Docker Engine with Docker Compose v2. Node.js 24.22 or
+later and Python 3.13 with `uv` are needed for the repository and documentation
+checks.
 
 ```sh
 ./scripts/dev-env.sh
@@ -126,205 +119,290 @@ docker compose up --build
 ```
 
 Open `http://localhost:8080/` and sign in with `CODE_SERVER_PASSWORD` from the
-local `.env`. The workspace gate sets an HttpOnly cookie. CloudCLI then asks
-you to create its separate single-user account on first use. The local
-bootstrap also creates `secrets/local-remote-ssh`; keep that
-private key local and do not commit it. The public half is placed in the local
-`SSH_AUTHORIZED_KEYS` value.
+local `.env`. Keep `.env`, the local SSH private key, and `secrets/` out of Git.
+CloudCLI asks you to create its separate single-user account on first use.
+Continue with [first-run onboarding](docs/getting-started.md).
 
-Local development publishes the authenticated workspace on loopback port
-8080, Forgejo on 3000, Forgejo SSH on 2223, OmniRoute's dashboard on 20128 for
-local administration, and workspace SSH on 2222. The router has no Railway
-public domain. The workspace proxies its dashboard at `/omniroute/`, and its
-loopback-only Caddy adapter keeps `/v1/*` on the private network. PostgreSQL
-and OmniRoute inference stay on the Compose network. Local HTTP is for
-development only.
-
-## First-run onboarding
-
-1. Sign in to the workspace, then open the launchpad. It shows workspace health, browser links, the two
-   separate SSH endpoints, and aggregate recovery counts when configured.
-2. Open Forgejo, sign in to its bootstrapped administrator account, then create
-   a regular non-admin user and a private repository. Change the bootstrap
-   administrator password.
-3. Open Browser VS Code or connect with native VS Code Remote-SSH. Run
-   `git-setup` and add the displayed public key to the regular Forgejo user.
-   The private workspace Git key stays in that user's home.
-4. Open the authenticated OmniRoute dashboard, change its generated first
-   login password, add provider credentials, and create a separate scoped
-   inference API key.
-5. In the workspace terminal, run `ai-setup`, choose a live model, then run
-   `ai-status`.
-6. Start an agent with `ai-codex` or `ai-claude`. The launchpad buttons only
-   open the workspace and provide the command; they do not run commands
-   remotely.
-
-The agent endpoints, CLI wrappers, generated workspace credentials, and
-model-routing defaults are in place on first deploy. The owner still needs to
-connect a provider and create a scoped inference key in OmniRoute. Provider
-master keys are not included in any Railway variable.
-
-CloudCLI and the terminal CLIs share their persistent home and provider session
-artifacts. A local mock acceptance on 2026-10-25 imported a detached Claude Code
-session into CloudCLI, sent a browser follow-up at a 390x844 viewport, edited a
-shared project file, opened that file in browser VS Code, and pushed it to a
-private Forgejo repository. The file, CloudCLI conversation and selected mock
-model were still present after a local workspace restart. No paid provider API
-was used.
-
-This local run did not start the task from the native VS Code Desktop app and
-does not prove Railway behavior. Physical iPhone and Android testing, Windows
-Remote-SSH, and the exact desktop-to-phone-to-desktop flow remain open. Closing
-a browser or SSH client must not stop server-side work. A Railway process
-restart does stop active processes; the user must resume supported sessions
-through CloudCLI. No automatic prompt replay occurs.
+Local HTTP is for development only. Compose exposes the workspace on loopback
+port `8080`, Forgejo on `3000`, Forgejo SSH on `2223`, OmniRoute's local
+administration dashboard on `20128`, and workspace SSH on `2222`. PostgreSQL
+and the OmniRoute inference listener remain on the Compose network.
 
 ## Railway deployment
 
-The TypeScript IaC file is `.railway/railway.ts` and uses the official `railway`
-package. Do not add legacy `railway.toml` or `railway.json` files.
+There is no published template to deploy today. Do not treat the configuration
+as a production-ready or one-click-verified release. The current image findings
+are a release hold, not a warning to click through.
 
-```sh
-npm run check:railway
-railway config plan
-```
+For a maintainer validation deployment, use a new test project in the intended
+personal Railway workspace. Never apply an unreviewed plan to an existing
+project.
 
-The IaC type-check is local. `railway config plan` requires the checkout to be
-linked to a deliberately created test project. Review the entire plan before
-applying it. Do not use an existing production project for an unreviewed plan.
+1. Open [release status](docs/operations/RELEASE_STATUS.md) and
+   [the image scan and release decision](docs/security/IMAGE_SCAN.md). Stop if
+   G15 or G17 is still open.
+2. Sign in to Railway with the account that will own the test deployment. In
+   the dashboard, create a fresh project in that account. Do not reuse the
+   shared business validation project or a production project.
+3. In a local checkout, run `npm run check:railway`. Link the Railway CLI to
+   only that fresh test project, then run `railway config plan`. Read the whole
+   plan and confirm it contains only the four CloudDev services and their
+   expected volumes and references before applying anything.
+4. Follow the [Template Composer runbook](docs/operations/RAILWAY_MARKETPLACE.md).
+   In the Composer, set the requested region to `europe-west4-drams3a`, configure
+   the generated HTTPS domains for the workspace and Forgejo, and add TCP
+   proxies for their SSH listeners. Keep PostgreSQL and OmniRoute private.
+5. In the Composer's variables for each service, add the ten independently
+   generated secrets and the operator's Ed25519 public key from the
+   [variable inventory](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md). Never
+   enter a private SSH key or provider master key there.
+6. Check the one-replica setting, volume mounts, health checks, restart policy,
+   domain access, and disabled Serverless/App Sleeping setting. Create the
+   template draft only after the plan and configuration have been reviewed. In
+   Railway, deploy that draft to a second fresh project and run the live auth,
+   SSH, persistence, provider, cross-device, and restore checks.
+7. After every release gate passes, open the draft's template page in Railway
+   and click **Publish**. Railway must provide the real template URL before
+   this README can show a deploy button.
+8. Deploy the published template to another fresh project and repeat the
+   acceptance checks. A source declaration or local test is not a live
+   read-back.
 
-The IaC reference does not represent generated Railway HTTPS domains. Configure
-the workspace and Forgejo domains in the Railway Template Composer. Keep
-PostgreSQL and OmniRoute private. Expose only Forgejo's web and SSH endpoints
-and the shared workspace HTTP and SSH endpoints. The launchpad links to the
-OmniRoute dashboard under `/omniroute/`, behind the workspace cookie and the
-gateway's own login. Both OmniRoute listeners remain private, and its API
-bridge is bound to router loopback rather than reachable by workspace agents.
+The [step-by-step onboarding guide](docs/getting-started.md) describes the
+operator's first login. The [Marketplace runbook](docs/operations/RAILWAY_MARKETPLACE.md)
+has the full publication sequence and current Railway links.
 
-The requested region is `europe-west4-drams3a`. `deploy.sleepApplication` is
-false on application services, and the workspace uses exactly one replica.
-After deployment, read back the region, volume, TCP proxies, domains, and
-Serverless/App Sleeping setting. A source declaration is not proof that a live
-service uses those settings.
+## First-run onboarding
 
-The Marketplace publication workflow is in
-[docs/operations/RAILWAY_MARKETPLACE.md](docs/operations/RAILWAY_MARKETPLACE.md).
-The Composer values for generated secrets and the operator's SSH public key are
-listed in [docs/operations/RAILWAY_TEMPLATE_VARIABLES.md](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md).
-The official button is intentionally not enabled until Railway assigns a real
-template URL.
+After a deployment is available for testing:
 
-## Security model
+1. Open the generated workspace HTTPS domain. Sign in with the generated
+   `CODE_SERVER_PASSWORD`, then save it in a password manager and seal or remove
+   the bootstrap variable as the runbook directs.
+2. Open the launchpad. Choose Browser VS Code or CloudCLI. On first use, create
+   CloudCLI's separate local account.
+3. Open the Forgejo domain. Sign in with the generated bootstrap administrator
+   password, change it, and create a regular user with a private repository.
+4. In a workspace terminal, run `git-setup`. Add the displayed public key to
+   the regular Forgejo user. Clone the private repository. The workspace keeps
+   the matching private key; do not use the Forgejo administrator token for Git.
+5. From the launchpad, open OmniRoute. Sign in with its generated first-login
+   password, change it, add your provider in the authenticated dashboard, and
+   create a restricted inference API key.
+6. In the workspace terminal, run `ai-setup`. Select a model returned by
+   `ai-models`, then check the connection with `ai-status`.
+7. Run `ai-codex` or `ai-claude` in the project terminal. These commands use
+   the configured OmniRoute endpoint and scoped inference key.
+8. For desktop access, add the workspace TCP proxy host and port to VS Code's
+   Remote-SSH configuration and authenticate with the operator's private key.
+   On a phone, open CloudCLI in the browser and sign in to its own account.
+   Both clients use the same files. The editor windows do not share UI state.
 
-The single user account owns the workspace files. Coding agents run as that
-same user. They can read those files and may read the restricted OmniRoute
-inference key and regular Forgejo Git key required for work. Those keys are
-not administrator credentials, but code executed by an agent can use their
-granted access. No Railway token, Forgejo administrator token, OmniRoute
-management secret, provider master key, Docker socket, or privileged container
-is part of the agent environment.
+See [the onboarding guide](docs/getting-started.md) for connection details and
+recovery behavior. The launchpad opens services and provides commands. It does
+not run agent commands on the user's behalf.
 
-The launchpad auth process under UID 1002 checks the workspace password and
-signs browser cookies. Caddy holds the internal verification key in its
-protected config. Neither value reaches the agent process. CloudCLI retains
-its own account and Bearer token. Forgejo and OmniRoute keep separate logins.
+## Provider routing and billing
 
-The operator-provisioned workspace SSH key authenticates the human desktop
-client. It is kept outside the workspace user's writable home. Railway private
-networking does not restrict outbound traffic. An agent can access the Internet
-unless a real egress enforcement control is added and verified. Repository
-scripts are not automatically run when cloning.
+The workspace wrappers send Codex CLI and Claude Code CLI requests to
+OmniRoute. OmniRoute authenticates the request with a scoped inference key and
+routes it to a provider connection configured by the owner. The available
+providers and models depend on the pinned OmniRoute release and the owner's
+credentials. This is not a promise that every provider or model works.
 
-See [SECURITY.md](SECURITY.md),
-[the hardening guide](docs/security/SECURITY_HARDENING.md), and
-[the threat model](docs/security/THREAT_MODEL.md). Current local image scan
-results and release holds are in [IMAGE_SCAN.md](docs/security/IMAGE_SCAN.md).
+### ChatGPT subscription and OpenAI API are different
 
-## Privacy boundaries
+A ChatGPT subscription does not include OpenAI API credits. `ai-codex` is
+configured to use the OmniRoute API endpoint and its scoped key; it does not
+convert a consumer ChatGPT plan into API usage. OpenAI API requests require
+provider API access and are billed under the current API terms and rates. Do not copy browser
+cookies, extract subscription tokens, or assume that a separate Codex sign-in
+uses OmniRoute.
 
-Railway EU West does not guarantee that AI provider requests remain in the EU.
-Provider terms, retention, training use, and transfer arrangements depend on
-the selected account and model. CloudDev AI does not claim automatic GDPR
-compliance or EU-only processing.
+### DeepSeek and free-model options
 
-Read the [data flows](docs/privacy/DATA_FLOW.md),
-[readiness notes](docs/privacy/GDPR_READINESS.md),
+To use DeepSeek through OmniRoute, configure your own DeepSeek API account and
+API key in OmniRoute, then select a model visible to the scoped workspace key.
+Check [DeepSeek's current API documentation and pricing](https://api-docs.deepseek.com/quick_start/pricing)
+before sending requests. A free consumer chat surface does not make API traffic
+free.
+
+Free model and provider availability, access rules, rate limits, data handling,
+and terms are controlled by those providers and can change. Check the live list
+with `ai-models` and
+review the provider's terms before sending source code or other sensitive data.
+Fallback routing must respect provider terms, rate limits, and quotas. It is not
+a way to evade usage limits or billing rules.
+
+Provider master keys stay in OmniRoute. The agent needs a scoped inference key
+to make routed requests, so code executed by that agent can use the permissions
+of that key. See the [provider onboarding guide](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md#provider-setup-after-deployment)
+and [data flow notes](docs/privacy/DATA_FLOW.md).
+
+## Security boundaries
+
+CloudDev AI is designed for one operator per deployment. Browser entry points
+use an authenticated workspace cookie. Workspace SSH accepts configured public
+keys and rejects password authentication. Forgejo and OmniRoute keep their own
+accounts; there is no implicit cross-service SSO.
+
+Agents run as the workspace user. They can read and change that user's project
+files and can access the restricted Git and inference credentials needed for
+work. Untrusted repository content and commands can use those same permissions
+and can make outbound Internet connections. Railway private networking does
+not filter outbound traffic.
+
+The workspace process does not receive a Railway token, Forgejo administrator
+token, OmniRoute management secret, provider master key, Docker socket, or
+privileged container access. Repository scripts are not automatically run when
+cloning. These controls reduce exposure; they do not sandbox arbitrary code
+from the workspace user.
+
+**Release hold:** local scans found unresolved critical and high severity
+findings in the pinned service images. G15 and G17 remain open. Do not call the
+images clean, publish the template as verified, or expose OmniRoute's dashboard
+or inference listeners publicly until the exact release images have been
+reviewed and the release gates pass. See the detailed
+[image scan](docs/security/IMAGE_SCAN.md), [threat model](docs/security/THREAT_MODEL.md),
+and [hardening guide](docs/security/SECURITY_HARDENING.md).
+
+## Privacy and data flows
+
+Project files, editor settings, CLI configuration, CloudCLI session metadata,
+and task state persist on the workspace volume. Forgejo uses its own volume and
+PostgreSQL. OmniRoute stores provider configuration and usage data in its
+persistent SQLite store. Prompts, relevant project context, and tool output
+sent to a provider are processed under that provider's terms.
+
+Selecting Railway EU West does not establish EU-only processing. AI providers
+may process data outside the Railway region. Retention, training use, transfer
+terms, and legal obligations depend on the provider, model, and operator's
+account. This project does not claim automatic GDPR compliance or legal review.
+
+Read [the data-flow map](docs/privacy/DATA_FLOW.md),
+[GDPR readiness notes](docs/privacy/GDPR_READINESS.md),
 [subprocessor inventory](docs/privacy/SUBPROCESSORS.md), and
 [DPA checklist](docs/privacy/DPA_CHECKLIST.md).
 
-## Backups and restore
+## Backup and restore
 
-Back up each data store: the workspace volume, Forgejo repositories, the
-PostgreSQL database, and OmniRoute SQLite state. Keep OmniRoute's
-`STORAGE_ENCRYPTION_KEY` in a separate protected store. A backup is not tested
-until the data has been restored and verified in an isolated target. See
-[docs/security/BACKUP_RESTORE.md](docs/security/BACKUP_RESTORE.md).
+The local backup command streams the workspace, Forgejo volume, PostgreSQL
+database and role dumps, and OmniRoute SQLite snapshot through `age` to an
+operator-controlled public recipient. It writes no plaintext archive to the
+backup destination. OmniRoute's consistent SQLite snapshot exists briefly in
+the router container's `/dev/shm` tmpfs while it is exported. The matching
+private identity stays outside Railway, this repository, `/workspace`, and
+agent environments. Keep OmniRoute's
+`STORAGE_ENCRYPTION_KEY` separately. Railway's volume snapshots remain
+provider-managed and are not encrypted with this operator key.
 
-Railway documents volume backup schedules with short retained history and
-restore staging in the same project and environment. Railway volume backups
-are not an off-project copy.
-
-## Updates and maintenance
-
-- Review upstream releases and licenses before changing any pin.
-- Take verified backups before service image or database upgrades.
-- Test upgrades in a separate Railway project first. Volume-backed service
-  restarts incur downtime and cannot be horizontally replicated.
-- Rotate provider keys in OmniRoute, then rerun `ai-setup`, then revoke the old
-  inference key.
-- Rotate Forgejo passwords/SSH keys in Forgejo and the workspace user, not by
-  adding administrator credentials to the IDE.
-
-## Verification
+Before an export, stop agent tasks and other workspace or Git writes, then
+acknowledge that check explicitly:
 
 ```sh
-npm test
-npm run test:forgejo
-npm run test:security
-npm run scan:images
-npm run check:compose
-npm run check:railway
-docker compose build
-./scripts/verify-local.sh
+AGE_RECIPIENT='age1...your-public-recipient' \
+  bash scripts/backup-encrypted.sh --acknowledge-quiesced \
+  '/path/to/new-encrypted-backup'
 ```
 
-Integration and live gates are listed in `GATES.md`. Paid API calls are not
-made by automated tests. Browser viewport tests do not replace acceptance on
-a physical iPhone or Android device, and a local SSH test does not replace a
-Railway TCP-proxy test.
+The local automated restore drill passed for all four stores in a separately
+named Compose project. It used an ephemeral test identity and marker data. That
+does not prove an application-level login or provider reconnection after a
+Railway restore. Follow [the backup and restore procedure](docs/security/BACKUP_RESTORE.md)
+and retain the full restore evidence in [GATES.md](GATES.md).
+
+## Updates
+
+1. Review upstream release notes, security advisories, and license changes.
+2. Back up all state stores and verify that the backup can be read.
+3. Change one pinned image or CLI dependency at a time in a separate test
+   project. Rebuild, run tests, and scan the exact candidate images.
+4. Check the complete Railway plan and verify variables, private networking,
+   public domains, TCP proxies, volumes, replica counts, and sleep settings.
+5. Run the provider mock tests, Git round-trip, auth checks, cross-device
+   acceptance, and an isolated restore before updating production.
+6. Rotate provider credentials in OmniRoute. Create a replacement scoped
+   inference key, run `ai-setup`, test it, then revoke the old key.
+
+Volume-backed services run as a single replica and may have downtime during a
+restart. Do not update a live volume or database without a tested backup and
+recovery plan.
+
+## Troubleshooting
+
+- **Remote-SSH fails:** check the Railway TCP proxy host and port, confirm
+  `SSH_AUTHORIZED_KEYS` contains your public key, and keep the matching private
+  key on your device. `railway ssh` is not the VS Code Remote-SSH transport.
+- **No model appears:** open OmniRoute through the authenticated workspace,
+  verify the provider connection, create or rotate a scoped inference key, then
+  run `ai-setup` and `ai-models`.
+- **A task is interrupted:** inspect `clouddev-tasks list` and CloudCLI's
+  sessions. Restarted processes do not continue in the background. Resume only
+  through a session mechanism supported by the upstream agent.
+- **The Composer differs from IaC:** compare every `preserve()` value with the
+  [template variable inventory](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md).
+  `preserve()` keeps an existing value; the Composer must generate secrets for
+  new template deployments.
+- **A restore test fails:** leave the source volumes untouched, restore to an
+  isolated target, and include OmniRoute's encryption key. Follow the
+  [four-store restore guide](docs/security/BACKUP_RESTORE.md).
+
+See the full [troubleshooting guide](docs/operations/TROUBLESHOOTING.md).
 
 ## Costs and capacity
 
-The service has one always-on workspace with persistent storage, one Forgejo
-instance, one small PostgreSQL service, and one OmniRoute gateway. Railway
-usage depends on the chosen resource limits, storage consumption, network
-egress, and AI provider billing. Coding sessions with long contexts and large
-tool outputs can increase OmniRoute's memory and provider token use. This
-repository does not yet contain measured idle or single-agent resource
-results. Do not treat the volume sizes in IaC as capacity or cost estimates.
+| Cost item | Evidence or estimate |
+| --- | --- |
+| Idle and single-agent resource use | Not measured in this repository. No RAM, CPU, or storage benchmark is claimed. |
+| Railway infrastructure | No total price estimate is published. The bill depends on the selected plan, always-on compute, volume use, network egress, and current Railway rates. |
+| AI usage | Billed separately by the provider account used in OmniRoute. API prices and free-model policies can change. |
+| Longer agent sessions | Large contexts and tool outputs can increase memory use and provider token consumption. The increase has not been benchmarked here. |
+
+The workspace is configured not to sleep. That is required for availability,
+but means operators should budget for an always-on service. Check Railway's
+current pricing and each provider's rates before deployment.
 
 ## Upstream licenses
 
-CloudDev AI's own code uses the MIT License. See
-[docs/operations/UPSTREAM_LICENSES.md](docs/operations/UPSTREAM_LICENSES.md)
-for components with separate licenses or commercial terms. Claude Code use is
-subject to Anthropic's legal agreements. CloudCLI remains AGPL-3.0-or-later.
+CloudDev AI's own code is MIT-licensed. The runtime includes upstream software
+with separate licenses and terms, including CloudCLI (AGPL-3.0-or-later),
+OmniRoute (MIT), code-server (MIT), Forgejo (GPL-3.0-or-later), Codex CLI
+(Apache-2.0), and Claude Code (Anthropic terms). The full pinned component and
+license list is in [UPSTREAM_LICENSES.md](docs/operations/UPSTREAM_LICENSES.md).
+Claude Code is not relicensed by this repository's MIT license.
+
+## Release status
+
+This source snapshot reports **16 of 24 acceptance gates complete**. Local
+Compose, mock-provider, Git, and security checks are not substitutes for the
+open live gates. G4 and G5 still need full cross-device evidence; G12 needs a
+fresh Railway deployment; G13 proves a local four-store data-level restore but
+not Railway recovery; G14 needs a published and test-deployed Marketplace
+template. G15/G17 are the image security release hold. G20/G23 remain open
+until the current docs publish and the GitHub social preview is uploaded. G24
+passed an isolated application-level restore, while CloudCLI session resume
+remains unverified.
+
+Read the generated [release status](docs/operations/RELEASE_STATUS.md) and
+[acceptance ledger](GATES.md). The Marketplace template is not published, and
+no Railway template ID or verified badge is claimed.
 
 ## Railway deploy button
 
-The button is intentionally omitted until a Marketplace template has been
-created and Railway provides its actual deployment URL. Add it here after
-publishing and test-deploying the template.
-
-<!-- After Railway returns the published template code, replace the placeholder
-below with the real code and remove this comment wrapper.
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/<TEMPLATE_CODE>?utm_medium=integration&utm_source=button&utm_campaign=clouddev-ai)
--->
+There is no button here because Railway has not assigned a published template
+URL. The button must use the exact URL Railway returns after publication. Do
+not use a placeholder template ID. Follow the
+[Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) after the
+security and deployment gates are closed.
 
 ## Changelog
 
 ### Unreleased
 
-- Searchable documentation, a generated release-status page, and the GitHub Pages workflow are in place. Final publication evidence is tracked in `GATES.md`.
-- Cross-device workspace runtime and Railway Marketplace publication are under
-  active implementation and verification.
+- The repository contains a single-user workspace runtime, persistent storage
+  configuration, private Forgejo and PostgreSQL services, and an OmniRoute
+  service definition.
+- Local tests cover mock Codex and Claude routing, private Git operations,
+  authentication checks, and task/session recovery behavior.
+- Railway publication and the security release hold remain open. See the
+  [release status](docs/operations/RELEASE_STATUS.md) for current evidence.

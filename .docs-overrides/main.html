@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% set social_title = (page.title ~ " | " ~ config.site_name) if page.title else config.site_name %}
+  {% set social_description = page.meta.description if page.meta and page.meta.description else config.site_description %}
+  {% set social_image = config.site_url ~ "assets/clouddev-social-preview.png" %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name | e }}">
+  <meta property="og:title" content="{{ social_title | e }}">
+  <meta property="og:description" content="{{ social_description | e }}">
+  <meta property="og:url" content="{{ page.canonical_url | e }}">
+  <meta property="og:image" content="{{ social_image | e }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Illustration of one CloudDev AI workspace shared by VS Code Desktop, browser VS Code, and CloudCLI mobile.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ social_title | e }}">
+  <meta name="twitter:description" content="{{ social_description | e }}">
+  <meta name="twitter:image" content="{{ social_image | e }}">
+  <meta name="twitter:image:alt" content="Illustration of one CloudDev AI workspace shared by VS Code Desktop, browser VS Code, and CloudCLI mobile.">
+{% endblock %}

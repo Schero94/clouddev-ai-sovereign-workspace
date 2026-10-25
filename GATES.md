@@ -13,8 +13,13 @@ The always-on cross-device flow is a release-blocking product requirement.
   EXPECT: /# fail 0/
   EVIDENCE: `node --test tests/unit/docs-site.test.mjs` passed all 6 tests on 2026-10-25. Tests cover gate parsing, duplicate/malformed rows, HTML escaping, evidence omission, artifact path/credential checks, operator navigation, and SHA-pinned workflow permissions/deploy guards.
 
-- [x] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
-  EVIDENCE: GitHub API read-back confirms `build_type=workflow` for `main`. Actions run `40180791106` completed both build and deploy successfully for commit `3116f9ca3ccee4ff8b35a8db811c093f890c7b77`. The live URL returned HTTP 200; Playwright loaded the current release-status page at 390x844, found `12 of 20 gates complete`, confirmed no horizontal overflow, and reported no console messages.
+- [ ] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
+  EVIDENCE: The latest successful Pages workflow is run `40185011774`, deployed from commit `37aebf55836d209aedc0b2727758be7b4fed4904`. The live release-status page reports 12/20 gates. Local `main` is at `e9262619ee2aac59f0ab67acac0522d7ed16204d` with uncommitted documentation updates and reports 16/24. This local revision has not been committed, pushed, or deployed, so G20 remains open until a successful Pages read-back matches the reviewed source.
+
+- [x] G21: Markdown, documentation assets, and local browser/agent state are excluded from every declared Docker build context.
+  CHECK: npm run check:docker-context
+  EXPECT: pass
+  EVIDENCE: `npm run check:docker-context` passed all 5 tests on 2026-10-25 after excluding `examples/`. Tests cover the root and nested contexts, Markdown variants, local browser/agent state, explicit Dockerfile copy paths, configurable preview ports, and absence of a container-publishing workflow. No new image build ran because the Docker CLI's configured Colima socket is unavailable. Registry history remains unverified: Docker Hub lookup returned 404, and the GitHub Packages token lacks `read:packages`.
 
 - [x] G1: Current CloudCLI package, auth boundary, workspace discovery and session recovery behavior are verified against the pinned upstream release.
   CHECK: node --test services/ide/test/cloudcli-runtime.integration.test.mjs
@@ -24,22 +29,18 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [x] G2: IDE, CloudCLI, Codex, Claude Code, SSH, agent configuration, projects and task state use one persistent `/workspace` mount; application processes other than sshd/supervisor run as UID 1000 without capabilities.
   CHECK: npm test
   EXPECT: pass
-  EVIDENCE: `npm test` passed on 2026-10-25: 115 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
+  EVIDENCE: `npm test` passed on 2026-10-25: 124 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
 
 - [x] G3: Every browser route is authenticated, SSH accepts keys only, and no shared service port or administrator secret is exposed to agent processes.
   CHECK: npm run test:security
   EXPECT: pass
-  EVIDENCE: `npm run test:security` passed across 86 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
+  EVIDENCE: `npm run test:security` passed across 89 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
 
-- [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work.
-  CHECK: npm run test:cross-device
-  EXPECT: pass
-  EVIDENCE: Partial local check on 2026-10-25. `npm run test:cross-device` passed the pinned Caddy integration test for cookie gating, CloudCLI bearer-token preservation, and WebSocket upgrades over local HTTP. Railway-generated HTTPS and the deployed auth edge remain unverified.
+- [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work on the Railway HTTPS domain.
+  EVIDENCE: Partial local evidence only. `npm run test:cross-device` passed the pinned Caddy cookie gate, CloudCLI Bearer-token handling and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge have not been tested.
 
 - [ ] G5: Starting Codex or Claude from native VS Code produces a session CloudCLI can discover and resume, and follow-up changes share the same project files.
-  CHECK: npm run test:session-handoff
-  EXPECT: pass
-  EVIDENCE: Partial local acceptance on 2026-10-25. `npm run test:session-handoff` passed against CloudCLI 1.37.5, and a detached Claude Code task started through key-authenticated SSH was indexed in CloudCLI, followed up from mobile, and its file change appeared in browser VS Code and Forgejo. The task was not started from native VS Code Desktop; Railway acceptance is open.
+  EVIDENCE: Partial local evidence only. `npm run test:session-handoff` passed the pinned CloudCLI session-indexing integration, but the current mobile follow-up was not started from native VS Code Desktop and the full handoff has not been tested on Railway.
 
 - [x] G6: Agent activity continues after browser/desktop disconnect. Restart handling marks in-flight work interrupted and exposes supported recovery without claiming a killed process continued.
   CHECK: npm run test:recovery
@@ -62,20 +63,22 @@ The always-on cross-device flow is a release-blocking product requirement.
   EXPECT: pass
   EVIDENCE: `npm run check:railway` passed with Railway 3.16.0 and TypeScript 7.0.2.
 
-- [ ] G11: A safe `railway config plan` in a dedicated fresh test project shows the expected services, volumes, references, TCP proxy, and no destructive changes.
-  EVIDENCE: Open on 2026-10-25. `railway whoami --json` and `railway project list --json` show access only to the Joulee Tech workspace. The linked `clouddev-ai-validation` project is empty and is not the intended personal-account target. No plan was applied and no services were created.
+- [x] G11: A safe `railway config plan` in a dedicated fresh test project shows the expected services, volumes, references, TCP proxy, and no destructive changes.
+  EVIDENCE: Railway CLI 5.70.0 plan passed on 2026-10-25 in a newly created, empty validation project in the confirmed personal workspace. The current graph was empty and the plan showed exactly four service/database creates, three volume creates, EU West, private references, TCP proxies, `sleepApplication: false`, and no deletes. The plan was not applied. Project identifiers are intentionally omitted from this public ledger.
 
 - [ ] G12: A fresh Railway deployment in `europe-west4-drams3a` proves TCP SSH, public HTTPS auth, no serverless sleep, shared storage, desktop/mobile handoff and recovery after service restart.
-  EVIDENCE: Open. No fresh personal-account Railway project is available to deploy into. No live domains, proxies, volumes, sleep settings, or cross-device behavior are claimed.
+  EVIDENCE: Open. A dedicated empty validation project exists in the personal workspace, but it has no services or deployment. No live domains, proxies, volumes, sleep settings, or cross-device behavior are claimed.
 
-- [ ] G13: Restore drills prove the workspace, Forgejo, PostgreSQL and OmniRoute data can be recovered from documented backups.
-  EVIDENCE: Partial local evidence on 2026-10-25. A logical dump of the local Forgejo database was restored into an isolated PostgreSQL 18.6 container, and 131 application tables matched. The test did not include role state, the Forgejo volume, workspace files, or OmniRoute; see `docs/security/BACKUP_RESTORE.md`. G13 remains open.
+- [x] G13: Restore drills prove the workspace, Forgejo, PostgreSQL and OmniRoute data can be recovered from documented backups.
+  CHECK: npm run test:encrypted-restore
+  EXPECT: /# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0/
+  EVIDENCE: `npm run test:encrypted-restore` passed on 2026-10-25 using an ephemeral age 1.3.2 test identity. It encrypted five artifacts covering four stores, restored PostgreSQL globals/database, workspace, Forgejo volume and OmniRoute SQLite, verified markers, roles, SQLite integrity and user tables, and confirmed existing containers were unchanged. This is a local fixture restore, not a Railway restore or recovery of existing user data.
 
 - [ ] G14: Marketplace template is created, published, and successfully test-deployed. No template ID or verified badge is claimed before Railway confirms it.
-  EVIDENCE: Open. No Railway template ID or URL exists. Creation and publication are held until the intended Railway workspace is available and image-security gates G15/G17 are closed.
+  EVIDENCE: Open. No Railway template ID or URL exists. Creation and publication are held until image-security gates G15/G17 are closed and the fresh template has been test-deployed in the personal workspace.
 
 - [ ] G15: OmniRoute dashboard dependency vulnerabilities are patched in a rebuilt upstream image and authenticated runtime checks pass before its public domain is enabled.
-  EVIDENCE: Open on 2026-10-25. Trivy 0.76.1 scanned the built local router image and found 2 critical and 48 high package findings, including two unique critical Next.js advisories in pinned Next.js 16.3.8. The public OmniRoute release remains 3.8.52, and upstream main still declares Next.js 16.3.8. Full results and image ID are in `docs/security/IMAGE_SCAN.md`. No patched router image or full source rebuild has passed health, authentication, inference, and dependency checks.
+  EVIDENCE: Open on 2026-10-26. The exact local Compose candidate image `sha256:b8a2191a8b9c5b4287fe329e9662b436b2e874c34766dc9e0613b9ef3d089bcc` has 2 critical and 48 high findings, including two critical Next.js advisories in 16.3.8. The newest published stable release checked is 3.8.52. The `release/v3.8.53` source declares Next.js 16.4.2 and DOMPurify 3.4.17, but no versioned image had been published when checked; the current `next` image still uses Next.js 16.3.8. Upstream Release acceptance run `40238715433` remained queued at 00:00 CET. Do not deploy the moving tag. No patched image has passed health, authentication, inference, and persistence checks. Details and source links are in `docs/security/IMAGE_SCAN.md`.
 
 - [x] G16: Every IaC `preserve()` variable has an explicit Railway Template Composer value or a documented operator input. Generated credentials use per-deployment `secret()` functions; provider master keys are excluded.
   CHECK: npm run check:railway-template
@@ -84,5 +87,16 @@ The always-on cross-device flow is a release-blocking product requirement.
 
 - [ ] G17: All four local Compose images are scanned, high and critical findings are triaged, and the exact release images pass the documented deployment security criteria.
   CHECK: npm run scan:images
-  EXPECT: exit 0 after each local image has no remaining high or critical findings.
-  EVIDENCE: Open on 2026-10-25. Trivy 0.76.1 scanned all four running local Compose images. The rebuilt IDE candidate moved `shell-quote` from 1.10.0 to 1.11.0 and removed that critical finding; it still has 5 unique critical and 122 unique high CVEs, including Next.js/DOMPurify and OS findings. The CLI lockfile overrides Next.js 16.4.3, DOMPurify 3.4.17, and Zod 4.6.6; its npm audit reports zero high/critical advisories, but the lockfile has not been rebuilt into the image. PostgreSQL 18.6 is pinned in Compose and passed an isolated startup check. The running database remains 18.1; its logical dump restored to a temporary 18.6 target with 131 matching Forgejo tables. Full image scans, the managed Railway database, and complete four-store restore remain open. See `docs/security/IMAGE_SCAN.md` and `docs/security/BACKUP_RESTORE.md`.
+  EXPECT: /No HIGH or CRITICAL vulnerabilities were found in the configured Compose candidate images/
+  EVIDENCE: Open on 2026-10-26. `npm run scan:images` rebuilt the three Dockerfile-backed candidates sequentially, pulled the pinned PostgreSQL 18.6 digest, resolved the configured image references to immutable IDs, and exited 1. Results: OmniRoute `sha256:b8a2191a8b9c5b4287fe329e9662b436b2e874c34766dc9e0613b9ef3d089bcc` 2 critical / 48 high; IDE `sha256:af99cbfb7b878cfc996c2533a0b06efb6895f2329ea220a3def04516826ffb57` 4 critical / 250 high; Forgejo `sha256:9c7edcf4ddcc7bac6cc25930968bca44def6898adea458f138c50e7e10eb2405` 0 critical / 4 high; PostgreSQL 18.6 `sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5` 1 critical / 26 high. Trivy found 2, 2, 0, and 1 unique critical IDs respectively. Existing Compose containers were not restarted; the local database service remains on 18.1. Details are in `docs/security/IMAGE_SCAN.md`.
+
+- [x] G22: Off-platform backup artifacts are encrypted to an operator-controlled recipient without plaintext archives on durable storage, and an isolated restore validates all four local stores.
+  CHECK: npm run test:encrypted-backup
+  EXPECT: /# tests 9\n# suites 0\n# pass 9\n# fail 0\n# cancelled 0\n# skipped 0/
+  EVIDENCE: `npm run test:encrypted-backup` passed 9/9 tests on 2026-10-25 with age 1.3.2 and locally pinned restore images. The integration generated a temporary key, encrypted the workspace, Forgejo volume, PostgreSQL database and globals, and OmniRoute fixture, restored them in a separate Compose project, then removed only its test containers, volumes and key.
+
+- [ ] G23: Public repository metadata and the documentation crawl/social cards are read back from the published site, and the repository social preview is uploaded.
+  EVIDENCE: GitHub description, homepage, and 13 topics were read back. The current Pages build includes `robots.txt`, a sitemap, page-specific Open Graph/Twitter tags, and a local 1200x630 social card. The latest live Pages deployment is commit `37aebf55836d209aedc0b2727758be7b4fed4904`; local updates are not deployed. GitHub documents no API or `gh` command for the repository social preview. The 1200x630 PNG is 682,585 bytes and still needs upload at repository Settings > General > Social preview.
+
+- [x] G24: An isolated application-level restore verifies a private Forgejo repository, its PostgreSQL roles, OmniRoute authentication/provider metadata, and workspace configuration.
+  EVIDENCE: `npm run test:application-restore` passed 4/4 tests in 44 seconds on 2026-10-25. In generated isolated source and restore projects it created and restored a private Forgejo repo and checked non-admin API plus Git clone/fetch, restored PostgreSQL role and data, verified OmniRoute login and provider metadata, and checked persistent gateway/editor configuration. Existing containers were unchanged and all generated resources were cleaned. CloudCLI native-session resume is not verified by this fixture.

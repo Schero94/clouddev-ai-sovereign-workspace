@@ -15,6 +15,7 @@ Use this page to find the source of truth before changing a deployment. Several 
 | Git identity and private repository | Workspace Git key plus a non-admin Forgejo user | Run `git-setup`, add its public key to the regular Forgejo user, and clone a private repository | Commit, push, fetch, and confirm the file in Forgejo |
 | Files, sessions, and task recovery | `/workspace` persistent volume and upstream provider session files | Edit files in any client; use the provider's supported manual resume after an interruption | Check the shared tree, session history, task registry, and restore procedure |
 | Public documentation | `docs/`, `mkdocs.yml`, and `.github/workflows/docs.yml` | Edit Markdown, preview with `npm run docs:build`, then merge to `main` | Require the workflow's strict build and artifact scan before Pages deploys |
+| Docker build inputs | Root `.dockerignore`, `services/ide/.dockerignore`, and `services/forgejo/.dockerignore` | Keep Markdown, docs, local browser traces, and local agent metadata out of each service context | Run `npm run check:docker-context`; Docker Hub lookup for the intended image returned 404 and the repository has no container-push workflow |
 | Release claims | `GATES.md` | Update only with evidence from an actually run check | The generated [release-status page](RELEASE_STATUS.md) summarizes gate titles and states, not evidence |
 
 ## Safe change sequence
@@ -36,3 +37,9 @@ Railway Private Networking does not filter outbound traffic. An agent can still 
 The repository's Pages source is configured for **GitHub Actions**. The `Documentation` workflow builds on pull requests and changes to `main` using a pinned Ubuntu 24.04 runner. Pull requests never receive Pages deployment permissions. Only the `github-pages` deployment job can publish, and it runs for `main`. If the workflow cannot deploy, check **Settings → Pages → Build and deployment → Source → GitHub Actions**. The current Pages helper actions emit Node 20 deprecation warnings that GitHub forces onto Node 24. Update the SHA pins when their upstreams publish Node 24-native releases. The site is public even if repository visibility later changes, so only reviewed documentation is included.
 
 Material for MkDocs 9.8.0 is pinned in `docs-site/uv.lock`. Its upstream support ends on 2027-05-05. Review its security notices and evaluate Zensical before that date. The site generator does not update itself.
+
+## Docker contexts
+
+There are three application build contexts: the repository root for the IDE, the repository root for the OmniRoute overlay, and `services/forgejo/` for Forgejo. The Postgres service uses a pinned upstream image and has no application build context. Each context has its own ignore file. The root ignore file excludes every Markdown extension, `docs/`, local browser and agent state, Python environments, tests, gates, and Git data. Forgejo uses its local ignore file because it builds from a nested directory.
+
+The Docker Hub API returned 404 for `schero94/clouddev-ai-sovereign-workspace`, and the repository contains no workflow that pushes container images. The GitHub Packages inventory could not be queried because the current token lacks `read:packages`. There is no known Docker image to delete, but an image in an unqueried registry has not been ruled out. `.dockerignore` excludes Markdown from future builds. It does not remove docs from Git history or purge existing image layers. Use `npm run check:docker-context` to keep the context rules checked.

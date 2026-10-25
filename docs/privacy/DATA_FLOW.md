@@ -73,6 +73,28 @@ variable values according to its platform behavior. Sealed variables are not
 visible in the dashboard or retrievable by the API, but running services still
 receive them.
 
+## Public documentation crawlers
+
+The documentation is public. Its `robots.txt` allows general search crawlers
+and dedicated answer-retrieval crawlers, including OAI-SearchBot,
+PerplexityBot, Claude-SearchBot, and Google-Extended. It disallows GPTBot and
+ClaudeBot. This blocks the training-specific crawlers whose search
+counterparts have separate controls. Googlebot remains allowed for ordinary
+search indexing. A
+`robots.txt` rule is a request, not access control. Anyone can still open or
+download a public documentation page.
+
+The user-agent names and effects are documented by [OpenAI](https://developers.openai.com/api/docs/bots),
+[Perplexity](https://docs.perplexity.ai/docs/resources/perplexity-crawlers),
+[Anthropic](https://privacy.anthropic.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler),
+and [Google](https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers).
+
+The docs site allows Google-Extended so Google may use it for Gemini grounding.
+Google's token also covers using crawled content for future Gemini training.
+This is an intentional discoverability choice for public product documentation,
+not permission to publish private source code, workspace files, credentials, or
+user data.
+
 ## Deletion and retention
 
 Deleting a Git repository in Forgejo does not delete clones or copies in the

@@ -123,6 +123,22 @@ test("pinned Caddy gates browser routes with the HttpOnly workspace cookie and p
     forwardedPaths.push(request.url);
     forwardedAuthorization = request.headers.authorization ?? null;
     forwardedAuthKey = request.headers["x-clouddev-auth-key"] ?? null;
+    if (request.url === "/omniroute/") {
+      response.writeHead(308, { location: "/omniroute" });
+      response.end();
+      return;
+    }
+    if (request.url === "/omniroute") {
+      response.writeHead(200, { "content-type": "text/plain" });
+      response.end("OmniRoute dashboard root");
+      return;
+    }
+    if (request.url === "/omniroute/dashboard/providers") {
+      response.setHeader("Content-Security-Policy", "default-src 'self'; img-src https: data:");
+      response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      response.end("OmniRoute provider dashboard");
+      return;
+    }
     if (request.url === "/omniroute/api/v1/models?kind=chat") {
       modelCatalogRequests.push({ authorization: request.headers.authorization ?? null });
       if (request.headers.authorization !== "Bearer scoped-inference-test-key") {
@@ -284,5 +300,21 @@ test("pinned Caddy gates browser routes with the HttpOnly workspace cookie and p
   assert.equal(authenticatedRouter.status, 200);
   assert.equal(forwardedPaths.at(-1), "/omniroute/dashboard/providers",
     "the dashboard path prefix must be preserved for OmniRoute basePath routing");
+  const routerCsp = authenticatedRouter.headers.get("content-security-policy") ?? "";
+  assert.match(routerCsp, /img-src 'self' data: blob:/,
+    "the workspace proxy must constrain OmniRoute logo loads to local/data assets");
+
+  const authenticatedRouterSlash = await fetch(`http://127.0.0.1:${port}/omniroute/`, {
+    redirect: "manual",
+    headers: { cookie: "clouddev_workspace_session=valid" },
+  });
+  assert.equal(authenticatedRouterSlash.status, 308);
+  assert.equal(authenticatedRouterSlash.headers.get("location"), "/omniroute");
+  const authenticatedRouterRoot = await fetch(`http://127.0.0.1:${port}/omniroute`, {
+    redirect: "manual",
+    headers: { cookie: "clouddev_workspace_session=valid" },
+  });
+  assert.equal(authenticatedRouterRoot.status, 200, "the canonical OmniRoute root must be reachable after one redirect");
+  assert.equal(forwardedPaths.at(-1), "/omniroute", "the exact OmniRoute base path must reach the upstream");
 
 });

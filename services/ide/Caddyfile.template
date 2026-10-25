@@ -30,15 +30,18 @@
 		redir @vscode-root /vscode/ 308
 		@launchpad-root path /launchpad
 		redir @launchpad-root /launchpad/ 308
-		@omniroute-root path /omniroute
-		redir @omniroute-root /omniroute/ 308
-		handle_path /vscode/* {
-			reverse_proxy @@VSCODE_UPSTREAM@@
-		}
-		handle /omniroute/* {
+		@omniroute path /omniroute /omniroute/*
+		handle @omniroute {
+			header {
+				defer
+				+Content-Security-Policy "img-src 'self' data: blob:"
+			}
 			reverse_proxy @@OMNIROUTE_DASHBOARD_PUBLIC_UPSTREAM@@ {
 				header_up X-Forwarded-Prefix /omniroute
 			}
+		}
+		handle_path /vscode/* {
+			reverse_proxy @@VSCODE_UPSTREAM@@
 		}
 		handle_path /launchpad/* {
 			reverse_proxy @@LAUNCHPAD_UPSTREAM@@ {

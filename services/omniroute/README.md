@@ -50,7 +50,7 @@ Keep the router dashboard private; the release hold still applies because the UI
 
 Mount persistent storage at `/app/data` and set `DATA_DIR=/app/data`. The SQLite database holds provider connections, generated API keys, settings, usage metadata and audit data. Set unique values for `JWT_SECRET`, `API_KEY_SECRET`, `STORAGE_ENCRYPTION_KEY`, `MACHINE_ID_SALT` and `OMNIROUTE_WS_BRIDGE_SECRET`. `API_KEY_SECRET` protects API-key values, while `STORAGE_ENCRYPTION_KEY` enables full SQLite database encryption at rest. Losing the encryption key can make the database unreadable. Include it in the operator's protected backup and recovery plan.
 
-Set `INITIAL_PASSWORD` to a generated value before the first start. OmniRoute uses it only until a dashboard password is saved. The operator opens `/omniroute/` on the authenticated workspace origin, then signs in with OmniRoute's own login and changes the password. After setup, remove the bootstrap variable.
+Set `INITIAL_PASSWORD` to a generated value before the first start. OmniRoute uses it only until a dashboard password is saved. The launchpad's **Manage AI providers** link opens `/omniroute/dashboard/providers` on the authenticated workspace origin. Complete OmniRoute's separate sign-in before connecting providers. Never use a known default password. Keep the generated bootstrap value in Railway's protected variable store until a recovery procedure can safely recreate the first-admin credential.
 
 The router requires inference API keys with `REQUIRE_API_KEY=true`. The launchpad password is separate. The IDE receives only an inference key created in OmniRoute. It does not receive the dashboard password, `JWT_SECRET`, `API_KEY_SECRET`, `STORAGE_ENCRYPTION_KEY` or Railway credentials.
 
