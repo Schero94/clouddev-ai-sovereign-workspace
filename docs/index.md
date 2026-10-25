@@ -1,23 +1,98 @@
-# CloudDev AI documentation
+---
+title: CloudDev AI docs
+description: Set up and operate a private, persistent CloudDev AI workspace across desktop, browser, and mobile.
+---
 
-CloudDev AI is a private, single-user development workspace for native VS Code, browser VS Code, and a mobile agent interface. The clients share project files and supported agent session history. They do not share editor-window state.
+<div class="cd-home" markdown="1">
 
-Start with the [setup guide](getting-started.md), then use the [operations control plane](operations/CONTROL_PLANE.md) to find where each setting lives and what proof is required before release.
+<div class="cd-hero" markdown="1">
 
-## Before deploying
+<div class="cd-hero__copy" markdown="1">
 
-The Railway service graph and private references are in `.railway/railway.ts`. Per-deployment secrets, the operator's SSH public key, and public domains are set in the Railway Template Composer. Provider master keys are added by the owner after deployment in OmniRoute. The coding-agent workspace receives only a scoped inference key.
+<p class="cd-eyebrow"><span class="cd-eyebrow__dot"></span> SINGLE-USER WORKSPACE <span class="cd-eyebrow__divider">/</span> PERSISTENT BY DESIGN</p>
 
-The template is not one-click verified until a fresh Railway project passes the release gates. Review the [current release status](operations/RELEASE_STATUS.md) before deployment. The page shows gate names and states only. Detailed test evidence remains in the repository's [`GATES.md`](https://github.com/Schero94/clouddev-ai-sovereign-workspace/blob/main/GATES.md).
+# One workspace.<br><span class="cd-gradient">Every screen.</span> {.cd-home-title}
 
-## Sections
+<p class="cd-lead">Use native VS Code, browser VS Code, or CloudCLI on your phone. Each connects to the same project tree and supported agent-session history.</p>
 
-- [Start here](getting-started.md) for local setup and the Railway deployment sequence.
-- [Architecture](architecture.md) for runtime boundaries and persistent data paths.
-- [Railway operations](operations/CONTROL_PLANE.md) for variable ownership, release checks, and safe changes.
-- [Security](security/THREAT_MODEL.md) and [privacy](privacy/DATA_FLOW.md) for documented limits and operator responsibilities.
-- [Backup and restore](security/BACKUP_RESTORE.md) for the four persistent stores.
+<div class="cd-actions" markdown="1">
 
-## Documentation status
+[Set up your workspace](getting-started.md){ .cd-button .cd-button--primary }
+[Check release status](operations/RELEASE_STATUS.md){ .cd-button .cd-button--quiet }
 
-The documentation build checks navigation and links before deployment. GitHub Pages is public. The workflow publishes only its generated static site artifact. A successful local build does not mean the GitHub Pages site or Railway template has been deployed.
+</div>
+
+<p class="cd-hero__note">Files and session artifacts are shared. Separate editor windows do not share UI state. A workspace restart interrupts running agent processes.</p>
+
+</div>
+
+<div class="cd-architecture" role="img" aria-label="VS Code Desktop, browser IDE, and CloudCLI mobile connect to one persistent workspace at slash workspace.">
+<div class="cd-architecture__caption"><span>ONE REMOTE WORKSPACE</span><span class="cd-architecture__caption-line"></span><span>THREE CLIENTS</span></div>
+<div class="cd-clients">
+<div class="cd-client"><span class="cd-client__icon cd-client__icon--vscode">VS</span><span class="cd-client__copy"><strong>VS Code Desktop</strong><small>Key-only Remote-SSH</small></span><span class="cd-client__signal"></span></div>
+<div class="cd-client"><span class="cd-client__icon cd-client__icon--browser">&lt;/&gt;</span><span class="cd-client__copy"><strong>Browser IDE</strong><small>code-server</small></span><span class="cd-client__signal"></span></div>
+<div class="cd-client"><span class="cd-client__icon cd-client__icon--mobile">C</span><span class="cd-client__copy"><strong>CloudCLI mobile</strong><small>Phone and tablet</small></span><span class="cd-client__signal"></span></div>
+</div>
+<div class="cd-bus" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="cd-workspace-core">
+<div class="cd-workspace-core__mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="cd-workspace-core__copy"><small>PERSISTENT WORKSPACE VOLUME</small><strong>/workspace</strong><span>projects <i></i> Git checkouts <i></i> session artifacts</span></div>
+</div>
+<div class="cd-architecture__foot"><span>ONE USER</span><span class="cd-architecture__foot-line"></span><span>ONE PROJECT TREE</span><span class="cd-architecture__foot-line"></span><span>PRIVATE INSTANCE</span></div>
+
+</div>
+
+</div>
+
+<div class="cd-release-note" markdown="1">
+<span class="cd-release-note__icon" aria-hidden="true">↗</span>
+<p><strong>Before you deploy</strong><br>Review the release gates first. A local build is not proof of a fresh Railway deployment.</p>
+[Open release status](operations/RELEASE_STATUS.md){ .cd-inline-link }
+</div>
+
+<h2 class="cd-section-title">Find your next step <span>01 / 03</span></h2>
+
+<div class="cd-route-grid" markdown="1">
+
+<div class="cd-route-card" markdown="1">
+<p class="cd-route-card__index">01 <span>DEPLOY</span></p>
+## Get the workspace running
+Follow the local quick start or prepare a Railway deployment. See which settings are automatic and which need your input.
+
+[Start setup](getting-started.md){ .cd-route-card__link }
+</div>
+
+<div class="cd-route-card" markdown="1">
+<p class="cd-route-card__index">02 <span>UNDERSTAND</span></p>
+## Know what shares state
+Review the service boundaries, persistent paths, client connections, and where provider requests go.
+
+[Explore the architecture](architecture.md){ .cd-route-card__link }
+</div>
+
+<div class="cd-route-card" markdown="1">
+<p class="cd-route-card__index">03 <span>OPERATE</span></p>
+## Keep it healthy
+Check variables, recovery actions, backups, and the evidence required before a release.
+
+[Open the control plane](operations/CONTROL_PLANE.md){ .cd-route-card__link }
+</div>
+
+</div>
+
+<div class="cd-guardrails" markdown="1">
+<div class="cd-guardrails__lead" markdown="1">
+<p class="cd-eyebrow">BUILT AROUND CLEAR BOUNDARIES</p>
+## Private by default. Honest about recovery.
+Provider master keys stay in OmniRoute. The workspace receives a scoped inference credential. After a restart, running tasks are marked interrupted; resume them only through a supported, user-initiated action.
+</div>
+<div class="cd-guardrails__links" markdown="1">
+[Security hardening](security/SECURITY_HARDENING.md){ .cd-guardrail-link }
+[Data flows](privacy/DATA_FLOW.md){ .cd-guardrail-link }
+[Backup and restore](security/BACKUP_RESTORE.md){ .cd-guardrail-link }
+</div>
+</div>
+
+<p class="cd-home-footer">Source, tests, and full release evidence live in the <a href="https://github.com/Schero94/clouddev-ai-sovereign-workspace">GitHub repository</a>.</p>
+
+</div>

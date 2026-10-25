@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <title>CloudDev AI</title>
+  <defs>
+    <linearGradient id="surface" x1="5" y1="4" x2="44" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#172A23"/>
+      <stop offset="1" stop-color="#0A1414"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="12" y1="13" x2="37" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A0FFD2"/>
+      <stop offset="1" stop-color="#77DFF0"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#surface)" stroke="#34564A" stroke-width="1.5"/>
+  <path d="m17 17-6 7 6 7M23 31l4-14" stroke="url(#signal)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="30" y="29" width="5" height="3" rx="1.5" fill="#8AF4C8"/>
+  <circle cx="35.5" cy="12.5" r="2.5" fill="#8AF4C8"/>
+</svg>

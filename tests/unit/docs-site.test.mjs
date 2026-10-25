@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,6 +77,40 @@ test("documentation content and navigation cover the operator workflow", () => {
   assert.doesNotMatch(navigation, /^repo_(?:name|url):/m, "repository header metadata calls the GitHub Releases API on every page view");
   assert.match(navigation, /name: Source repository/, "the repository link should be a static social link instead");
   assert.match(readme, /https:\/\/schero94\.github\.io\/clouddev-ai-sovereign-workspace\//);
+});
+
+test("documentation landing page explains the shared workspace and routes users to verified next steps", () => {
+  const configuration = readFileSync(path.join(root, "mkdocs.yml"), "utf8");
+  const home = readFileSync(path.join(root, "docs/index.md"), "utf8");
+  const stylesheetPath = path.join(root, "docs/stylesheets/landing.css");
+  const brandPath = path.join(root, "docs/assets/clouddev-mark.svg");
+
+  assert.ok(existsSync(stylesheetPath), "the local landing-page stylesheet should exist");
+  assert.ok(existsSync(brandPath), "the local CloudDev brand mark should exist");
+  assert.match(configuration, /extra_css:\s*\n\s*- stylesheets\/landing\.css/);
+  assert.match(configuration, /logo:\s*assets\/clouddev-mark\.svg/);
+  assert.match(configuration, /favicon:\s*assets\/clouddev-mark\.svg/);
+  assert.match(configuration, /scheme: slate[\s\S]*?name: Switch to light mode[\s\S]*?scheme: default[\s\S]*?name: Switch to dark mode/);
+  assert.match(configuration, /plugins:\s*\n\s*- search/);
+
+  for (const label of ["VS Code Desktop", "Browser IDE", "CloudCLI mobile", "/workspace"]) {
+    assert.ok(home.includes(label), `the landing page is missing ${label}`);
+  }
+  for (const route of ["getting-started.md", "operations/RELEASE_STATUS.md", "architecture.md", "operations/CONTROL_PLANE.md"]) {
+    assert.ok(home.includes(route), `the landing page is missing the ${route} route`);
+  }
+  assert.match(home, /do not share UI state/i);
+  assert.match(home, /interrupted/i);
+  assert.match(home, /resume/i);
+  assert.equal((home.match(/<div class="cd-client">/g) ?? []).length, 3, "all three cross-device clients should be visible markup, not a code sample");
+  assert.doesNotMatch(home, /[—–]/, "landing-page copy should use plain punctuation");
+
+  const stylesheet = readFileSync(stylesheetPath, "utf8");
+  assert.match(stylesheet, /prefers-reduced-motion/);
+  assert.match(stylesheet, /:focus-visible/);
+  assert.match(stylesheet, /@media[^\{]*max-width/);
+  assert.match(stylesheet, /body:has\(\.cd-home-title\) \.cd-route-grid/);
+  assert.doesNotMatch(stylesheet, /@import\s+url|fonts\.googleapis\.com/i);
 });
 
 test("Pages workflow pins actions, isolates write permissions, and never deploys a pull request", () => {
