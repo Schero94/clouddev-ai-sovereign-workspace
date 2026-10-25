@@ -119,14 +119,13 @@ to be retrieved. Never print them in logs.
    the template verified. Publish from the Railway Template Composer. Add the
    deploy button only after Railway assigns the actual template URL.
 
-The Railway CLI is authenticated and a fresh, empty test project is linked.
-`railway config plan --json` succeeds and proposes only the seven expected
-service, database, and volume creations. No services or paid resources have
-been applied. The only available Railway workspace during this run appears to
-be a shared business workspace, not the personal account modelled by CloudDev.
-The checkout also has no published Git remote for Template Composer to bind.
-Do not apply this plan until the intended personal workspace and public source
-repository are selected.
+The current Railway CLI session is linked to an empty validation project in a
+shared business workspace, not the personal workspace this product targets.
+The earlier `railway config plan --json` proposed seven service, database, and
+volume creations. No services or paid resources have been applied. The
+checkout has no published Git remote for Template Composer to bind. Keep this
+project untouched until a dedicated personal-account test workspace and public
+source repository are available.
 
 ## Official references
 

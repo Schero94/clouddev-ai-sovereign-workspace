@@ -1,9 +1,9 @@
 # Railway Marketplace and kickback release
 
 This checkout does not have a public Git remote or a Railway template ID. The
-Railway CLI is signed in to `Joulee Tech GmbH's Projects`, not to the personal
-`Schero94` account requested for this release. No Railway services or template
-have been created from this checkout. The product is not one-click verified.
+Railway CLI is linked to a shared business workspace, not to the personal
+workspace required for this release. No Railway services or template have
+been created from this checkout. The product is not one-click verified.
 
 The Railway documentation was checked on 2026-10-25. The current documented
 flow is to create a template from a tested Railway project or start in the
@@ -94,6 +94,20 @@ does not publish a Marketplace template by itself.
    verification before Railway confirms both.
 6. Watch the Template Queue and respond to support requests. This is required
    for the additional support bonus under the current kickback rules.
+
+The current CLI also supports publishing template metadata after Railway has
+created a draft and returned its real code. Do not run this example until the
+personal target workspace and deployment gates are confirmed:
+
+```sh
+npx --yes @railway/cli@5.71.0 templates publish <TEMPLATE_CODE> \
+  --category AI/ML \
+  --description "Deploy and Host CloudDev AI on Railway" \
+  --readme-file docs/operations/RAILWAY_TEMPLATE_OVERVIEW.md \
+  --json
+```
+
+The Template Composer remains available for the same publication workflow.
 
 ## Post-publication checks
 

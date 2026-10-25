@@ -132,6 +132,11 @@ development only.
    open the workspace and provide the command; they do not run commands
    remotely.
 
+The agent endpoints, CLI wrappers, generated workspace credentials, and
+model-routing defaults are in place on first deploy. The owner still needs to
+connect a provider and create a scoped inference key in OmniRoute. Provider
+master keys are not included in any Railway variable.
+
 CloudCLI and the terminal CLIs share their persistent home and provider session
 artifacts. A local mock acceptance on 2026-10-25 imported a detached Claude Code
 session into CloudCLI, sent a browser follow-up at a 390x844 viewport, edited a
@@ -281,6 +286,11 @@ subject to Anthropic's legal agreements. CloudCLI remains AGPL-3.0-or-later.
 The button is intentionally omitted until a Marketplace template has been
 created and Railway provides its actual deployment URL. Add it here after
 publishing and test-deploying the template.
+
+<!-- After Railway returns the published template code, replace the placeholder
+below with the real code and remove this comment wrapper.
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/<TEMPLATE_CODE>?utm_medium=integration&utm_source=button&utm_campaign=clouddev-ai)
+-->
 
 ## Changelog
 

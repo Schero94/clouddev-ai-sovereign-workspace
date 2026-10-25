@@ -25,6 +25,13 @@ advisory. These settings mitigate specific advisory paths. They do not update
 the vulnerable dependency ranges. This checkout has not completed an image
 vulnerability scan.
 
+On 2026-10-25, `npm audit --json` in `services/ide/omniroute-cli` reported 10
+advisories for the pinned CLI dependency tree: 6 low, 1 moderate, 1 high, and 2
+critical. The same audit reported 20 advisories for CloudCLI's pinned package
+tree (5 low and 15 moderate), and none for the direct Codex, Claude Code, and
+pnpm tool manifest. These are npm lockfile audits, not scans of the final
+container images. No image scanner was available in the environment.
+
 A runtime-only replacement of Next.js `16.3.8` with `16.4.3` failed at startup
 because the prebuilt application artifacts did not match the newer runtime.
 That overlay was removed. The local and Railway Dockerfiles now use the pinned

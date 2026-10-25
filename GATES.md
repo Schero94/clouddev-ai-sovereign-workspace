@@ -11,22 +11,23 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [x] G2: IDE, CloudCLI, Codex, Claude Code, SSH, agent configuration, projects and task state use one persistent `/workspace` mount; application processes other than sshd/supervisor run as UID 1000 without capabilities.
   CHECK: npm test
   EXPECT: pass
-  EVIDENCE: `npm test` passed: 111 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
+  EVIDENCE: `npm test` passed: 113 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
 
 - [x] G3: Every browser route is authenticated, SSH accepts keys only, and no shared service port or administrator secret is exposed to agent processes.
   CHECK: npm run test:security
   EXPECT: pass
-  EVIDENCE: `npm run test:security` passed across 84 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
+  EVIDENCE: `npm run test:security` passed across 85 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
 
 - [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work.
   CHECK: npm run test:cross-device
   EXPECT: pass
-  EVIDENCE: Partial: `npm run test:cross-device` verifies cookie gating, bearer-token preservation and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge remain unverified.
+  EVIDENCE: Partial local check only. `npm run test:cross-device` verifies cookie gating, bearer-token preservation and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge remain unverified.
 
 - [ ] G5: Starting Codex or Claude from native VS Code produces a session CloudCLI can discover and resume, and follow-up changes share the same project files.
   CHECK: npm run test:session-handoff
   EXPECT: pass
-  EVIDENCE: Partial local acceptance on 2026-10-25. A detached Claude Code task started through the key-authenticated SSH shell was indexed in CloudCLI. CloudCLI sent a follow-up, updated a shared file, and browser VS Code displayed it. The task was not started from the native VS Code Desktop application; Railway acceptance is open.
+  EVIDENCE: Partial local acceptance on 2026-10-25. A detached Claude Code task started through key-authenticated SSH was indexed in CloudCLI, followed up from mobile, and its file change appeared in browser VS Code and Forgejo. The task was not started from native VS Code Desktop; Railway acceptance is open.
+  EVIDENCE: ℹ todo 0 | ℹ duration_ms 252.938527
 
 - [x] G6: Agent activity continues after browser/desktop disconnect. Restart handling marks in-flight work interrupted and exposes supported recovery without claiming a killed process continued.
   CHECK: npm run test:recovery
@@ -50,7 +51,7 @@ The always-on cross-device flow is a release-blocking product requirement.
   EVIDENCE: `npm run check:railway` passed with Railway 3.16.0 and TypeScript 7.0.2.
 
 - [ ] G11: A safe `railway config plan` in a dedicated fresh test project shows the expected services, volumes, references, TCP proxy, and no destructive changes.
-  EVIDENCE: Open. Railway CLI context points to an empty `clouddev-ai-validation` project in `Joulee Tech GmbH's Projects`, not the personal-account target modeled by CloudDev AI. No plan was applied and no services were created.
+  EVIDENCE: Open. Read-only `railway status --json` shows the linked `clouddev-ai-validation` project is empty and belongs to a shared business workspace, not the intended personal-account target. No plan was applied and no services were created.
 
 - [ ] G12: A fresh Railway deployment in `europe-west4-drams3a` proves TCP SSH, public HTTPS auth, no serverless sleep, shared storage, desktop/mobile handoff and recovery after service restart.
   EVIDENCE: pending
@@ -62,7 +63,7 @@ The always-on cross-device flow is a release-blocking product requirement.
   EVIDENCE: pending
 
 - [ ] G15: OmniRoute dashboard dependency vulnerabilities are patched in a rebuilt upstream image and authenticated runtime checks pass before its public domain is enabled.
-  EVIDENCE: pending. The pinned image remains behind the release hold documented in `services/omniroute/README.md`.
+  EVIDENCE: Open on 2026-10-25. `npm audit --json` on the pinned OmniRoute CLI lock reported 10 advisories: 6 low, 1 moderate, 1 high, and 2 critical. The current upstream package and image remain at `3.8.52`; the published package declares Next.js `16.3.8` and DOMPurify `^3.4.14`. No Docker image vulnerability scanner is installed, so the full published image has not been scanned. A runtime-only Next.js overlay failed startup and was removed. See `services/omniroute/README.md`; do not deploy publicly until upstream ships a patched image or a full source rebuild passes the stated gates.
 
 - [x] G16: Every IaC `preserve()` variable has an explicit Railway Template Composer value or a documented operator input. Generated credentials use per-deployment `secret()` functions; provider master keys are excluded.
   CHECK: npm run check:railway-template
