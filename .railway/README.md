@@ -56,14 +56,14 @@ deployment and read the service-specific `RAILWAY_TCP_PROXY_DOMAIN` and
 `RAILWAY_TCP_PROXY_PORT` values. Do not use `railway ssh` for VS Code
 Remote-SSH. The workspace SSH key and Forgejo Git key are separate identities.
 
-The public repository and build roots are source settings, not fixed in this
-file because this checkout has no Git remote or published repository yet. When
-the public monorepo exists, bind it to `clouddev-ide` with repository root `.`
-and Dockerfile `services/ide/Dockerfile`; bind it to `clouddev-git` with root
+The public source repository is
+`https://github.com/Schero94/clouddev-ai-sovereign-workspace`. Bind it to
+`clouddev-ide` with repository root `.` and Dockerfile
+`services/ide/Dockerfile`; bind it to `clouddev-git` with root
 `services/forgejo` and Dockerfile `Dockerfile`. The OmniRoute image source is
 already pinned in IaC. Generated HTTPS domains are created in the Composer or
-service networking settings. No repository owner, generated domain, or
-template ID is fabricated here.
+service networking settings. No generated domain or template ID is fabricated
+here.
 
 ## Secrets and first login
 
@@ -122,10 +122,10 @@ to be retrieved. Never print them in logs.
 The current Railway CLI session is linked to an empty validation project in a
 shared business workspace, not the personal workspace this product targets.
 The earlier `railway config plan --json` proposed seven service, database, and
-volume creations. No services or paid resources have been applied. The
-checkout has no published Git remote for Template Composer to bind. Keep this
-project untouched until a dedicated personal-account test workspace and public
-source repository are available.
+volume creations. No services or paid resources have been applied. The public
+GitHub source is available, but the linked Railway project is still in the
+shared business workspace. Keep it untouched until a dedicated personal-account
+test workspace is available.
 
 ## Official references
 

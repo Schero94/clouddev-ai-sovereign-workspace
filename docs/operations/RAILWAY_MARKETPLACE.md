@@ -1,9 +1,11 @@
 # Railway Marketplace and kickback release
 
-This checkout does not have a public Git remote or a Railway template ID. The
-Railway CLI is linked to a shared business workspace, not to the personal
-workspace required for this release. No Railway services or template have
-been created from this checkout. The product is not one-click verified.
+The source repository is public at
+[github.com/Schero94/clouddev-ai-sovereign-workspace](https://github.com/Schero94/clouddev-ai-sovereign-workspace).
+There is no Railway template ID yet. The Railway CLI is linked to a shared
+business workspace, not to the personal workspace required for this release.
+No Railway services or template have been created from this checkout. The
+product is not one-click verified.
 
 The Railway documentation was checked on 2026-10-25. The current documented
 flow is to create a template from a tested Railway project or start in the
@@ -13,8 +15,9 @@ does not publish a Marketplace template by itself.
 
 ## Release gates before creating the template
 
-1. Publish the reviewed source to a public GitHub repository. Keep `.env`, SSH
-   private keys, Railway tokens, and provider credentials out of Git.
+1. Keep the public source repository free of `.env`, SSH private keys, Railway
+   tokens, and provider credentials. The current GitHub history was scanned
+   with Gitleaks before the source push and returned no findings.
 2. Run the unit, security, Compose, image-build, mock-provider, SSH, Git, and
    session recovery checks. Record the actual output in `GATES.md`.
 3. Close the OmniRoute image security hold in G15. Keep the router dashboard
@@ -39,7 +42,7 @@ does not publish a Marketplace template by itself.
    new template in Workspace Settings is also documented. Confirm the final
    draft contains only `clouddev-ide`, `clouddev-git`, `clouddev-postgres`,
    and `clouddev-router`.
-2. Connect the public repository. Set `clouddev-ide` to repository root `.`
+2. Connect the public repository above. Set `clouddev-ide` to repository root `.`
    and Dockerfile `services/ide/Dockerfile`. Set `clouddev-git` to root
    `services/forgejo` and Dockerfile `Dockerfile`. Keep the pinned OmniRoute
    image declared by IaC.
