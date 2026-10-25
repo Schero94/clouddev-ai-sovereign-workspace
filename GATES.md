@@ -13,8 +13,8 @@ The always-on cross-device flow is a release-blocking product requirement.
   EXPECT: /# fail 0/
   EVIDENCE: `node --test tests/unit/docs-site.test.mjs` passed all 6 tests on 2026-10-25. Tests cover gate parsing, duplicate/malformed rows, HTML escaping, evidence omission, artifact path/credential checks, operator navigation, and SHA-pinned workflow permissions/deploy guards.
 
-- [ ] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
-  EVIDENCE: Partial on 2026-10-25. The Pages API read-back confirms the `workflow` publishing source. GitHub Actions run `40180002052` succeeded for commit `140b17b2536f8bc659e1835939fc0ec9fa24a8bc`, and the public status page returned HTTP 200. A newer `main` revision with the README link and final status update still needs a successful build and live read-back.
+- [x] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
+  EVIDENCE: GitHub API read-back confirms `build_type=workflow` for `main`. Actions run `40180371064` completed both build and deploy successfully for commit `b652ed1641f5bfabbd0815b598253ae90c50007f`. The live URL returned HTTP 200; Playwright loaded its release-status page at 390x844, found `11 of 20 gates complete`, confirmed no horizontal overflow, and reported no console messages.
 
 - [x] G1: Current CloudCLI package, auth boundary, workspace discovery and session recovery behavior are verified against the pinned upstream release.
   CHECK: node --test services/ide/test/cloudcli-runtime.integration.test.mjs
