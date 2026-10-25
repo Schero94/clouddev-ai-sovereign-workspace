@@ -1,0 +1,80 @@
+site_name: "CloudDev AI: Sovereign Workspace"
+site_description: Deployment, operations, security, and privacy documentation for the single-user Sovereign Workspace.
+site_url: https://schero94.github.io/clouddev-ai-sovereign-workspace/
+docs_dir: docs
+site_dir: .docs-site/site
+strict: true
+exclude_docs: |
+  plans/**
+
+theme:
+  name: material
+  language: en
+  font: false
+  features:
+    - navigation.sections
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Schero94/clouddev-ai-sovereign-workspace
+      name: Source repository
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Start here: getting-started.md
+  - Architecture: architecture.md
+  - Railway:
+      - Deployment and release: operations/RAILWAY_MARKETPLACE.md
+      - Template overview: operations/RAILWAY_TEMPLATE_OVERVIEW.md
+      - Variables and secrets: operations/RAILWAY_TEMPLATE_VARIABLES.md
+  - Operations:
+      - Control plane: operations/CONTROL_PLANE.md
+      - Release status: operations/RELEASE_STATUS.md
+      - Troubleshooting: operations/TROUBLESHOOTING.md
+      - Backup and restore: security/BACKUP_RESTORE.md
+      - Upstream licenses: operations/UPSTREAM_LICENSES.md
+  - Security and privacy:
+      - Hardening: security/SECURITY_HARDENING.md
+      - Threat model: security/THREAT_MODEL.md
+      - Image scan and release hold: security/IMAGE_SCAN.md
+      - Data flows: privacy/DATA_FLOW.md
+      - GDPR readiness: privacy/GDPR_READINESS.md
+      - Subprocessors: privacy/SUBPROCESSORS.md
+      - DPA checklist: privacy/DPA_CHECKLIST.md

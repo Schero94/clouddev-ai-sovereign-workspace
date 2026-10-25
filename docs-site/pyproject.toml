@@ -1,0 +1,11 @@
+[project]
+name = "clouddev-ai-docs"
+version = "0.1.0"
+description = "Pinned static documentation toolchain for CloudDev AI."
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "mkdocs-material==9.8.0",
+]
+
+[tool.uv]
+package = false

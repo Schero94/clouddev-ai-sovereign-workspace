@@ -3,18 +3,18 @@
 No gate is complete until its verification was run and evidence was recorded.
 The always-on cross-device flow is a release-blocking product requirement.
 
-- [ ] G18: Public documentation builds from the existing Markdown sources with strict navigation/link validation and no private build inputs in the artifact.
+- [x] G18: Public documentation builds from the existing Markdown sources with strict navigation/link validation and no private build inputs in the artifact.
   CHECK: npm run docs:build
-  EXPECT: /Documentation build passed/
-  EVIDENCE: pending
+  EXPECT: /Documentation built in/
+  EVIDENCE: `npm run docs:check` passed on 2026-10-25. MkDocs Material 9.8.0 built with strict navigation/link validation, and the artifact scanner checked all 65 generated files (3.2 MiB) for hidden paths and credential-shaped strings. Browser preview returned the site and release-status page; browser console was clean after removing the automatic GitHub release metadata request.
 
-- [ ] G19: The operations overview reports current release-gate status without publishing raw evidence, local paths, or secrets.
+- [x] G19: The operations overview reports current release-gate status without publishing raw evidence, local paths, or secrets.
   CHECK: node --test tests/unit/docs-site.test.mjs
   EXPECT: /# fail 0/
-  EVIDENCE: pending
+  EVIDENCE: `node --test tests/unit/docs-site.test.mjs` passed all 6 tests on 2026-10-25. Tests cover gate parsing, duplicate/malformed rows, HTML escaping, evidence omission, artifact path/credential checks, operator navigation, and SHA-pinned workflow permissions/deploy guards.
 
 - [ ] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
-  EVIDENCE: pending
+  EVIDENCE: Partial on 2026-10-25. Pages source is configured as `workflow` for `Schero94/clouddev-ai-sovereign-workspace`; GitHub API read-back returns `https://schero94.github.io/clouddev-ai-sovereign-workspace/`. The first workflow deployment and public-page read-back have not completed yet.
 
 - [x] G1: Current CloudCLI package, auth boundary, workspace discovery and session recovery behavior are verified against the pinned upstream release.
   CHECK: node --test services/ide/test/cloudcli-runtime.integration.test.mjs

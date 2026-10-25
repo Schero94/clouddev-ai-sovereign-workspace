@@ -19,6 +19,10 @@ the upstream provider.
 > advisories. Keep the dashboard and inference endpoints private until G15 and
 > G17 are closed on the exact release images.
 
+The documentation source is in [`docs/`](docs/index.md). GitHub Pages is
+configured for Actions publishing. The public link will be added after the first
+deployment is verified.
+
 ## Architecture
 
 ```mermaid
@@ -95,10 +99,19 @@ deployer does not need to write gateway URLs or CLI settings. Provider API keys
 are deliberately not template variables. After deployment, the owner adds them
 in OmniRoute, creates a scoped inference key, and runs `ai-setup` once.
 
+## Documentation
+
+The documentation source is in [`docs/`](docs/index.md). Preview it locally
+with `npm run docs:check`. That command runs the documentation tests, builds in
+strict mode, and checks the generated public artifact for private files and
+credential-shaped values. Pull requests run the same check. GitHub Pages only
+deploys the reviewed artifact from `main`.
+
 ## Requirements
 
 - Docker Engine with Docker Compose v2 for local development.
 - Node.js 24.22 or later for repository checks.
+- Python 3.13 and `uv` to build and check the documentation site.
 - A Railway account for deployment. A fresh project should be used for the
   first deployment test.
 - The operator must provide AI provider credentials through OmniRoute. Paid
@@ -312,5 +325,6 @@ below with the real code and remove this comment wrapper.
 
 ### Unreleased
 
+- Searchable GitHub Pages documentation and an automatically generated release-status page are being prepared. The public site link will be added after the Pages deployment is verified.
 - Cross-device workspace runtime and Railway Marketplace publication are under
   active implementation and verification.

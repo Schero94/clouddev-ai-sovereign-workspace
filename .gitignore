@@ -4,6 +4,10 @@
 .DS_Store
 node_modules/
 **/node_modules/
+.venv/
+**/.venv/
+.docs-site/
+docs/operations/RELEASE_STATUS.md
 __pycache__/
 **/__pycache__/
 *.py[cod]
