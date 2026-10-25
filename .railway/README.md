@@ -106,8 +106,9 @@ to be retrieved. Never print them in logs.
 
 ## Safe plan and deployment procedure
 
-1. Publish the repository to a public Git host and add that source to a new
-   Railway project through the Template Composer.
+1. Select the published
+   `Schero94/clouddev-ai-sovereign-workspace` repository as the source for a
+   new Railway project through the Template Composer.
 2. Review service roots, three HTTP domains, the workspace and Forgejo TCP
    proxies, the region, all secret generators, and volume sizes in Composer.
 3. Link only a fresh test project, run `railway config plan`, and inspect every

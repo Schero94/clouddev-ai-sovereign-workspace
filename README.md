@@ -210,7 +210,8 @@ scripts are not automatically run when cloning.
 
 See [SECURITY.md](SECURITY.md),
 [the hardening guide](docs/security/SECURITY_HARDENING.md), and
-[the threat model](docs/security/THREAT_MODEL.md).
+[the threat model](docs/security/THREAT_MODEL.md). Current local image scan
+results and release holds are in [IMAGE_SCAN.md](docs/security/IMAGE_SCAN.md).
 
 ## Privacy boundaries
 
