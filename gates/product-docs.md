@@ -24,4 +24,4 @@ Scope: The public site and click-through guides use real product evidence, clear
   EVIDENCE: Manually inspected all 14 source PNG captures. Forms are empty; no credentials, account identifiers, Railway project IDs, or private repository contents are visible. One horizontally cropped OmniRoute mobile capture and unused local captures are excluded from the generated site.
 
 - [x] G6: Current GitHub Pages deployment corresponds to the reviewed source commit.
-  EVIDENCE: Pages Actions run `40244029687` succeeded for commit `52edd889a5b181178bbda20da57a6bcc22b6edfa`; the live home and release-status routes return HTTP 200. The published status page reports 17/24 gates and Playwright verifies desktop and 390px layouts, images, links, and no console errors.
+  EVIDENCE: Pages Actions run `40244904663` succeeded for commit `c6f1fb9f5856cbec46e1868e920a9a77ed00e8f2`; the live release-status route returns HTTP 200 and reports 17/24 gates. Playwright verified the home page at 1440px and 390px, both launchpad images load, the page has no horizontal overflow, and the browser reports 0 errors and 0 warnings.
