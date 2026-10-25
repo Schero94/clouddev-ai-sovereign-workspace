@@ -11,7 +11,7 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [x] G2: IDE, CloudCLI, Codex, Claude Code, SSH, agent configuration, projects and task state use one persistent `/workspace` mount; application processes other than sshd/supervisor run as UID 1000 without capabilities.
   CHECK: npm test
   EXPECT: pass
-  EVIDENCE: `npm test` passed: 114 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
+  EVIDENCE: `npm test` passed on 2026-10-25: 115 passed, 0 failed, 3 skipped. Image and runtime tests assert the shared mount paths, unprivileged UIDs and restricted process capabilities.
 
 - [x] G3: Every browser route is authenticated, SSH accepts keys only, and no shared service port or administrator secret is exposed to agent processes.
   CHECK: npm run test:security
