@@ -3,6 +3,19 @@
 No gate is complete until its verification was run and evidence was recorded.
 The always-on cross-device flow is a release-blocking product requirement.
 
+- [ ] G18: Public documentation builds from the existing Markdown sources with strict navigation/link validation and no private build inputs in the artifact.
+  CHECK: npm run docs:build
+  EXPECT: /Documentation build passed/
+  EVIDENCE: pending
+
+- [ ] G19: The operations overview reports current release-gate status without publishing raw evidence, local paths, or secrets.
+  CHECK: node --test tests/unit/docs-site.test.mjs
+  EXPECT: /# fail 0/
+  EVIDENCE: pending
+
+- [ ] G20: GitHub Pages is enabled for the public repository and the latest `main` build is available at the GitHub Pages URL.
+  EVIDENCE: pending
+
 - [x] G1: Current CloudCLI package, auth boundary, workspace discovery and session recovery behavior are verified against the pinned upstream release.
   CHECK: node --test services/ide/test/cloudcli-runtime.integration.test.mjs
   EXPECT: pass
@@ -21,13 +34,12 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work.
   CHECK: npm run test:cross-device
   EXPECT: pass
-  EVIDENCE: Partial local check only. `npm run test:cross-device` verifies cookie gating, bearer-token preservation and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge remain unverified.
+  EVIDENCE: Partial local check on 2026-10-25. `npm run test:cross-device` passed the pinned Caddy integration test for cookie gating, CloudCLI bearer-token preservation, and WebSocket upgrades over local HTTP. Railway-generated HTTPS and the deployed auth edge remain unverified.
 
 - [ ] G5: Starting Codex or Claude from native VS Code produces a session CloudCLI can discover and resume, and follow-up changes share the same project files.
   CHECK: npm run test:session-handoff
   EXPECT: pass
-  EVIDENCE: Partial local acceptance on 2026-10-25. A detached Claude Code task started through key-authenticated SSH was indexed in CloudCLI, followed up from mobile, and its file change appeared in browser VS Code and Forgejo. The task was not started from native VS Code Desktop; Railway acceptance is open.
-  EVIDENCE: ℹ todo 0 | ℹ duration_ms 252.938527
+  EVIDENCE: Partial local acceptance on 2026-10-25. `npm run test:session-handoff` passed against CloudCLI 1.37.5, and a detached Claude Code task started through key-authenticated SSH was indexed in CloudCLI, followed up from mobile, and its file change appeared in browser VS Code and Forgejo. The task was not started from native VS Code Desktop; Railway acceptance is open.
 
 - [x] G6: Agent activity continues after browser/desktop disconnect. Restart handling marks in-flight work interrupted and exposes supported recovery without claiming a killed process continued.
   CHECK: npm run test:recovery
