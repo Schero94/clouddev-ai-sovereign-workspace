@@ -65,6 +65,34 @@ test("Composer manifest covers every IaC preserve() variable", () => {
   }
 });
 
+test("fresh template deployments generate all service secrets and request only operator-owned SSH/provider setup", () => {
+  assert.equal(manifest.generatedSecrets.length, 10);
+  assert.deepEqual(
+    manifest.generatedSecrets.map(({ service, name }) => `${service}.${name}`).sort(),
+    [
+      "clouddev-git.FORGEJO_ADMIN_PASSWORD",
+      "clouddev-git.FORGEJO_POSTGRES_PASSWORD",
+      "clouddev-ide.CLOUDDEV_WORKSPACE_AUTH_SECRET",
+      "clouddev-ide.CODE_SERVER_PASSWORD",
+      "clouddev-router.API_KEY_SECRET",
+      "clouddev-router.INITIAL_PASSWORD",
+      "clouddev-router.JWT_SECRET",
+      "clouddev-router.MACHINE_ID_SALT",
+      "clouddev-router.OMNIROUTE_WS_BRIDGE_SECRET",
+      "clouddev-router.STORAGE_ENCRYPTION_KEY",
+    ].sort(),
+  );
+  assert.equal(manifest.operatorInputs.length, 1);
+  assert.equal(manifest.operatorInputs[0].name, "SSH_AUTHORIZED_KEYS");
+  assert.deepEqual(
+    manifest.postDeploySetup.map(({ name }) => name).sort(),
+    ["Provider credentials", "Scoped inference credential"].sort(),
+  );
+  assert.match(variableDocumentation, /All other application values are fixed defaults or private\s+references in the IaC file/);
+  assert.match(variableDocumentation, /Provider API keys are not template variables/);
+  assert.match(variableDocumentation, /creates a restricted inference key/);
+});
+
 test("every stateful service has persistent data, and the Composer does not embed provider keys", () => {
   assert.match(source, /volumeMounts:\s*\{\s*"\/workspace":\s*workspaceData/);
   assert.match(source, /volumeMounts:\s*\{\s*"\/var\/lib\/gitea":\s*forgejoData/);

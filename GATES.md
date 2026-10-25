@@ -51,16 +51,16 @@ The always-on cross-device flow is a release-blocking product requirement.
   EVIDENCE: `npm run check:railway` passed with Railway 3.16.0 and TypeScript 7.0.2.
 
 - [ ] G11: A safe `railway config plan` in a dedicated fresh test project shows the expected services, volumes, references, TCP proxy, and no destructive changes.
-  EVIDENCE: Open. Read-only `railway status --json` shows the linked `clouddev-ai-validation` project is empty and belongs to a shared business workspace, not the intended personal-account target. No plan was applied and no services were created.
+  EVIDENCE: Open on 2026-10-25. `railway whoami --json` and `railway project list --json` show access only to the Joulee Tech workspace. The linked `clouddev-ai-validation` project is empty and is not the intended personal-account target. No plan was applied and no services were created.
 
 - [ ] G12: A fresh Railway deployment in `europe-west4-drams3a` proves TCP SSH, public HTTPS auth, no serverless sleep, shared storage, desktop/mobile handoff and recovery after service restart.
-  EVIDENCE: pending
+  EVIDENCE: Open. No fresh personal-account Railway project is available to deploy into. No live domains, proxies, volumes, sleep settings, or cross-device behavior are claimed.
 
 - [ ] G13: Restore drills prove the workspace, Forgejo, PostgreSQL and OmniRoute data can be recovered from documented backups.
   EVIDENCE: Partial local evidence on 2026-10-25. A logical dump of the local Forgejo database was restored into an isolated PostgreSQL 18.6 container, and 131 application tables matched. The test did not include role state, the Forgejo volume, workspace files, or OmniRoute; see `docs/security/BACKUP_RESTORE.md`. G13 remains open.
 
 - [ ] G14: Marketplace template is created, published, and successfully test-deployed. No template ID or verified badge is claimed before Railway confirms it.
-  EVIDENCE: pending
+  EVIDENCE: Open. No Railway template ID or URL exists. Creation and publication are held until the intended Railway workspace is available and image-security gates G15/G17 are closed.
 
 - [ ] G15: OmniRoute dashboard dependency vulnerabilities are patched in a rebuilt upstream image and authenticated runtime checks pass before its public domain is enabled.
   EVIDENCE: Open on 2026-10-25. Trivy 0.76.1 scanned the built local router image and found 2 critical and 48 high package findings, including two unique critical Next.js advisories in pinned Next.js 16.3.8. The public OmniRoute release remains 3.8.52, and upstream main still declares Next.js 16.3.8. Full results and image ID are in `docs/security/IMAGE_SCAN.md`. No patched router image or full source rebuild has passed health, authentication, inference, and dependency checks.
@@ -68,7 +68,7 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [x] G16: Every IaC `preserve()` variable has an explicit Railway Template Composer value or a documented operator input. Generated credentials use per-deployment `secret()` functions; provider master keys are excluded.
   CHECK: npm run check:railway-template
   EXPECT: pass
-  EVIDENCE: `npm run check:railway-template` passed 3 tests on 2026-10-25. They match all 11 `preserve()` entries against `.railway/template-variables.json`, validate the generated-secret expression and required SSH public-key input, check all 57 IaC application variable names against the guide and declared persistent mounts, reject provider master-key fields, and verify GitHub sources for the three app services. Live Composer configuration remains unverified.
+  EVIDENCE: `npm run check:railway-template` passed 4 tests on 2026-10-25. Tests match all 11 `preserve()` entries against `.railway/template-variables.json`, enforce the exact ten generated-secret names and one required SSH public-key input, document all 57 IaC application variables, exclude provider API keys, and verify GitHub sources for the three app services. This verifies the checked-in Composer specification, not a live Railway template, which remains uncreated.
 
 - [ ] G17: All four local Compose images are scanned, high and critical findings are triaged, and the exact release images pass the documented deployment security criteria.
   CHECK: npm run scan:images

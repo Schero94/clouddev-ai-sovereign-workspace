@@ -100,8 +100,9 @@ Composer. The IaC type-check does not prove those live settings exist.
 
 ## Provider setup after deployment
 
-Provider master keys cannot be preconfigured for a public template. The owner
-adds their own credentials through OmniRoute's authenticated dashboard, then
+Provider API keys are not template variables and cannot be preconfigured for a
+public template. The owner adds their own credentials through OmniRoute's
+authenticated dashboard, then
 creates a restricted inference key and runs `ai-setup`. The selected model and
 scoped key configuration persist in the workspace volume. Agent processes can
 read that scoped inference key while running, but they do not receive provider

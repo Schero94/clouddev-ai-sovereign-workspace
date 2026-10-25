@@ -81,6 +81,20 @@ the same live tree. Volume-backed services cannot use horizontal replicas.
 - Startup recovery metadata that marks prior `running` tasks as `interrupted`.
   It does not replay prompts or claim a killed process continued.
 
+## Railway variables are preconfigured
+
+Service defaults and private service references are declared in
+`.railway/railway.ts`. When preparing the public template, the Composer must
+include ten independent `secret()` values and one required
+`SSH_AUTHORIZED_KEYS` field for the deployer's Ed25519 public key. Railway
+generates those secrets for each deployment. The complete list and descriptions
+are in [RAILWAY_TEMPLATE_VARIABLES.md](docs/operations/RAILWAY_TEMPLATE_VARIABLES.md).
+
+Codex, Claude Code, and their OmniRoute connection are preconfigured. The
+deployer does not need to write gateway URLs or CLI settings. Provider API keys
+are deliberately not template variables. After deployment, the owner adds them
+in OmniRoute, creates a scoped inference key, and runs `ai-setup` once.
+
 ## Requirements
 
 - Docker Engine with Docker Compose v2 for local development.
