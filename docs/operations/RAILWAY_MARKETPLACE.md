@@ -88,6 +88,15 @@ does not publish a Marketplace template by itself.
    plus a 10% support bonus for actively answering questions in the Template
    Queue, for up to 25% total. This program is separate from Railway's Open
    Source & Technology Partners program.
+   The linked [Open Source Kickback page](https://railway.com/open-source-kickback)
+   currently headlines 25% and says there is no minimum payout, while the
+   detailed [Template Kickbacks docs](https://docs.railway.com/templates/kickbacks)
+   describe 15% plus the support bonus and a $0.01 minimum payout. These
+   first-party pages do not fully agree. Do not promise a specific rate or
+   payout until the current eligibility and terms are confirmed in the owner's
+   Railway account. The landing page describes publishing a working Marketplace
+   template as the route to eligibility; it does not present a separate
+   application form.
 4. The separate partner program is applied for at
    [railway.com/partners](https://railway.com/partners). Its documented open
    source onboarding includes template verification, a standalone deployment
