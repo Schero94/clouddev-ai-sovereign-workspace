@@ -390,8 +390,9 @@ Compose, mock-provider, Git, and security checks are not substitutes for the
 open live gates. G4 and G5 still need full cross-device evidence; G12 needs a
 fresh Railway deployment; G13 proves a local four-store data-level restore but
 not Railway recovery; G14 needs a published and test-deployed Marketplace
-template. G15/G17 are the image security release hold. G20/G23 remain open
-until the current docs publish and the GitHub social preview is uploaded. G24
+template. G15/G17 are the image security release hold. G20 is complete:
+GitHub Pages serves the reviewed documentation. G23 remains open until the
+repository social preview is uploaded. G24
 passed an isolated application-level restore, while CloudCLI session resume
 remains unverified.
 
