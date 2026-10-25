@@ -96,6 +96,7 @@ test("Pages workflow pins actions, isolates write permissions, and never deploys
   assert.match(deployJob, /permissions:\s*\n\s+contents:\s*read\s+pages:\s*write\s+id-token:\s*write/s);
   assert.match(deployJob, /needs:\s*build/);
   assert.match(deployJob, /if:\s*>-[\s\S]*github\.ref == 'refs\/heads\/main'/);
+  assert.equal((workflow.match(/runs-on: ubuntu-24\.04/g) ?? []).length, 2, "runner image should be pinned for build and deploy");
   assert.match(deployJob, /github\.event_name == 'workflow_dispatch' && github\.ref == 'refs\/heads\/main'/);
   assert.doesNotMatch(workflow, /pull_request_target/);
   assert.doesNotMatch(workflow, /pull_request[^\n]*\n[\s\S]{0,800}deploy:\s*if:\s*always\(\)/);
