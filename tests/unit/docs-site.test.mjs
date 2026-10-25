@@ -110,6 +110,8 @@ test("documentation landing page explains the shared workspace and routes users 
   assert.match(stylesheet, /:focus-visible/);
   assert.match(stylesheet, /@media[^\{]*max-width/);
   assert.match(stylesheet, /body:has\(\.cd-home-title\) \.cd-route-grid/);
+  assert.match(stylesheet, /grid-template-columns:\s*2\.1rem minmax\(0,\s*1fr\)/, "mobile release note should reserve a fixed icon column and leave room for its copy");
+  assert.match(stylesheet, /\.cd-release-note > p:last-child\s*\{\s*grid-column:\s*2/s, "the release-status link should sit below the message on narrow screens");
   assert.doesNotMatch(stylesheet, /@import\s+url|fonts\.googleapis\.com/i);
 });
 

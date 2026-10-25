@@ -454,7 +454,7 @@ body:has(.cd-home-title) .cd-architecture__foot {
 
 body:has(.cd-home-title) .cd-release-note {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 2.1rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.9rem;
   margin: 1.4rem 0 3.3rem;
@@ -481,6 +481,10 @@ body:has(.cd-home-title) .cd-release-note p {
   color: var(--md-default-fg-color--light);
   font-size: 0.76rem;
   line-height: 1.5;
+}
+
+body:has(.cd-home-title) .cd-release-note > p:first-child {
+  margin: 0;
 }
 
 body:has(.cd-home-title) .cd-release-note strong {
@@ -732,11 +736,15 @@ body:has(.cd-home-title) .cd-home-footer a {
   }
 
   body:has(.cd-home-title) .cd-release-note {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 2.1rem minmax(0, 1fr);
     margin-bottom: 2.5rem;
   }
 
   body:has(.cd-home-title) .cd-inline-link {
+    grid-column: 2;
+  }
+
+  body:has(.cd-home-title) .cd-release-note > p:last-child {
     grid-column: 2;
   }
 
