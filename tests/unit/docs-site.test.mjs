@@ -28,6 +28,16 @@ function assertPageMetadata(markdown, route) {
   assert.match(frontmatter[1], /^tags:\s*\n(?:\s+-\s+\S.+\n?){2,}/m, `${route} needs at least two descriptive tags`);
 }
 
+test("docs check generates the ignored release-status page before link tests run on a clean checkout", () => {
+  const scripts = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).scripts;
+  const command = scripts["docs:check"];
+  const generateIndex = command.indexOf("npm run docs:generate");
+  const testsIndex = command.indexOf("node --test");
+
+  assert.ok(generateIndex >= 0 && generateIndex < testsIndex,
+    "docs:check must create the generated local link target before tests that validate it");
+});
+
 test("parses gate identifiers, status, and labels without reading evidence lines", () => {
   const gates = parseGates([
     "# Release gates",

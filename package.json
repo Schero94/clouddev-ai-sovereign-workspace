@@ -27,7 +27,7 @@
     "check:railway-template": "node --test tests/unit/railway-template-contract.test.mjs",
     "docs:generate": "node scripts/generate-docs-status.mjs",
     "docs:build": "npm run docs:generate && uv run --project docs-site --locked mkdocs build --strict",
-    "docs:check": "node --test tests/unit/docs-site.test.mjs tests/unit/docs-seo.test.mjs tests/unit/docs-screenshots.test.mjs && npm run docs:build && node scripts/check-docs-artifact.mjs .docs-site/site",
+    "docs:check": "npm run docs:generate && node --test tests/unit/docs-site.test.mjs tests/unit/docs-seo.test.mjs tests/unit/docs-screenshots.test.mjs && uv run --project docs-site --locked mkdocs build --strict && node scripts/check-docs-artifact.mjs .docs-site/site",
     "check:launchpad": "node --check services/launchpad/src/server.mjs && node --check services/launchpad/public/app.js",
     "verify:local": "./scripts/verify-local.sh"
   }
