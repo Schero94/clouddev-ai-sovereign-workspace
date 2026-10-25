@@ -79,7 +79,7 @@ test("README reports verified capabilities separately from open deployment gates
   expectMatch(/mock (?:LLM )?provider tests/i, "mock-provider evidence should be explicit");
   expectMatch(/Forgejo[\s\S]{0,180}(?:private|repository|push)/i, "private Git evidence should be explicit");
   expectMatch(/same persistent (?:workspace|filesystem|project tree)/i, "shared persistent files should be explicit");
-  expectMatch(/(?:16 of 24|16\/24) gates complete/i, "release status should be stated directly");
+  expectMatch(/(?:17 of 24|17\/24) gates complete/i, "release status should be stated directly");
   expectMatch(/G15[\s\S]{0,100}G17|G17[\s\S]{0,100}G15/i, "both image release gates should be named");
   expectMatch(/security release hold|release remains on hold/i, "the security hold should be explicit");
   expectMatch(/not (?:a )?(?:published|one-click-verified)|not a published or one-click-verified/i, "the template must not be presented as published");

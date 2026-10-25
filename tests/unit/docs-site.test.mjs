@@ -53,6 +53,13 @@ test("parses gate identifiers, status, and labels without reading evidence lines
   ]);
 });
 
+test("root release ledger contains every unique gate from G1 through G24", () => {
+  const gates = parseGates(readFileSync(path.join(root, "GATES.md"), "utf8"));
+  const ids = gates.map(gate => gate.id).sort((left, right) => Number(left.slice(1)) - Number(right.slice(1)));
+
+  assert.deepEqual(ids, Array.from({ length: 24 }, (_, index) => `G${index + 1}`));
+});
+
 test("rejects duplicate or malformed gate identifiers instead of publishing ambiguous status", () => {
   assert.throws(() => parseGates("- [ ] G1: one\n- [x] G1: duplicate"), /duplicate gate/i);
   assert.throws(() => parseGates("- [ ] Broken: missing numeric id"), /invalid gate/i);

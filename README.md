@@ -13,7 +13,7 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 16 of 24 gates complete.** The Railway Marketplace release
+**Release status: 17 of 24 gates complete.** The Railway Marketplace release
 is not ready. The exact image security gates, fresh Railway deployment,
 application-level Railway restore, and parts of the cross-device acceptance remain open. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
@@ -54,6 +54,18 @@ publication have passed acceptance.
 | Local service stack | Docker Compose checks cover the IDE, Forgejo, PostgreSQL, and OmniRoute services with local health and persistence checks. This is not a live Railway deployment. |
 
 See [GATES.md](GATES.md) for the evidence and limits behind each result.
+
+## Launchpad screenshots
+
+These captures show the local launchpad build. They do not represent a live Railway deployment.
+
+![CloudDev AI launchpad on desktop with links to CloudCLI, browser VS Code, Forgejo, OmniRoute, Codex, and Claude Code.](docs/assets/screenshots/launchpad-services-desktop.png)
+
+*Desktop launchpad from the local build.*
+
+![CloudDev AI launchpad on a phone with the same workspace actions stacked for a narrow screen.](docs/assets/screenshots/launchpad-services-mobile.png)
+
+*Mobile launchpad from the local build.*
 
 ## Docker build contexts
 
@@ -373,7 +385,7 @@ Claude Code is not relicensed by this repository's MIT license.
 
 ## Release status
 
-This source snapshot reports **16 of 24 acceptance gates complete**. Local
+This source snapshot reports **17 of 24 acceptance gates complete**. Local
 Compose, mock-provider, Git, and security checks are not substitutes for the
 open live gates. G4 and G5 still need full cross-device evidence; G12 needs a
 fresh Railway deployment; G13 proves a local four-store data-level restore but
