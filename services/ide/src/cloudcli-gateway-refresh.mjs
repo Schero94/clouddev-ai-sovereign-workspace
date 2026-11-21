@@ -1,3 +1,4 @@
+import { statSync } from "node:fs";
 import path from "node:path";
 import { loadGatewayConfig } from "./ai-cli.mjs";
 import { ensureCodexGatewayConfig } from "./codex-config.mjs";
@@ -24,4 +25,37 @@ export function createCloudCliGatewayRefresher({
     env.ANTHROPIC_BASE_URL = gatewayConfig.baseUrl;
     return { baseUrl: gatewayConfig.baseUrl, models: { ...gatewayConfig.models } };
   };
+}
+
+// CloudCLI starts before the router hands over the workspace key. Its
+// provider status page reads process.env, so apply the key when it arrives.
+export function watchCloudCliGateway({
+  configPath,
+  refresh,
+  intervalMs = 5000,
+  stat = statSync,
+  schedule = callback => setInterval(callback, intervalMs),
+  cancel = clearInterval,
+}) {
+  let applied = null;
+  const check = () => {
+    let signature;
+    try {
+      const info = stat(configPath);
+      signature = `${info.mtimeMs}:${info.size}`;
+    } catch {
+      return;
+    }
+    if (signature === applied) return;
+    try {
+      refresh();
+      applied = signature;
+    } catch {
+      // The handoff may still be writing models; retry on the next tick.
+    }
+  };
+  check();
+  const timer = schedule(check);
+  timer?.unref?.();
+  return () => cancel(timer);
 }

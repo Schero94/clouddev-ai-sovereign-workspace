@@ -20,9 +20,9 @@ images. Verify license and version changes whenever a dependency is updated.
 | OpenSSH | Distribution package | BSD-style license and notices | [OpenSSH](https://www.openssh.com/) |
 | Python | 3.15.2 standalone build installed by uv; Debian's python3 stays for system tools | PSF-2.0 and bundled notices | [Python](https://github.com/python/cpython), [python-build-standalone](https://github.com/astral-sh/python-build-standalone) |
 | uv | 0.13.9, release archive checked by SHA-256 | Apache-2.0 or MIT | [Repository](https://github.com/astral-sh/uv) |
-| OpenAI Codex CLI | 0.164.0 | Apache-2.0 | [Repository](https://github.com/openai/codex) |
-| Anthropic Claude Code CLI | 2.1.310 | Anthropic proprietary terms; package includes a terms notice, not an OSI license | [Repository](https://github.com/anthropics/claude-code), [legal terms](https://code.claude.com/docs/en/legal-and-compliance) |
-| pnpm | 10.34.8 | MIT | [Repository](https://github.com/pnpm/pnpm) |
+| OpenAI Codex CLI | 0.171.0 | Apache-2.0 | [Repository](https://github.com/openai/codex) |
+| Anthropic Claude Code CLI | 2.1.330 | Anthropic proprietary terms; package includes a terms notice, not an OSI license | [Repository](https://github.com/anthropics/claude-code), [legal terms](https://code.claude.com/docs/en/legal-and-compliance) |
+| pnpm | 12.21.0 | MIT | [Repository](https://github.com/pnpm/pnpm) |
 | Red Hat YAML | 2.1.2026112008 | MIT | [Open VSX listing](https://open-vsx.org/extension/redhat/vscode-yaml) |
 | Error Lens | 3.30.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/usernamehw/errorlens) |
 | Even Better TOML | 0.21.2 | MIT | [Open VSX listing](https://open-vsx.org/extension/tamasfe/even-better-toml) |

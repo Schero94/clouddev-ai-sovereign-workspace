@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { ensureCodexGatewayConfig } from "./codex-config.mjs";
-import { createCloudCliGatewayRefresher } from "./cloudcli-gateway-refresh.mjs";
+import { createCloudCliGatewayRefresher, watchCloudCliGateway } from "./cloudcli-gateway-refresh.mjs";
 import { createTaskRegistry } from "./task-registry.mjs";
 import { installCloudCliTaskHook } from "./cloudcli-runtime-hook.mjs";
 
@@ -35,6 +35,10 @@ installCloudCliTaskHook(registryModule.chatRunRegistry, taskRegistry, {
   providerRegistry: providerRegistryModule.providerRegistry,
   providerModelsService: providerModelsModule.providerModelsService,
   refreshProviderConfig,
+});
+watchCloudCliGateway({
+  configPath: process.env.CLOUDDEV_GATEWAY_CONFIG_PATH || path.join(home, ".config/clouddev-ai/gateway.json"),
+  refresh: refreshProviderConfig,
 });
 
 process.stderr.write(`CloudCLI task recovery ready; ${interruptedCount} prior run(s) require manual review.\n`);
