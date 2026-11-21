@@ -22,7 +22,7 @@ The mock tests are `scripts/verify-mock-llm.mjs`, `tests/mock-llm/run-agents.mjs
 
 OpenAI documents that ChatGPT sign-in and API-key sign-in are distinct local Codex authentication methods. OpenAI states that API-key usage is billed at standard OpenAI API rates and does not use ChatGPT plan credits. See [Codex authentication](https://developers.openai.com/codex/auth).
 
-CloudDev's supported Codex route is the API-compatible path through OmniRoute. It does not relay or consume a ChatGPT subscription through OmniRoute. Signing in directly to Codex with ChatGPT is a separate authentication mode and is not evidence that requests pass through this gateway. This project does not claim that the pinned OmniRoute release provides a permitted ChatGPT-subscription relay.
+CloudDev's supported Codex route is the API-compatible path through OmniRoute. OmniRoute 3.8.54 also has its own official Sign in with ChatGPT and Sign in with Claude account flows in the dashboard. CloudDev does not relay a ChatGPT subscription by copying cookies or extracting tokens. Signing in directly to Codex with ChatGPT is a separate authentication mode and is not evidence that requests pass through this gateway. This repository has not live-tested the official account sign-in.
 
 Do not use token extraction, browser-cookie copying, account rotation, quota circumvention, rate-limit evasion, or shared credentials. Use provider credentials issued for the API product and follow that provider's current terms.
 

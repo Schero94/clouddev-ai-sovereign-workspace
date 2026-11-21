@@ -39,7 +39,8 @@ DOMPurify was not detected as a separate package.
 The Dockerfile now pins that index. This is a scan of the upstream image, not
 a rebuilt CloudDev overlay, and the container was not started. Health,
 authentication, inference, and persistence checks have not been run on 3.8.54.
-G15 and G17 stay open.
+G15 stays open for those runtime checks. The later local overlay scan closed
+the image-finding part recorded as G17.
 
 ## 2026-10-26 local overlay scan
 
@@ -101,17 +102,38 @@ findings. The container was not started.
 
 ## Release decision
 
-Do not call the set of release images clean and do not publish the Railway
-template as verified. On 2026-11-21 the rebuilt amd64 Postgres, Forgejo, and
-OmniRoute candidates scanned with 0 high and 0 critical findings. OmniRoute
-reaches that result by upgrading from the Debian sid snapshot
-`20261121T000000Z` and replacing OpenSSL 3.6.5 with the same release plus
-commit `f3acb0a` for `CVE-2026-124709`. The IDE candidate still has 104 high
-findings in Kerberos, Git, wget, bundled Node packages, and the Caddy binary.
-G15 stays open until the router image passes health, authentication,
-inference, and persistence checks. G17 stays open until the IDE candidate is
-clean and `npm run scan:images` passes as one command. No Railway service or
-volume was created.
+On 2026-11-21, `npm run scan:images` with Trivy 0.76.2 rebuilt the four amd64
+Compose candidates and exited 0. It printed `No HIGH or CRITICAL
+vulnerabilities were found in the configured Compose candidate images.` The
+scanned IDs were router
+`sha256:b2083f120e4fbea399bb4c80e50449499cd15e9ad39eb2f652c335f25a0bfcb8`, IDE
+`sha256:e7b12e3d45dd5941ff1423491d0fd159228cf6b1d5cc0bba5c5e02cf6bd6db3a`,
+Forgejo
+`sha256:27b7885a4cb3b66db4c3d692792fc48a46d3a58b48edadc5a9ced779bc506a0e`, and
+Postgres
+`sha256:b9b84d30c48bdc118fb51aba69106318b6c588a1af804592da4b5b3cd2abfa73`.
+OmniRoute reaches that result by upgrading from the Debian sid snapshot
+`20261121T000000Z` and replacing OpenSSL with 3.6.5 plus commit `f3acb0a`.
+The IDE image replaces Kerberos 1.22.3, Git 2.55.1, OpenSSL 3.6.5, and the
+Caddy binary built with Go 1.27.4. That first IDE image did not start. Its
+Caddy build imported the reverse-proxy package but not
+`caddyhttp/reverseproxy/forwardauth`, so Caddy rejected the gateway
+Caddyfile. The binary now imports that package and still does not import
+`modules/standard`. The rebuilt amd64 IDE is
+`sha256:56e8d1ab5f9cda9752983d63226ff3928f0b40f6d10c6c0297f55ed7f9a735d8`.
+Trivy 0.76.2 scanned that ID with `--severity HIGH,CRITICAL --exit-code 1`
+and exited 0. `npm run scan:images` was not rerun after this rebuild. A local
+boot of this IDE with the scanned router returned `/healthz` 200 and
+`/vscode/` 302, and `node /opt/clouddev-ide/src/healthcheck.mjs` exited 0.
+The boot project and its volumes were removed. That HTTP check does not close
+G4. No Railway service or volume was created.
+
+G17 is closed for these local candidates. On the same day the rebuilt amd64
+router answered `GET /omniroute/healthz` with 200, rejected anonymous and
+wrong-password requests, accepted the dashboard login, routed a scoped chat
+completion through a local mock provider, and kept that provider and key after
+a restart. G15 is closed for that private run. Do not publish the Railway
+template as verified from this local evidence.
 
 Before deployment, scan the rebuilt overlay and the other three release images
 again. Run the runtime checks on those same images. Record accepted,

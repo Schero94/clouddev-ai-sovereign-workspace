@@ -19,9 +19,9 @@ Use this guide after deploying a tested instance. The current Railway template i
 1. In Railway, open the `clouddev-ide` service and find its generated HTTPS domain under **Settings → Networking**.
 2. Open that domain in a browser. If the sign-in page asks for the workspace password, use the generated `CODE_SERVER_PASSWORD` from the deployment inputs. It is not a default password.
 3. Save the password in a password manager. Do not paste it into a terminal, chat, Git issue, or repository. After first access, seal the Railway variable if the variable inventory says it can be sealed.
-4. The launchpad opens with service health, desktop connection details, and first-run steps. CloudCLI, Forgejo, and OmniRoute keep separate accounts. Workspace sign-in does not sign you in to those services.
+4. The launchpad opens on Step 1. Each button opens the next page or copies the words you paste. Service health and the computer connection stay under More. CloudCLI, Forgejo, and OmniRoute keep separate accounts. Workspace sign-in does not sign you in to those services.
 
-The launchpad screenshots below are captures from the local build. They show the actual service cards, not a Railway deployment.
+The launchpad screenshots below are earlier local captures of the service cards, not the current Step 1 page and not a Railway deployment.
 
 <div class="cd-screenshot-grid cd-screenshot-grid--guide">
 <figure class="cd-screenshot cd-screenshot--desktop">
@@ -30,7 +30,7 @@ The launchpad screenshots below are captures from the local build. They show the
 </figure>
 <figure class="cd-screenshot cd-screenshot--mobile">
 <img src="../../assets/screenshots/launchpad-services-mobile.png" alt="CloudDev AI mobile launchpad with the same six service cards in a vertical layout." width="364" height="795" loading="lazy" decoding="async">
-<figcaption><strong>Phone layout</strong><span>Open the same workspace origin from an iPhone or Android browser.</span></figcaption>
+<figcaption><strong>Phone layout</strong><span>Open the same workspace origin from an iPhone, iPad, or Android browser, then use Open the workspace.</span></figcaption>
 </figure>
 </div>
 
@@ -46,6 +46,8 @@ The launchpad screenshots below are captures from the local build. They show the
 </figure>
 
 The launchpad shortcut is not a shared sign-on service. CloudCLI, Forgejo, and OmniRoute have their own authentication.
+
+Git is optional. If you only want ChatGPT and Claude in the workspace, skip this section and continue at [Add a provider in OmniRoute](#4-add-a-provider-in-omniroute).
 
 ## 3. Set up Forgejo for Git
 
@@ -70,9 +72,9 @@ If the generated bootstrap password is no longer available, use the documented F
 ## 4. Add a provider in OmniRoute
 
 1. Return to the launchpad and click **Manage AI providers**.
-2. Sign in to OmniRoute with its generated bootstrap password. Change that password before adding provider credentials.
-3. In OmniRoute's authenticated dashboard, add a provider account using its documented integration. Provider credentials belong here, not in the Railway template or workspace environment.
-4. Create an inference key with only the model access needed by this workspace. Keep the provider master key in OmniRoute.
+2. Sign in to OmniRoute with its generated bootstrap password. Change that password before connecting accounts.
+3. In **Providers**, use **Sign in with ChatGPT** and **Sign in with Claude**. Those are OmniRoute's official account sign-ins. For DeepSeek, add the API key from its console. DeepSeek has no account sign-in, and a chat-website token is not an API key.
+4. Create one inference key for this workspace. Keep the provider account credentials in OmniRoute.
 
 The list of providers and models depends on the pinned OmniRoute release and the provider account. CloudDev does not package provider keys or promise that every model supports both agents.
 

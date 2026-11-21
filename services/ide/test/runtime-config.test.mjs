@@ -40,7 +40,7 @@ test("keeps code-server on loopback without a second password and puts all brows
   assert.match(supervisor, /127\.0\.0\.1:8081/);
   assert.match(supervisor, /"--auth", "none"/);
   assert.match(read("src/service-environment.mjs"), /LAUNCHPAD_PORT: "3002"/);
-  assert.match(dockerfile, /COPY --from=caddy-runtime \/usr\/bin\/caddy \/usr\/bin\/caddy/);
+  assert.match(dockerfile, /COPY --from=caddy-build \/out\/caddy \/usr\/bin\/caddy/);
   assert.match(dockerfile, /COPY services\/launchpad\/src\//);
 });
 
@@ -63,6 +63,7 @@ test("isolates Caddy, launchpad, code-server, CloudCLI, and sshd under the agree
   assert.match(entrypoint, /unset caddy_secret CODE_SERVER_PASSWORD/);
   assert.match(entrypoint, /CLOUDDEV_LAUNCHPAD_NODE_ENV=\"\$\{CLOUDDEV_LAUNCHPAD_NODE_ENV:-\}\"/);
   assert.match(entrypoint, /unset operator_keys SSH_AUTHORIZED_KEYS/);
+  assert.match(entrypoint, /install-editor-seed\.mjs/);
   assert.match(entrypoint, /CLOUDDEV_WORKSPACE_PASSWORD=\"\$workspace_password\"/);
   assert.match(entrypoint, /CLOUDDEV_WORKSPACE_AUTH_SECRET=\"\$workspace_auth_secret\"/);
   assert.match(entrypoint, /unset caddy_secret CODE_SERVER_PASSWORD/);

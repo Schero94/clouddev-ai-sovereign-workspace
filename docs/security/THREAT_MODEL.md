@@ -7,11 +7,10 @@ of workspace or Git credentials, malicious repository content executing with
 the workspace user's permissions, outbound data transfer from an agent, and
 unverified upstream dependencies in the public OmniRoute dashboard. The local
 runtime has separate browser-cookie and SSH-key entry points, but it is not a
-sandbox for hostile code. The OmniRoute image uses a pinned release whose
-Next.js version is within published advisory ranges. Some affected features
-are disabled or mitigated in the upstream build, but the Marketplace release
-gate remains open until the image is rebuilt or replaced with a fully verified
-patched release.
+sandbox for hostile code. The local OmniRoute overlay was rebuilt and scanned
+on 2026-11-21 with no high or critical findings, and its private runtime check
+passed. The Marketplace template is still unpublished, so this model does not
+treat that image as a verified Railway release.
 
 ## Scope and assumptions
 

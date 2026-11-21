@@ -13,6 +13,13 @@ tags:
 
 This guide connects a provider to the private OmniRoute service, then configures CloudDev's Codex and Claude Code wrappers with a scoped gateway key. The provider credential stays in OmniRoute. The workspace receives a separate key for model discovery and inference.
 
+The short path is three provider actions, then one workspace command:
+
+1. Open **Manage AI providers** and sign in to OmniRoute.
+2. Use **Sign in with ChatGPT** and **Sign in with Claude**. These are OmniRoute 3.8.54's official account sign-ins.
+3. Add a DeepSeek API key. DeepSeek publishes an API key, not an account sign-in.
+4. Create one scoped inference key and run `ai-setup` once. Do not paste a ChatGPT, Claude, or DeepSeek credential into that prompt.
+
 For protocol-specific support and test boundaries, see [Provider compatibility](../providers/COMPATIBILITY.md).
 
 ## Before you start
@@ -106,9 +113,11 @@ The DeepSeek API is separate from its consumer chat website. A consumer-site fre
 
 ## OpenAI API and ChatGPT sign-in
 
-To route Codex through OmniRoute, create an OpenAI Platform API key in the [OpenAI API key dashboard](https://platform.openai.com/api-keys), then add an OpenAI **API** connection to OmniRoute. Create the separate CloudDev inference key and select a compatible model in `ai-setup`. OpenAI API-key requests use standard API billing.
+For ChatGPT, open OmniRoute's **Providers** page and use **Sign in with ChatGPT**. For Claude, use **Sign in with Claude**. Those are the official account sign-ins in OmniRoute 3.8.54. This guide has not live-tested either sign-in.
 
-Codex can also sign in directly with ChatGPT. That is a separate sign-in mode. CloudDev does not route a ChatGPT subscription through OmniRoute, and this setup guide does not provide a subscription relay. If you choose direct ChatGPT sign-in for Codex, do not assume the request uses OmniRoute. Never copy browser cookies or Codex auth files to simulate another sign-in flow.
+An OpenAI Platform API key remains available for API billing. Create it in the [OpenAI API key dashboard](https://platform.openai.com/api-keys), then add an OpenAI **API** connection to OmniRoute. Create the separate CloudDev inference key and select a compatible model in `ai-setup`. OpenAI API-key requests use standard API billing.
+
+Codex can also sign in directly with ChatGPT. That is a separate sign-in mode and does not by itself send requests through OmniRoute. Never copy browser cookies or Codex auth files to simulate another sign-in flow. CloudDev does not relay a ChatGPT subscription by copying cookies or extracting tokens.
 
 ## Free and no-key providers
 

@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="CloudDev AI">
     <meta name="color-scheme" content="dark light">
     <title>CloudDev AI | Sovereign Workspace</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -20,11 +22,57 @@
       </header>
 
       <section class="hero">
-        <p class="eyebrow">SOVEREIGN WORKSPACE</p>
-        <h1>Your tools, in one place.</h1>
-        <p class="intro">A private development workspace for your code, repositories and AI providers.</p>
+        <p class="eyebrow">START HERE</p>
+        <h1>Four steps. One button each.</h1>
+        <p class="intro">iPhone, iPad, and Android use this same page. Each button opens the next page or copies the words you paste. You can skip Git and the computer connection.</p>
       </section>
 
+      <section class="section guide-section" aria-labelledby="touch-heading">
+        <h2 id="touch-heading">Step 1. Open the workspace</h2>
+        <ol class="guide-steps">
+          <li class="guide-step guide-step-current">
+            <span class="guide-index" aria-hidden="true">1</span>
+            <div class="guide-body">
+              <h3>Open the workspace</h3>
+              <p>This is the page where you write. On iPhone or iPad, tap Share, then Add to Home Screen. It opens like an app the next time.</p>
+              <a class="guide-button guide-button-primary" data-link="vscode" aria-disabled="true" tabindex="-1">Open the workspace</a>
+            </div>
+          </li>
+          <li class="guide-step">
+            <span class="guide-index" aria-hidden="true">2</span>
+            <div class="guide-body">
+              <h3>Sign in to ChatGPT and Claude</h3>
+              <p>This button opens the sign-in page. Choose Sign in with ChatGPT and Sign in with Claude. DeepSeek has no login. Add its API key only if you already have one.</p>
+              <a class="guide-button" data-link="router" aria-disabled="true" tabindex="-1">Open sign-in</a>
+            </div>
+          </li>
+          <li class="guide-step">
+            <span class="guide-index" aria-hidden="true">3</span>
+            <div class="guide-body">
+              <h3>Connect one key</h3>
+              <p>On the sign-in page, create one limited key. This button opens the workspace and copies the setup words. Paste them in Terminal. Do not paste your ChatGPT or Claude password.</p>
+              <button class="guide-button" type="button" data-copy="ai-setup" data-open="vscode">Copy setup</button>
+            </div>
+          </li>
+          <li class="guide-step">
+            <span class="guide-index" aria-hidden="true">4</span>
+            <div class="guide-body">
+              <h3>Start writing</h3>
+              <p>Pick one assistant. The button opens the workspace and copies the start words. Paste them in Terminal.</p>
+              <div class="guide-actions">
+                <button class="guide-button" type="button" data-agent="codex">Start Codex</button>
+                <button class="guide-button" type="button" data-agent="claude">Start Claude</button>
+              </div>
+            </div>
+          </li>
+        </ol>
+        <p class="notice" id="copy-notice" role="status" hidden></p>
+        <p class="notice" id="agent-notice" role="status" hidden></p>
+      </section>
+
+      <details class="more-setup">
+        <summary>More, only if you need it</summary>
+        <div class="more-panel">
       <section class="section" aria-labelledby="workspace-heading">
         <div class="section-heading">
           <div><p class="eyebrow">WORKSPACE</p><h2 id="workspace-heading">Open a service</h2></div>
@@ -33,47 +81,51 @@
         <div class="cards">
           <a class="card primary" data-link="cloudcli" aria-disabled="true" tabindex="-1">
             <span class="card-icon" aria-hidden="true">&gt;_</span><span class="card-title">Open CloudCLI</span>
-            <span class="card-copy">Workspace home and task history</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Your chats and earlier tasks</span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="card" data-link="vscode" aria-disabled="true" tabindex="-1">
             <span class="card-icon" aria-hidden="true">&lt;/&gt;</span><span class="card-title">Browser VS Code</span>
-            <span class="card-copy">Editor and integrated terminal</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">The page where you write, on phone, iPad, or computer</span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="card" data-link="git" aria-disabled="true" tabindex="-1">
             <span class="card-icon git-icon" aria-hidden="true">G</span><span class="card-title">Open Forgejo</span>
-            <span class="card-copy">Private repositories. Sign in with Forgejo.</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Private file history. You can skip Git. Sign in with Forgejo.</span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="card" data-link="router" aria-disabled="true" tabindex="-1">
             <span class="card-icon ai-icon" aria-hidden="true">✳</span><span class="card-title">Manage AI providers</span>
-            <span class="card-copy">OmniRoute settings. Sign in with OmniRoute.</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Sign in to ChatGPT and Claude. Add a DeepSeek API key.</span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
           <button class="card agent-card" data-agent="codex" type="button">
             <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Codex</span>
-            <span class="card-copy">Open Browser VS Code and run <code>ai-codex</code></span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Opens the workspace and copies the start words</span><span class="card-arrow" aria-hidden="true">↗</span>
           </button>
           <button class="card agent-card" data-agent="claude" type="button">
             <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Claude</span>
-            <span class="card-copy">Open Browser VS Code and run <code>ai-claude</code></span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Opens the workspace and copies the start words</span><span class="card-arrow" aria-hidden="true">↗</span>
           </button>
         </div>
-        <p class="notice" id="agent-notice" role="status" hidden></p>
       </section>
 
       <section class="section remote-section" aria-labelledby="remote-heading">
-        <div class="section-heading"><div><p class="eyebrow">DESKTOP</p><h2 id="remote-heading">Connect with VS Code Remote-SSH</h2></div></div>
-        <p class="remote-copy">Use the private key file supplied by the operator. The key stays on your computer.</p>
-        <p class="notice" id="ssh-status" role="status">SSH proxy details are not configured. The operator can map the IDE TCP proxy domain and port to <code>IDE_SSH_PROXY_HOST</code> and <code>IDE_SSH_PROXY_PORT</code>.</p>
+        <div class="section-heading"><div><p class="eyebrow">OPTIONAL</p><h2 id="remote-heading">Connect with VS Code Remote-SSH</h2></div></div>
+        <p class="remote-copy">Skip this on a phone or iPad. Use it only on a Mac or Windows computer if you already use VS Code. The private key stays on that computer.</p>
+        <p class="notice" id="ssh-status" role="status">Not needed on a phone or iPad. A computer connection appears here only after it is set up.</p>
         <pre class="ssh-config" id="ssh-config" hidden><code></code></pre>
         <p class="remote-copy fingerprint" id="ssh-fingerprint" hidden></p>
-        <p class="remote-copy">Paste the block into your local SSH config. In VS Code, choose <code>Remote-SSH: Connect to Host…</code> from the Command Palette, then select <code>clouddev</code>.</p>
+        <p class="remote-copy" id="ssh-help" hidden>Paste the block into your local SSH config. In VS Code, choose <code>Remote-SSH: Connect to Host…</code> from the Command Palette, then select <code>clouddev</code>.</p>
+        <button class="guide-button" id="copy-ssh" type="button" disabled>Copy the computer connection</button>
       </section>
 
       <section class="section git-ssh-section" aria-labelledby="git-ssh-heading">
         <div class="section-heading"><div><p class="eyebrow">FORGEJO</p><h2 id="git-ssh-heading">Connect Git over SSH</h2></div></div>
-        <p class="remote-copy">Git uses the separate Ed25519 key created by <code>git-setup</code>. The key stays in the shared workspace, and its contents are never shown here.</p>
-        <p class="notice" id="git-ssh-status" role="status">Git SSH proxy details are not configured. Forgejo browser access and sign-in remain on HTTPS.</p>
+        <p class="remote-copy">You can skip Git. This is only for saving a private copy of your files. The key stays in the workspace and is never shown here.</p>
+        <p class="notice" id="git-ssh-status" role="status">You can skip Git. Private file history in the browser stays available. A Git connection appears here only after it is set up.</p>
         <pre class="ssh-config" id="git-ssh-config" hidden><code></code></pre>
-        <p class="remote-copy">Save the block in the shared workspace's <code>~/.ssh/config</code>. Clone with <code>git@forgejo:&lt;owner&gt;/&lt;repo&gt;.git</code>. Use the Forgejo link above to sign in in your browser.</p>
+        <p class="remote-copy" id="git-ssh-help" hidden>Save the block in the shared workspace's <code>~/.ssh/config</code>. Clone with <code>git@forgejo:&lt;owner&gt;/&lt;repo&gt;.git</code>. Use the Forgejo link above to sign in in your browser.</p>
+        <div class="guide-actions">
+          <button class="guide-button" type="button" data-copy="git-setup">Copy Git setup</button>
+          <button class="guide-button" type="button" data-copy="ai-status">Copy a status check</button>
+        </div>
       </section>
 
       <section class="section status-section" aria-labelledby="status-heading">
@@ -92,17 +144,8 @@
         <p class="recovery-copy" id="recovery-state" role="status">Recovery is manual. Check CloudCLI for interrupted work and resume only through an action supported by the provider.</p>
         <p class="recovery-copy" id="recovery-summary" role="status" hidden></p>
       </section>
-
-      <section class="section setup-section" aria-labelledby="setup-heading">
-        <div class="section-heading"><div><p class="eyebrow">FIRST RUN</p><h2 id="setup-heading">Finish your setup</h2></div></div>
-        <ol class="setup-list">
-          <li><span class="step-number">01</span><span><strong>Set your Git identity</strong><small>In the IDE terminal, run <code>git config --global user.name</code> and <code>git config --global user.email</code>.</small></span></li>
-          <li><span class="step-number">02</span><span><strong>Connect Forgejo</strong><small>Create a regular, non-admin Forgejo account and a private repository. In the IDE, run <code>git-setup</code> and add its public SSH key to that account.</small></span></li>
-          <li><span class="step-number">03</span><span><strong>Connect an AI provider</strong><small>Open OmniRoute, add your provider credentials, then create a scoped inference key.</small></span></li>
-          <li><span class="step-number">04</span><span><strong>Connect the IDE to OmniRoute</strong><small>In the IDE terminal, run <code>ai-setup</code> and follow the prompts. It stores only the scoped gateway key.</small></span></li>
-          <li><span class="step-number">05</span><span><strong>Test an agent</strong><small>Run <code>ai-status</code>, then start an agent with <code>ai-codex</code> or <code>ai-claude</code>.</small></span></li>
-        </ol>
-      </section>
+        </div>
+      </details>
 
       <footer><span>CloudDev AI · Single-user instance</span><span>Provider traffic leaves Railway and follows your provider's terms.</span></footer>
     </main>

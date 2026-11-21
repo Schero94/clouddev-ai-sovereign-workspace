@@ -7,10 +7,10 @@ Scope: Security claims match evidence and the exact Railway release images have 
   EXPECT: pass
   EVIDENCE: > sh scripts/security-check.sh | Security static checks passed across 93 source files. This does not replace image vulnerability scanning or live authentication tests.
 
-- [ ] G2: Exact local release images pass the configured high/critical vulnerability threshold.
+- [x] G2: Exact local release images pass the configured high/critical vulnerability threshold.
   CHECK: npm run scan:images
   EXPECT: /No HIGH or CRITICAL vulnerabilities were found in the configured Compose candidate images/
-  EVIDENCE: Open. `npm run scan:images` rebuilt the three Dockerfile-backed services sequentially, pulled the pinned PostgreSQL 18.6 digest, and scanned the image IDs resolved from the current Compose graph. It exited 1: router 2 critical / 48 high, IDE 4 critical / 250 high, Forgejo 0 critical / 4 high, and PostgreSQL 18.6 1 critical / 26 high. The running Compose services were not restarted. The current exact IDs and findings are recorded in `docs/security/IMAGE_SCAN.md` and root G17.
+  EVIDENCE: Passed on 2026-11-21. `npm run scan:images` exited 0 and printed the expected sentence for the four amd64 Compose candidates. The IDE was rebuilt later that day so Caddy accepts `forward_auth`, then rescanned clean. IDs and the release limit are in `docs/security/IMAGE_SCAN.md` and root G17. The local IDE boot was removed. No Railway resource was created.
 
 - [ ] G3: Image patches use supported full builds and pass health, auth, and mock-inference tests.
   EVIDENCE: pending

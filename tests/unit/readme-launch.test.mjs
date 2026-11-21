@@ -79,10 +79,10 @@ test("README reports verified capabilities separately from open deployment gates
   expectMatch(/mock (?:LLM )?provider tests/i, "mock-provider evidence should be explicit");
   expectMatch(/Forgejo[\s\S]{0,180}(?:private|repository|push)/i, "private Git evidence should be explicit");
   expectMatch(/same persistent (?:workspace|filesystem|project tree)/i, "shared persistent files should be explicit");
-  expectMatch(/(?:17 of 24|17\/24) gates complete/i, "release status should be stated directly");
-  expectMatch(/G20 (?:is )?(?:complete|passed)[\s\S]{0,120}G23 remains open/i, "the public README must distinguish the published docs gate from the pending repository social preview");
-  expectMatch(/G15[\s\S]{0,100}G17|G17[\s\S]{0,100}G15/i, "both image release gates should be named");
-  expectMatch(/security release hold|release remains on hold/i, "the security hold should be explicit");
+  expectMatch(/(?:19 of 24|19\/24) gates complete/i, "release status should match the checked root ledger");
+  expectMatch(/G20 (?:is )?(?:complete|passed)[\s\S]{0,160}G23 remains open/i, "the public README must distinguish the published docs gate from the pending repository social preview");
+  expectMatch(/G15 and G17 are closed for that local evidence/i, "closed local image gates must stay distinct from publication");
+  expectMatch(/G12 and G14[\s\S]{0,120}release hold/i, "the unpublished Railway deployment must remain the release hold");
   expectMatch(/not (?:a )?(?:published|one-click-verified)|not a published or one-click-verified/i, "the template must not be presented as published");
   expectMatch(/Markdown[\s\S]{0,180}(?:build contexts|\.dockerignore)/i, "Docker build-context exclusions must be disclosed");
   expectMatch(/do not remove files from Git history/i, "build-context exclusions must not be described as history deletion");

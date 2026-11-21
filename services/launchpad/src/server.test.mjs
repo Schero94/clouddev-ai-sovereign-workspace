@@ -61,6 +61,17 @@ test("serves the launchpad below its base path without creating a second auth ch
   assert.match(html, /id="git-ssh-config"/);
   assert.match(html, /id="recovery-summary"/);
   assert.match(html, /Start Codex/);
+  assert.match(html, /id="touch-heading"/);
+  assert.match(html, /Step 1/);
+  assert.match(html, /class="guide-step guide-step-current"/);
+  assert.match(html, /Open the workspace/);
+  assert.match(html, /data-copy="ai-setup" data-open="vscode"/);
+  assert.match(html, /Copy setup/);
+  assert.match(html, /You can skip Git/);
+  assert.match(html, /Skip this on a phone or iPad/);
+  assert.match(html, /data-copy="git-setup"/);
+  assert.match(html, /data-copy="ai-setup"/);
+  assert.match(html, /iPhone, iPad, and Android/);
 });
 
 test("canonicalizes the configured base path with a trailing slash", async () => {
@@ -89,6 +100,12 @@ test("serves assets and status API under a configurable base path", async () => 
     assert.match(source, /Recovery summary:.*interrupted/);
     assert.match(source, /IdentityFile ~\/\.ssh\/id_ed25519_clouddev/);
     assert.match(source, /"  User git"/);
+    assert.match(source, /searchParams\.set\("folder", "\/workspace\/projects"\)/);
+    assert.match(source, /\["git-setup", "git-setup"\]/);
+    assert.match(source, /\["ai-setup", "ai-setup"\]/);
+    assert.match(source, /const openTargets = new Set\(\["vscode"\]\)/);
+    assert.match(source, /button\.dataset\.open/);
+    assert.doesNotMatch(source, /clipboard\.writeText\(button/);
 
     const status = await fetch(`${running.url}${customPath}/api/status`);
     assert.equal(status.status, 200);

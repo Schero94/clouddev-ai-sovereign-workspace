@@ -118,6 +118,13 @@ unset operator_keys SSH_AUTHORIZED_KEYS
 HOME="$IDE_HOME" CLOUDDEV_PROJECTS_DIR="$PROJECTS_DIR" /usr/local/bin/node /opt/clouddev-ide/src/write-server-config.mjs >/dev/null
 chown "$IDE_UID:$IDE_GID" "$IDE_HOME/.config/code-server/config.yaml"
 chmod 0600 "$IDE_HOME/.config/code-server/config.yaml"
+install -d -o "$IDE_UID" -g "$IDE_GID" -m 0700 \
+  "$IDE_HOME/.local" "$IDE_HOME/.local/share" "$IDE_HOME/.local/share/code-server" \
+  "$IDE_HOME/.local/share/code-server/extensions"
+CLOUDDEV_EXTENSION_SEED=/opt/clouddev-ide/extension-seed \
+  CLOUDDEV_EXTENSIONS_DIR="$IDE_HOME/.local/share/code-server/extensions" \
+  /usr/local/bin/node /opt/clouddev-ide/src/install-editor-seed.mjs
+chown -R "$IDE_UID:$IDE_GID" "$IDE_HOME/.local/share/code-server/extensions"
 
 # Reassert mount-root permissions after preparing all service-specific paths.
 # The mount root must be traversable by the separate Caddy and launchpad UIDs.

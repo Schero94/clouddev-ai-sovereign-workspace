@@ -15,8 +15,8 @@ manifest on 2026-11-21 and found Next.js 16.4.2, zero critical findings, and
 49 high Debian package findings. The previous 3.8.52 image contained Next.js
 16.3.8 and two critical Next.js advisories. This remote scan did not rebuild
 the CloudDev overlay or exercise health, authentication, inference, or
-persistence. G15 stays open for those runtime checks, and G17 stays open while
-high findings remain.
+persistence. The rebuilt local overlay later scanned clean, and a private
+local run passed health, login, mock inference, and a restart.
 
 CloudDev's separate OmniRoute CLI dependency tree now overrides Next.js to
 `16.4.3`, DOMPurify to `3.4.17`, and Zod to `4.6.6`. `npm run
@@ -44,10 +44,10 @@ container images. The exact image scans are in `docs/security/IMAGE_SCAN.md`.
 A runtime-only replacement of Next.js `16.3.8` with `16.4.3` failed at startup
 because the prebuilt application artifacts did not match the newer runtime.
 That overlay was removed. The local and Railway Dockerfiles now use the pinned
-upstream image and add only the local health probe. Gate G15 blocks public
-deployment until OmniRoute publishes a patched image, or a full source rebuild
-passes image build, health, authentication, inference, and dependency checks.
-Keep the router dashboard private; the release hold still applies because the UI is reachable through the authenticated workspace proxy.
+upstream image and add only the local health probe. The local overlay has now
+passed the image scan, health, authentication, mock inference, and restart
+checks. Keep the router dashboard private. A public Railway domain is still
+not enabled.
 
 ## Storage and credentials
 

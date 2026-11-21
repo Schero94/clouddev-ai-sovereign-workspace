@@ -97,11 +97,15 @@
 - [ ] Railway app sleeping is disabled and the live setting is read back.
 - [x] Gitleaks scanned all committed Git history and reported no leaks on
       2026-10-25. The source repository was rechecked after pushing.
-- [ ] `npm run scan:images` has been run against every image that would ship,
+- [x] `npm run scan:images` has been run against every image that would ship,
       and the remaining high and critical findings have been resolved or
-      formally assessed before the template is published.
+      formally assessed before the template is published. Passed on 2026-11-21
+      for the four local amd64 Compose candidates. The IDE was rebuilt the same
+      day so Caddy accepts `forward_auth`, then rescanned with no high or
+      critical findings. See [IMAGE_SCAN.md](IMAGE_SCAN.md).
 - [ ] Dependency audits and live penetration checks have recorded outputs for
-      the release. The current router and IDE image security hold is documented
-      in [IMAGE_SCAN.md](IMAGE_SCAN.md).
+      the release. The local OmniRoute runtime check is recorded in
+      [IMAGE_SCAN.md](IMAGE_SCAN.md). A public Railway deployment is still
+      unverified.
 
 Passing a local static check does not prove a corresponding Railway setting.

@@ -41,12 +41,18 @@ Remote-SSH uses the explicitly provisioned SSH service and Railway TCP proxy. It
 
 The operator provisions public SSH keys. Never send the matching private key to Railway variables, the repository, or the agent. The launchpad may show a host fingerprint when it is configured. Verify that fingerprint when your client prompts you.
 
-## iPhone and Android browser
+## iPhone, iPad, and Android
 
-1. Open the same workspace HTTPS origin on your phone and sign in with the workspace password.
-2. Click **Open CloudCLI** to use its mobile-first conversation and task-history interface.
-3. Sign in to the separate CloudCLI account if asked. Open a project or provider session from its supported history.
-4. Use **Browser VS Code** when you need the editor and terminal in a mobile browser. Small screens may make a desktop editor harder to use; CloudCLI is the mobile-oriented client.
+Someone who can sign in and paste one key does not need Git, SSH, or an app install.
+
+1. Open the same workspace HTTPS origin in Safari or Chrome and sign in with the workspace password.
+2. The launchpad starts at **Step 1**. Tap **Open the workspace**. It opens Browser VS Code on your files. Remote-SSH is not used here.
+3. On iPhone or iPad, use **Share → Add to Home Screen**. The icon opens the same workspace next time.
+4. Step 2, **Open sign-in**, opens **Manage AI providers**. Choose **Sign in with ChatGPT** and **Sign in with Claude**. Add a DeepSeek API key only if you already have one.
+5. Create one limited key on that page. Step 3, **Copy setup**, opens the workspace and copies the setup words. Paste them in **Terminal → New Terminal**. That runs `ai-setup` once. Do not paste an account password.
+6. Step 4, **Start Codex** or **Start Claude**, opens the workspace and copies the start words. You can skip Git. **Open CloudCLI** is under More, for chats and earlier tasks. The Git buttons there copy `git-setup` and `ai-status` only when you want private file history.
+
+CloudCLI and the browser editor share the project files. They do not share editor tabs or cursor position.
 
 The launchpad cards and service URLs are generated from the workspace's configuration. Do not copy an OmniRoute dashboard address or service credential into a public URL or chat.
 

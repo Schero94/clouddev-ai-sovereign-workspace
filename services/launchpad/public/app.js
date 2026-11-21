@@ -11,6 +11,10 @@ const sshFingerprint = document.querySelector("#ssh-fingerprint");
 const gitSshStatus = document.querySelector("#git-ssh-status");
 const gitSshConfig = document.querySelector("#git-ssh-config");
 const gitSshConfigCode = gitSshConfig.querySelector("code");
+const copySsh = document.querySelector("#copy-ssh");
+const sshHelp = document.querySelector("#ssh-help");
+const gitSshHelp = document.querySelector("#git-ssh-help");
+const sshBlockPattern = /^Host clouddev\n  HostName \S+\n  Port \d+\n  User coder\n  IdentityFile ~\/\.ssh\/<operator-provisioned-private-key>\n  IdentitiesOnly yes$/;
 const labels = new Map([["ready", "Ready"], ["unavailable", "Unavailable"], ["not-configured", "Not configured"]]);
 
 function isLoopbackHostname(hostname) {
@@ -34,23 +38,32 @@ function safeLink(value) {
   }
 }
 
+function editorHref(href) {
+  const url = new URL(href);
+  if (url.search || url.hash) return null;
+  url.searchParams.set("folder", "/workspace/projects");
+  return url.href;
+}
+
 function setLink(id, value) {
-  const link = document.querySelector(`[data-link="${id}"]`);
-  if (!link) return;
+  const links = document.querySelectorAll(`[data-link="${id}"]`);
   const href = safeLink(value);
-  if (!href) {
-    link.removeAttribute("href");
-    link.setAttribute("aria-disabled", "true");
-    link.setAttribute("tabindex", "-1");
-    delete link.dataset.ready;
-    return;
+  const targetHref = href && id === "vscode" ? editorHref(href) : href;
+  for (const link of links) {
+    if (!targetHref) {
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
+      link.setAttribute("tabindex", "-1");
+      delete link.dataset.ready;
+      continue;
+    }
+    link.href = targetHref;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.removeAttribute("aria-disabled");
+    link.removeAttribute("tabindex");
+    link.dataset.ready = "true";
   }
-  link.href = href;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  link.removeAttribute("aria-disabled");
-  link.removeAttribute("tabindex");
-  link.dataset.ready = "true";
 }
 
 function isValidSshProxy(ssh) {
@@ -65,7 +78,9 @@ function setSshConfig(ssh, fingerprint) {
     sshConfigCode.textContent = "";
     sshFingerprint.hidden = true;
     sshFingerprint.textContent = "";
-    sshStatus.textContent = "SSH proxy details are not configured. The operator can map the IDE TCP proxy domain and port to IDE_SSH_PROXY_HOST and IDE_SSH_PROXY_PORT.";
+    sshStatus.textContent = "Not needed on a phone or iPad. A computer connection appears here only after it is set up.";
+    if (copySsh) copySsh.disabled = true;
+    if (sshHelp) sshHelp.hidden = true;
     return;
   }
   sshConfigCode.textContent = [
@@ -77,7 +92,9 @@ function setSshConfig(ssh, fingerprint) {
     "  IdentitiesOnly yes",
   ].join("\n");
   sshConfig.hidden = false;
-  sshStatus.textContent = "SSH proxy is configured. Use the private key file provisioned by the operator.";
+  if (copySsh) copySsh.disabled = false;
+  if (sshHelp) sshHelp.hidden = false;
+  sshStatus.textContent = "The computer connection is ready. Use Copy the computer connection. The private key stays on that computer.";
   if (typeof fingerprint === "string" && /^SHA256:[A-Za-z0-9+/]{43}$/.test(fingerprint)) {
     sshFingerprint.textContent = `Workspace SSH host-key fingerprint: ${fingerprint}. Compare it with the first-connection prompt before accepting.`;
     sshFingerprint.hidden = false;
@@ -91,7 +108,8 @@ function setGitSshConfig(ssh) {
   if (!isValidSshProxy(ssh)) {
     gitSshConfig.hidden = true;
     gitSshConfigCode.textContent = "";
-    gitSshStatus.textContent = "Git SSH proxy details are not configured. Forgejo browser access and sign-in remain on HTTPS.";
+    gitSshStatus.textContent = "You can skip Git. Private file history in the browser stays available. A Git connection appears here only after it is set up.";
+    if (gitSshHelp) gitSshHelp.hidden = true;
     return;
   }
   gitSshConfigCode.textContent = [
@@ -103,6 +121,7 @@ function setGitSshConfig(ssh) {
     "  IdentitiesOnly yes",
   ].join("\n");
   gitSshConfig.hidden = false;
+  if (gitSshHelp) gitSshHelp.hidden = false;
   gitSshStatus.textContent = "Git SSH is configured for workspace Git commands. Forgejo browser access and sign-in remain on HTTPS.";
 }
 
@@ -160,7 +179,8 @@ async function refreshStatus() {
     recoveryState.textContent = "Recovery is manual. Check CloudCLI for interrupted work and resume only through an action supported by the provider.";
     recoverySummary.textContent = "Recovery summary is unavailable. Recovery remains manual.";
     recoverySummary.hidden = false;
-    gitSshStatus.textContent = "Git SSH proxy status is unavailable. Forgejo browser access and sign-in remain on HTTPS.";
+    gitSshStatus.textContent = "Git status is unavailable. You can still open private file history in the browser.";
+    if (gitSshHelp) gitSshHelp.hidden = true;
     gitSshConfig.hidden = true;
     gitSshConfigCode.textContent = "";
     const row = document.createElement("li");
@@ -170,14 +190,77 @@ async function refreshStatus() {
   }
 }
 
+const copyCommands = new Map([
+  ["git-setup", "git-setup"],
+  ["ai-setup", "ai-setup"],
+  ["ai-status", "ai-status"],
+]);
+const openTargets = new Set(["vscode"]);
+const copyNotice = document.querySelector("#copy-notice");
+
+function placeNotice(button, element, message) {
+  const slot = button.closest(".guide-body") || button.closest(".section");
+  if (slot) slot.append(element);
+  element.hidden = false;
+  element.textContent = message;
+}
+
+function openReadyLink(id) {
+  if (!openTargets.has(id)) return false;
+  const link = document.querySelector(`[data-link="${id}"][data-ready="true"]`);
+  if (!link?.href) return false;
+  return Boolean(window.open(link.href, "_blank", "noopener,noreferrer"));
+}
+
 document.querySelector("#refresh").addEventListener("click", refreshStatus);
+document.querySelectorAll("[data-copy]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const command = copyCommands.get(button.dataset.copy);
+    if (!command || !copyNotice) return;
+    const wantsOpen = typeof button.dataset.open === "string";
+    const opened = wantsOpen && openReadyLink(button.dataset.open);
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(command);
+      copied = true;
+    } catch {
+      copied = false;
+    }
+    let message = opened
+      ? `Workspace opened. Clipboard is blocked. Open Terminal and type ${command}.`
+      : `Clipboard is blocked. Open Terminal in the workspace and type ${command}.`;
+    if (copied && wantsOpen && opened) {
+      message = "Workspace opened and setup copied. In the workspace, open Terminal and paste. Do not paste an account password.";
+    } else if (copied && wantsOpen) {
+      message = "Copied. Step 1 is not ready yet. When Open the workspace is active, open it and paste in Terminal. Do not paste an account password.";
+    } else if (copied) {
+      message = "Copied. Open Terminal in the workspace and paste. Do not paste an account password.";
+    }
+    placeNotice(button, copyNotice, message);
+  });
+});
+if (copySsh) {
+  copySsh.addEventListener("click", async () => {
+    const text = sshConfigCode.textContent;
+    if (sshConfig.hidden || !sshBlockPattern.test(text) || !copyNotice) return;
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch {
+      copied = false;
+    }
+    placeNotice(copySsh, copyNotice, copied
+      ? "Copied. Paste it into the SSH config on your computer."
+      : "Clipboard is blocked. Select the connection text and copy it.");
+  });
+}
 document.querySelectorAll("[data-agent]").forEach(button => {
   button.addEventListener("click", async () => {
     const command = button.dataset.agent === "codex" ? "ai-codex" : "ai-claude";
     const vscode = document.querySelector('[data-link="vscode"]');
     if (!vscode?.dataset.ready) {
-      notice.hidden = false;
-      notice.textContent = "The Browser VS Code link is not configured. Check the launchpad service domains.";
+      placeNotice(button, notice, "The workspace page is not ready yet. Use Step 1 when it turns green, then try again.");
       return;
     }
     window.open(vscode.href, "_blank", "noopener,noreferrer");
@@ -188,10 +271,9 @@ document.querySelectorAll("[data-agent]").forEach(button => {
     } catch {
       copied = false;
     }
-    notice.hidden = false;
-    notice.textContent = copied
-      ? `Opened Browser VS Code. In its terminal, paste ${command} to start the agent.`
-      : `Open a terminal in Browser VS Code and run ${command} to start the agent.`;
+    placeNotice(button, notice, copied
+      ? "Opened the workspace. Open Terminal and paste. That starts the assistant."
+      : `Opened the workspace. Open Terminal and type ${command}.`);
   });
 });
 

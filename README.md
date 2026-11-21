@@ -13,9 +13,9 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 17 of 24 gates complete.** The Railway Marketplace release
-is not ready. The exact image security gates, fresh Railway deployment,
-application-level Railway restore, and parts of the cross-device acceptance remain open. See
+**Release status: 19 of 24 gates complete.** The Railway Marketplace release
+is not ready. G4, G5, G12, G14, and G23 remain open. G15 and G17 are closed
+for local image evidence. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
 this project beyond local evaluation.
 
@@ -143,8 +143,9 @@ and the OmniRoute inference listener remain on the Compose network.
 ## Railway deployment
 
 There is no published template to deploy today. Do not treat the configuration
-as a production-ready or one-click-verified release. The current image findings
-are a release hold, not a warning to click through.
+as a production-ready or one-click-verified release. G12 and G14, the fresh
+Railway deployment and Marketplace test, remain the release hold. They are not
+a warning to click through.
 
 For a maintainer validation deployment, use a new test project in the intended
 personal Railway workspace. Never apply an unreviewed plan to an existing
@@ -270,11 +271,11 @@ privileged container access. Repository scripts are not automatically run when
 cloning. These controls reduce exposure; they do not sandbox arbitrary code
 from the workspace user.
 
-**Release hold:** local scans found unresolved critical and high severity
-findings in the pinned service images. G15 and G17 remain open. Do not call the
-images clean, publish the template as verified, or expose OmniRoute's dashboard
-or inference listeners publicly until the exact release images have been
-reviewed and the release gates pass. See the detailed
+**Release hold:** on 2026-11-21 the four local amd64 Compose images had no high
+or critical findings, and the private OmniRoute overlay passed health, login,
+mock inference, and a restart. G15 and G17 are closed for that local evidence.
+Do not publish the template as verified. Keep OmniRoute's dashboard and
+inference listeners off the public internet. See the detailed
 [image scan](docs/security/IMAGE_SCAN.md), [threat model](docs/security/THREAT_MODEL.md),
 and [hardening guide](docs/security/SECURITY_HARDENING.md).
 
@@ -385,12 +386,12 @@ Claude Code is not relicensed by this repository's MIT license.
 
 ## Release status
 
-This source snapshot reports **17 of 24 acceptance gates complete**. Local
+This source snapshot reports **19 of 24 acceptance gates complete**. Local
 Compose, mock-provider, Git, and security checks are not substitutes for the
 open live gates. G4 and G5 still need full cross-device evidence; G12 needs a
 fresh Railway deployment; G13 proves a local four-store data-level restore but
 not Railway recovery; G14 needs a published and test-deployed Marketplace
-template. G15/G17 are the image security release hold. G20 is complete:
+template. G15 and G17 are closed for local image evidence. G20 is complete:
 GitHub Pages serves the reviewed documentation. G23 remains open until the
 repository social preview is uploaded. G24
 passed an isolated application-level restore, while CloudCLI session resume
@@ -418,7 +419,7 @@ security and deployment gates are closed.
   service definition.
 - Local tests cover mock Codex and Claude routing, private Git operations,
   authentication checks, and task/session recovery behavior.
-- Railway publication and the security release hold remain open. See the
+- Railway publication remains open. G12 and G14 are the release hold. See the
   [release status](docs/operations/RELEASE_STATUS.md) for current evidence.
 - GitHub Actions CI now runs the repository tests, security checks, Railway
   contracts, and documentation build on pull requests and on `main`.
