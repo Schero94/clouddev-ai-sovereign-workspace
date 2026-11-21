@@ -64,4 +64,7 @@ RUN set -eu \
   && ldconfig \
   && openssl version | grep -F 'OpenSSL 3.6.5'
 
-USER node
+COPY services/omniroute/entrypoint.sh /opt/clouddev-router-entrypoint.sh
+RUN chmod 0555 /opt/clouddev-router-entrypoint.sh
+USER root
+ENTRYPOINT ["/opt/clouddev-router-entrypoint.sh"]
