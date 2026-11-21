@@ -78,8 +78,14 @@ CLOUDDEV_OMNIROUTE_BASE_URL, CLOUDDEV_OMNIROUTE_HOST,
 CLOUDDEV_OMNIROUTE_PORT, CLOUDDEV_OMNIROUTE_PROXY_PORT,
 CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET,
 CLOUDDEV_FORGEJO_HOST, CLOUDDEV_FORGEJO_PORT, GIT_PUBLIC_URL,
-GIT_SSH_PROXY_HOST, GIT_SSH_PROXY_PORT
+GIT_SSH_PROXY_HOST, GIT_SSH_PROXY_PORT,
+IDE_PRIVATE_HOST, IDE_PRIVATE_PORT, GIT_PRIVATE_HOST, GIT_PRIVATE_PORT,
+ROUTER_PRIVATE_HOST, ROUTER_PRIVATE_PORT, POSTGRES_HOST, POSTGRES_PORT
 ```
+
+The `*_PRIVATE_*` and `POSTGRES_*` values only tell the launchpad where to
+probe service health. The IDE receives the Postgres host and port, not a
+database credential.
 
 Railway also injects its service values. CloudDev uses the public domain and
 TCP proxy domain/port on the two exposed services, and private domains for

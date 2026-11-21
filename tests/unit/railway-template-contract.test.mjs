@@ -103,6 +103,20 @@ test("every stateful service has persistent data, and the Composer does not embe
   assert.match(compose, /clouddev-postgres:[\s\S]*context:\s*\.\/services\/postgres/);
 });
 
+test("the launchpad status probes every service on a fresh Railway install", () => {
+  const ide = variablesByService().get("clouddev-ide");
+  const value = name => ide.find(entry => entry.name === name)?.value;
+  assert.equal(value("IDE_PRIVATE_HOST"), '"127.0.0.1"');
+  assert.equal(value("IDE_PRIVATE_PORT"), '"8080"');
+  assert.equal(value("GIT_PRIVATE_HOST"), "forgejo.env.RAILWAY_PRIVATE_DOMAIN");
+  assert.equal(value("GIT_PRIVATE_PORT"), '"3000"');
+  assert.equal(value("ROUTER_PRIVATE_HOST"), "router.env.RAILWAY_PRIVATE_DOMAIN");
+  assert.equal(value("ROUTER_PRIVATE_PORT"), '"20128"');
+  assert.equal(value("POSTGRES_HOST"), "postgresService.env.PGHOST");
+  assert.equal(value("POSTGRES_PORT"), "postgresService.env.PGPORT");
+  assert.ok(!ide.some(entry => /postgresService\.env\.(?:PGPASSWORD|DATABASE_URL|PGUSER)/.test(entry.value)), "the IDE gets no database credential");
+});
+
 test("Railway IaC builds all three GitHub-backed services from the published main branch", () => {
   assert.equal((source.match(/source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace"/g) ?? []).length, 3);
   assert.match(source, /const router = service\("clouddev-router",\s*\{\s*source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main"\s*\}\)/s);
