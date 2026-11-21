@@ -8,7 +8,7 @@ if [ "$(id -u)" -eq 0 ]; then
   install -d -o node -g node -m 0750 "$data"
   chown node:node "$data"
   cd /app
-  exec runuser -u node -- /app/check-permissions.sh "$@"
+  exec runuser --preserve-environment -u node -- /app/check-permissions.sh "$@"
 fi
 
 exec /app/check-permissions.sh "$@"
