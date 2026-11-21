@@ -273,7 +273,6 @@ ENV HOME=/workspace/home \
     PATH=/opt/clouddev-ide/agent-tools/node_modules/.bin:/opt/clouddev-ide/omniroute-cli/node_modules/.bin:/usr/local/bin:/workspace/home/.local/bin:/usr/bin:/bin
 
 WORKDIR /workspace/projects
-VOLUME ["/workspace"]
 EXPOSE 8080 2222
 ENTRYPOINT ["/usr/local/bin/clouddev-ide-entrypoint"]
 

@@ -614,7 +614,7 @@ class ForgejoEntrypointTests(unittest.TestCase):
         self.assertIn("libxml2=2.13.9-r3", dockerfile)
         self.assertIn("FROM codeberg.org/forgejo/forgejo:17.0.2-rootless", dockerfile)
         self.assertIn("USER root", dockerfile)
-        self.assertIn('VOLUME ["/var/lib/gitea"]', dockerfile)
+        self.assertNotIn("VOLUME", dockerfile)
         self.assertIn("EXPOSE 3000 2222", dockerfile)
         self.assertIn("/api/healthz", dockerfile)
         self.assertNotIn("FORGEJO_ADMIN_PASSWORD=", dockerfile)

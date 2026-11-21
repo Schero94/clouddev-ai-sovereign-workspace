@@ -72,8 +72,8 @@ test("provides the IDE wrappers and task utilities on one persistent workspace v
     assert.ok(statSync(script).isFile());
     assert.match(readFileSync(script, "utf8"), /^#!\/bin\/sh/m);
   }
-  assert.match(dockerfile, /VOLUME \["\/workspace"\]/);
-  assert.doesNotMatch(dockerfile, /VOLUME \[[^\]]*\/home\/coder/);
+  assert.doesNotMatch(dockerfile, /VOLUME /);
+  assert.match(readFileSync(path.join(root, "../../.railway/railway.ts"), "utf8"), /"\/workspace": workspaceData/);
   assert.match(dockerfile, /HOME=\/workspace\/home/);
   assert.match(dockerfile, /WORKDIR \/workspace\/projects/);
   assert.match(dockerfile, /EXPOSE 8080 2222/);

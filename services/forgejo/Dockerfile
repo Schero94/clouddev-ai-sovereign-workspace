@@ -18,7 +18,6 @@ ENV FORGEJO__service__REQUIRE_SIGNIN_VIEW=true
 ENV FORGEJO__repository__DEFAULT_PRIVATE=private
 ENV FORGEJO__server__DISABLE_SSH=true
 
-VOLUME ["/var/lib/gitea"]
 EXPOSE 3000 2222
 
 HEALTHCHECK --interval=30s --timeout=8s --start-period=90s --retries=3 \
