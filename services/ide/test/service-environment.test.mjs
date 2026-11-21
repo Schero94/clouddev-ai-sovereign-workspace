@@ -22,6 +22,8 @@ const secrets = {
   IDE_SSH_HOST_FINGERPRINT: "SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
   LAUNCHPAD_ADMIN_TOKEN: "must-not-inherit",
   PATH: "/usr/local/bin:/usr/bin:/bin",
+  INITIAL_PASSWORD: "omniroute-dashboard-password-0123456789abcdef",
+  CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET: "workspace-gateway-bootstrap-secret-0123456789abcdef",
 };
 
 test("does not pass deployment or platform secrets to Caddy, code-server, launchpad, or sshd", () => {

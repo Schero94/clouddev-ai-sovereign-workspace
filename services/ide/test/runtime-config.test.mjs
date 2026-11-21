@@ -17,6 +17,10 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.9");
   assert.match(dockerfile, /task-master-ai@0\.43\.1/);
   assert.match(read("entrypoint.sh"), /install-cloudcli-plugins\.sh/);
+  assert.match(read("entrypoint.sh"), /install-gateway-config\.mjs/);
+  const supervisorEnv = read("entrypoint.sh").slice(read("entrypoint.sh").indexOf("exec /usr/bin/env -i"));
+  assert.doesNotMatch(supervisorEnv, /CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET/);
+  assert.doesNotMatch(supervisorEnv, /INITIAL_PASSWORD/);
   assert.match(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-starter\.git/);
   assert.doesNotMatch(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-ccx/);
   assert.doesNotMatch(dockerfile, /VOLUME /);

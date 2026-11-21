@@ -22,7 +22,10 @@ test("wraps the pinned upstream router image without mismatching its prebuilt Ne
   assert.match(dockerfile, /healthcheck\.mjs \/opt\/clouddev-healthcheck\.mjs/);
   assert.match(dockerfile, /ENTRYPOINT \["\/opt\/clouddev-router-entrypoint\.sh"\]\nCMD \["node", "dev\/run-standalone\.mjs"\]\s*$/);
   const entrypoint = readFileSync(path.join(serviceDirectory, "entrypoint.sh"), "utf8");
-  assert.match(entrypoint, /exec runuser --preserve-environment -u node -- \/app\/check-permissions\.sh "\$@"/);
+  assert.match(entrypoint, /exec runuser --preserve-environment -u node -- \/opt\/clouddev-router-entrypoint\.sh "\$@"/);
+  assert.match(entrypoint, /node \/opt\/clouddev-router-provision\.mjs/);
+  assert.match(entrypoint, /exec \/app\/check-permissions\.sh "\$@"/);
+  assert.match(dockerfile, /provision-workspace-key\.mjs \/opt\/clouddev-router-provision\.mjs/);
 });
 
 test("Compose and Railway build the router overlay instead of mounting a host health script", () => {

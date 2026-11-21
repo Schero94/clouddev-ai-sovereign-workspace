@@ -8,6 +8,6 @@ if [ -f "$HOME/.config/clouddev-ai/gateway.json" ]; then
   export CLOUDDEV_AI_CONFIGURED=1
 else
   case $- in
-    *i*) echo "CloudDev AI setup needed. Run ai-setup to connect a scoped OmniRoute inference key." ;;
+    *i*) echo "CloudDev is connecting the AI gateway. Open a new terminal in a moment." ;;
   esac
 fi

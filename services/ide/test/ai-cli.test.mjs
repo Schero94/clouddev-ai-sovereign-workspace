@@ -6,6 +6,7 @@ import path from "node:path";
 import { afterEach, test } from "node:test";
 import {
   DEFAULT_BASE_URL,
+  configureGateway,
   extractChatModelIds,
   fetchChatModels,
   launchAgent,
@@ -177,4 +178,54 @@ test("propagates the child CLI exit code", async () => {
     stderr: { write() {} },
   });
   assert.equal(code, 17);
+});
+
+test("connects a stored inference key and selects the first visible model without prompting", async () => {
+  const home = makeHome();
+  saveGatewayConfig(home, { baseUrl: DEFAULT_BASE_URL, apiKey: testKey, models: { codex: "", claude: "" } });
+  const output = [];
+  const code = await configureGateway({
+    home,
+    attempts: 1,
+    fetchImpl: async () => new Response(JSON.stringify({ data: [{ id: "openai/gpt-5.4" }, { id: "anthropic/claude-sonnet-4-6" }] }), { status: 200 }),
+    stdout: { write(chunk) { output.push(String(chunk)); } },
+    stderr: { write(chunk) { output.push(String(chunk)); } },
+  });
+  const saved = loadGatewayConfig(home);
+  assert.equal(code, 0);
+  assert.equal(saved.models.codex, "openai/gpt-5.4");
+  assert.equal(saved.models.claude, "openai/gpt-5.4");
+  assert.equal(output.join("").includes(testKey), false);
+});
+
+test("keeps a model that is still visible and reports when the catalog is empty", async () => {
+  const home = makeHome();
+  saveGatewayConfig(home, { baseUrl: DEFAULT_BASE_URL, apiKey: testKey, models: { codex: "openai/gpt-5.4", claude: "anthropic/claude-sonnet-4-6" } });
+  const output = [];
+  const code = await configureGateway({
+    home,
+    fetchImpl: async () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
+    stdout: { write(chunk) { output.push(String(chunk)); } },
+    stderr: { write() {} },
+  });
+  const saved = loadGatewayConfig(home);
+  assert.equal(code, 0);
+  assert.equal(saved.models.codex, "openai/gpt-5.4");
+  assert.match(output.join(""), /No chat model is visible yet/);
+});
+
+test("waits for the private gateway file instead of asking for a pasted key", async () => {
+  const home = makeHome();
+  const errors = [];
+  const code = await configureGateway({
+    home,
+    attempts: 2,
+    delayMs: 0,
+    fetchImpl: async () => { throw new Error("catalog should not be called"); },
+    stdout: { write() {} },
+    stderr: { write(chunk) { errors.push(String(chunk)); } },
+  });
+  assert.equal(code, 2);
+  assert.match(errors.join(""), /still connecting the AI gateway/);
+  assert.equal(errors.join("").includes("No inference key supplied"), false);
 });

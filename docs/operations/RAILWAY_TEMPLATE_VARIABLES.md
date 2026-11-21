@@ -5,7 +5,7 @@ The Railway Template Composer must add the generated values listed in
 `.railway/template-variables.json`. Railway IaC's `preserve()` function keeps
 an existing value. It does not generate a value for a new deployment.
 
-Use this Composer value for each of the ten generated secrets:
+Use this Composer value for each of the eleven generated secrets:
 
 ```text
 ${{secret(64, "0123456789abcdef")}}
@@ -26,6 +26,7 @@ replace it with a literal password or reuse a value across variables.
 | `clouddev-router` | `STORAGE_ENCRYPTION_KEY` | Generate independently and seal it. Include it in protected OmniRoute backups. |
 | `clouddev-router` | `MACHINE_ID_SALT` | Generate independently and seal it. |
 | `clouddev-router` | `OMNIROUTE_WS_BRIDGE_SECRET` | Generate independently and seal it. |
+| `clouddev-router` | `CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET` | Generate independently and seal it. The workspace uses it only to fetch its own inference key. It is not passed to agent processes. |
 | `clouddev-ide` | `SSH_AUTHORIZED_KEYS` | Require one or more operator Ed25519 public keys, one per line. Never ask for or store a private key. |
 
 Railway's managed Postgres service supplies its own database credentials. The
@@ -47,6 +48,7 @@ DATA_DIR, PORT, DASHBOARD_PORT, API_PORT, API_HOST,
 OMNIROUTE_BASE_PATH, NEXT_PUBLIC_OMNIROUTE_BASE_PATH,
 INITIAL_PASSWORD, JWT_SECRET, API_KEY_SECRET, STORAGE_ENCRYPTION_KEY,
 STORAGE_ENCRYPTION_KEY_VERSION, MACHINE_ID_SALT, OMNIROUTE_WS_BRIDGE_SECRET,
+CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET,
 AUTH_COOKIE_SECURE, REQUIRE_API_KEY, APP_LOG_LEVEL, APP_LOG_TO_FILE,
 APP_LOG_RETENTION_DAYS, CALL_LOG_RETENTION_DAYS, ENABLE_REQUEST_LOGS,
 CALL_LOG_PIPELINE_CAPTURE_STREAM_CHUNKS, PROXY_LOG_INCLUDE_IPS,
@@ -74,6 +76,7 @@ FORGEJO__server__START_SSH_SERVER, FORGEJO__server__SSH_LISTEN_PORT
 CODE_SERVER_PASSWORD, CLOUDDEV_WORKSPACE_AUTH_SECRET, SSH_AUTHORIZED_KEYS,
 CLOUDDEV_OMNIROUTE_BASE_URL, CLOUDDEV_OMNIROUTE_HOST,
 CLOUDDEV_OMNIROUTE_PORT, CLOUDDEV_OMNIROUTE_PROXY_PORT,
+CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET,
 CLOUDDEV_FORGEJO_HOST, CLOUDDEV_FORGEJO_PORT, GIT_PUBLIC_URL,
 GIT_SSH_PROXY_HOST, GIT_SSH_PROXY_PORT
 ```
@@ -102,8 +105,9 @@ Composer. The IaC type-check does not prove those live settings exist.
 
 Provider API keys are not template variables and cannot be preconfigured for a
 public template. The owner adds their own credentials through OmniRoute's
-authenticated dashboard, then
-creates a restricted inference key and runs `ai-setup`. The selected model and
+authenticated dashboard. The workspace creates a restricted inference key
+and stores it for the agents. `ai-setup` refreshes that key and selects a
+visible model. The selected model and
 scoped key configuration persist in the workspace volume. Agent processes can
 read that scoped inference key while running, but they do not receive provider
 master keys, the Railway token, the Forgejo administrator password, or the

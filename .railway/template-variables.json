@@ -60,6 +60,12 @@
       "name": "OMNIROUTE_WS_BRIDGE_SECRET",
       "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
       "description": "Independent secret for the private OmniRoute WebSocket bridge. Seal this Railway variable."
+    },
+    {
+      "service": "clouddev-router",
+      "name": "CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET",
+      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
+      "description": "Private handoff secret the workspace uses to fetch its own inference key from OmniRoute. Seal this Railway variable. It is not a provider credential."
     }
   ],
   "operatorInputs": [
@@ -80,7 +86,7 @@
     {
       "name": "Scoped inference credential",
       "location": "OmniRoute dashboard, then ai-setup",
-      "description": "Create a restricted inference key after provider setup. ai-setup stores it in the persistent workspace configuration used by the coding agents."
+      "description": "The workspace creates its restricted inference key automatically. Connect a provider in OmniRoute and the agents pick up a visible model."
     }
   ]
 }

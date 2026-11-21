@@ -88,6 +88,7 @@ env_text=$(
   printf 'STORAGE_ENCRYPTION_KEY_VERSION=v1\n'
   printf 'MACHINE_ID_SALT=%s\n' "$(openssl rand -hex 32)"
   printf 'OMNIROUTE_WS_BRIDGE_SECRET=%s\n' "$(openssl rand -base64 32 | tr -d '\n')"
+  printf 'CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET=%s\n' "$(openssl rand -hex 32)"
   printf 'AUTH_COOKIE_SECURE=false\n'
   printf 'REQUIRE_API_KEY=true\n'
   printf 'APP_LOG_LEVEL=warn\n'

@@ -74,17 +74,16 @@ If the generated bootstrap password is no longer available, use the documented F
 1. Return to the launchpad and click **Manage AI providers**.
 2. Sign in to OmniRoute with its generated bootstrap password. Change that password before connecting accounts.
 3. In **Providers**, use **Sign in with ChatGPT** and **Sign in with Claude**. Those are OmniRoute's official account sign-ins. For DeepSeek, add the API key from its console. DeepSeek has no account sign-in, and a chat-website token is not an API key.
-4. Create one inference key for this workspace. Keep the provider account credentials in OmniRoute.
+4. Leave the inference key to the workspace. It creates one scoped key and stores it privately. Keep the provider account credentials in OmniRoute.
 
 The list of providers and models depends on the pinned OmniRoute release and the provider account. CloudDev does not package provider keys or promise that every model supports both agents.
 
 ## 5. Connect the agent CLIs
 
 1. Click **Browser VS Code**, then choose **Terminal → New Terminal**.
-2. Run `ai-setup`. Enter the internal OmniRoute URL if it is not already filled in. When prompted for an inference key, paste the scoped key, not an OmniRoute administrator key or provider master key. The input is hidden. The command saves it in the persistent home with restricted file permissions.
-3. Choose only models shown by the live model list. Run `ai-status` to check the gateway and `ai-models` to list models the scoped key can use.
-4. Restart the workspace if `ai-setup` tells you to, so CloudCLI loads the restricted inference configuration.
-5. Start a task with `ai-codex` or `ai-claude` from an interactive terminal. Do not start a paid provider request until you have checked the provider's current billing and usage terms.
+2. The workspace connects its scoped inference key on its own. Run `ai-setup` only to refresh it. The command does not ask for a key. It checks `/v1/models?kind=chat` and saves the private gateway file with mode `0600`.
+3. Run `ai-status` to check the gateway and `ai-models` to list models the scoped key can use. The workspace selects the first visible chat model for Codex and Claude Code.
+4. Start a task with `ai-codex` or `ai-claude` from an interactive terminal. Do not start a paid provider request until you have checked the provider's current billing and usage terms.
 
 ## 6. Create or open a project
 

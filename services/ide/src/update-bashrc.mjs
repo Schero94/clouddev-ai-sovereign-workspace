@@ -4,7 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const OLD_ONBOARDING_LINE = 'echo "CloudDev AI setup needed. Run ai-setup to connect a scoped OmniRoute inference key."';
-const NEW_ONBOARDING_LINE = 'case $- in *i*) echo "CloudDev AI setup needed. Run ai-setup to connect a scoped OmniRoute inference key." ;; esac';
+const PREVIOUS_ONBOARDING_LINE = 'case $- in *i*) echo "CloudDev AI setup needed. Run ai-setup to connect a scoped OmniRoute inference key." ;; esac';
+const NEW_ONBOARDING_LINE = 'case $- in *i*) echo "CloudDev is connecting the AI gateway. Open a new terminal in a moment." ;; esac';
 const OLD_GATEWAY_URL_LINE = 'export CLOUDDEV_OMNIROUTE_BASE_URL="${CLOUDDEV_OMNIROUTE_BASE_URL:-http://clouddev-router.railway.internal:20131}"';
 const NEW_GATEWAY_URL_LINE = 'export CLOUDDEV_OMNIROUTE_BASE_URL="${CLOUDDEV_OMNIROUTE_BASE_URL:-http://127.0.0.1:20129}"';
 const DEFAULT_BASHRC = fileURLToPath(new URL("../bashrc", import.meta.url));
@@ -59,6 +60,7 @@ export function ensureBashrc({
 
   const updated = current
     .replace(OLD_ONBOARDING_LINE, NEW_ONBOARDING_LINE)
+    .replace(PREVIOUS_ONBOARDING_LINE, NEW_ONBOARDING_LINE)
     .replace(OLD_GATEWAY_URL_LINE, NEW_GATEWAY_URL_LINE);
   if (updated === current) return { action: "unchanged", filePath };
   const existing = lstatSync(filePath);

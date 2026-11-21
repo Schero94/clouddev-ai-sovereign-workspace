@@ -2,7 +2,6 @@ import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { createInterface } from "node:readline";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ensureCodexGatewayConfig } from "./codex-config.mjs";
@@ -305,93 +304,56 @@ export async function printModels({ home = process.env.HOME, fetchImpl = fetch, 
   }
 }
 
-export async function setupInteractive({ home = process.env.HOME, env = process.env, input = process.stdin, stdout = process.stdout, stderr = process.stderr, fetchImpl = fetch } = {}) {
-  if (!input.isTTY || !stdout.isTTY) {
-    stderr.write("Run `ai-setup` from an interactive IDE terminal.\n");
-    return 2;
-  }
-  let existing = { baseUrl: env.CLOUDDEV_OMNIROUTE_BASE_URL || DEFAULT_BASE_URL, apiKey: "", models: {} };
-  try { existing = loadGatewayConfig(home); } catch { /* First setup or a config the operator needs to replace. */ }
-  const ask = (prompt, { secret = false, initial = "" } = {}) => new Promise(resolve => {
-    if (!secret) {
-      const readline = createInterface({ input, output: stdout });
-      readline.question(`${prompt}${initial ? ` [${initial}]` : ""}: `, answer => {
-        readline.close();
-        resolve(answer.trim() || initial);
-      });
-      return;
-    }
-    input.setRawMode?.(true);
-    input.resume();
-    stdout.write(`${prompt}: `);
-    let answer = "";
-    const onData = chunk => {
-      const char = chunk.toString("utf8");
-      if (char === "\u0003") {
-        cleanup();
-        stdout.write("\n");
-        resolve(null);
-      } else if (char === "\r" || char === "\n") {
-        cleanup();
-        stdout.write("\n");
-        resolve(answer);
-      } else if (char === "\u007f" || char === "\b") {
-        answer = answer.slice(0, -1);
-      } else if (!/[\u0000-\u001f\u007f]/.test(char)) {
-        answer += char;
+export async function configureGateway({
+  home = process.env.HOME,
+  fetchImpl = fetch,
+  stdout = process.stdout,
+  stderr = process.stderr,
+  attempts = 1,
+  delayMs = 0,
+} = {}) {
+  let config;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      config = loadGatewayConfig(home);
+      break;
+    } catch {
+      if (attempt === attempts - 1) {
+        stderr.write("CloudDev is still connecting the AI gateway. Wait a moment and open a new terminal.\n");
+        return 2;
       }
-    };
-    const cleanup = () => {
-      input.off("data", onData);
-      input.setRawMode?.(false);
-    };
-    input.on("data", onData);
-  });
-
-  stdout.write("CloudDev AI gateway setup\nThe inference key is stored in your persistent home with mode 0600 and is not displayed.\n\n");
-  const baseUrl = await ask("OmniRoute URL", { initial: existing.baseUrl });
-  if (baseUrl === null) return 130;
-  let normalized;
-  try { normalized = normalizeBaseUrl(baseUrl); }
-  catch (error) { stderr.write(`${error.message}\n`); return 2; }
-  let apiKey = await ask("OmniRoute inference key (input hidden)", { secret: true });
-  if (apiKey === null) return 130;
-  apiKey = apiKey.trim() || existing.apiKey;
-  if (!apiKey) {
-    stderr.write("No inference key supplied. Create a scoped inference key in OmniRoute and run `ai-setup` again.\n");
-    return 2;
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
   }
-  let models;
-  try { models = await fetchChatModels({ baseUrl: normalized, apiKey, fetchImpl, allowEmpty: true }); }
-  catch (error) { stderr.write(`${error.message}\n`); return 1; }
 
-  try { ensureCodexGatewayConfig({ codexHome: path.join(home, ".codex"), baseUrl: normalized }); }
-  catch { stderr.write("Could not update the private user-level Codex provider config. Check CODEX_HOME permissions.\n"); return 1; }
+  let models;
+  try {
+    models = await fetchChatModels({ baseUrl: config.baseUrl, apiKey: config.apiKey, fetchImpl, allowEmpty: true });
+  } catch (error) {
+    stderr.write(`${error.message}\n`);
+    return 1;
+  }
+
+  const selected = { codex: config.models.codex || "", claude: config.models.claude || "" };
+  if (models.length > 0) {
+    for (const agent of ["codex", "claude"]) {
+      if (!models.includes(selected[agent])) selected[agent] = models[0];
+    }
+  }
+
+  try {
+    ensureCodexGatewayConfig({ codexHome: path.join(home, ".codex"), baseUrl: config.baseUrl });
+    saveGatewayConfig(home, { baseUrl: config.baseUrl, apiKey: config.apiKey, models: selected });
+  } catch {
+    stderr.write("Could not save the private gateway config. Check that the persistent home is writable.\n");
+    return 1;
+  }
 
   if (models.length === 0) {
-    try { saveGatewayConfig(home, { baseUrl: normalized, apiKey, models: { codex: "", claude: "" } }); }
-    catch { stderr.write("Could not save the private gateway config. Check that the persistent home is writable.\n"); return 1; }
-    stdout.write("Inference key saved. No chat models are visible yet. Add a provider and model in OmniRoute, then run `ai-setup` again. Restart the workspace after setup so CloudCLI loads the restricted inference key.\n");
+    stdout.write("The workspace inference key is ready. No chat model is visible yet. Open OmniRoute and connect ChatGPT, Claude, or a DeepSeek API key.\n");
     return 0;
   }
-
-  stdout.write("Models visible to this key:\n");
-  for (let index = 0; index < models.length; index += 1) stdout.write(`${index + 1}. ${models[index]}\n`);
-  const choose = async (agent, initialModel = "") => {
-    const defaultIndex = models.indexOf(initialModel);
-    const initial = defaultIndex >= 0 ? String(defaultIndex + 1) : "";
-    const choice = await ask(`${agent === "codex" ? "Codex" : "Claude Code"} model number, or blank to leave unconfigured`, { initial });
-    if (choice === "") return "";
-    if (!/^\d+$/.test(choice) || Number(choice) < 1 || Number(choice) > models.length) return null;
-    return models[Number(choice) - 1];
-  };
-  const codex = await choose("codex", existing.models.codex);
-  if (codex === null) { stderr.write("Invalid Codex model selection.\n"); return 2; }
-  const claude = await choose("claude", existing.models.claude);
-  if (claude === null) { stderr.write("Invalid Claude Code model selection.\n"); return 2; }
-  try { saveGatewayConfig(home, { baseUrl: normalized, apiKey, models: { codex, claude } }); }
-  catch { stderr.write("Could not save the private gateway config. Check that the persistent home is writable.\n"); return 1; }
-  stdout.write("Gateway settings saved. The key was not displayed. Run `ai-status` to verify, then restart the workspace so CloudCLI loads the restricted inference key.\n");
+  stdout.write(`AI gateway ready.\nCodex: ${selected.codex}\nClaude Code: ${selected.claude}\nThe inference key is stored privately and is not shown.\n`);
   return 0;
 }
 
@@ -400,7 +362,7 @@ async function main() {
   if (command === "codex") return launchAgent("codex", args);
   if (command === "claude") return launchAgent("claude", args);
   if (command === "models") return printModels();
-  if (command === "setup") return setupInteractive();
+  if (command === "setup") return configureGateway({ attempts: 8, delayMs: 2000 });
   if (command === "status") return status();
   process.stderr.write("Usage: ai-setup | ai-status | ai-models | ai-codex [args...] | ai-claude [args...]\n");
   return 2;

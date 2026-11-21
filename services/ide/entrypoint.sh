@@ -148,6 +148,18 @@ env -i \
     /usr/bin/caddy validate --config /run/clouddev-caddy/Caddyfile --adapter caddyfile
 env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin /usr/sbin/sshd -t -f /etc/ssh/sshd_config
 
+nohup /usr/bin/setpriv --reuid="$IDE_UID" --regid="$IDE_GID" --clear-groups --no-new-privs \
+  --inh-caps=-all --ambient-caps=-all --bounding-set=-all \
+  /usr/bin/env -i \
+  PATH=/usr/local/bin:/usr/bin:/bin \
+  HOME="$IDE_HOME" \
+  USER=coder \
+  CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET="${CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET:-}" \
+  CLOUDDEV_OMNIROUTE_HOST="${CLOUDDEV_OMNIROUTE_HOST:-}" \
+  CLOUDDEV_OMNIROUTE_BASE_URL="${CLOUDDEV_OMNIROUTE_BASE_URL:-http://127.0.0.1:20129}" \
+  CLOUDDEV_GATEWAY_BOOTSTRAP_PORT="${CLOUDDEV_GATEWAY_BOOTSTRAP_PORT:-20130}" \
+  /usr/local/bin/node /opt/clouddev-ide/src/install-gateway-config.mjs >/dev/null 2>&1 &
+
 exec /usr/bin/env -i \
   PATH=/usr/local/bin:/usr/bin:/bin \
   HOME="$IDE_HOME" \

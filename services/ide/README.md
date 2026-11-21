@@ -102,9 +102,8 @@ Open the authenticated OmniRoute dashboard at `/omniroute/` to connect a provide
 restricted inference API key. Do not give the IDE a provider master key,
 OmniRoute management key, Forgejo administrator token, or Railway token.
 
-Run `ai-setup` in an interactive IDE terminal. It prompts for the private
-inference key without echoing it, checks `/v1/models?kind=chat`, and saves the
-key and selected models in `~/.config/clouddev-ai/gateway.json` with mode
+The workspace fetches its own scoped inference key from OmniRoute and saves it
+in `~/.config/clouddev-ai/gateway.json` with mode
 0600. It also writes the Codex provider routing to the persistent user-level
 `$CODEX_HOME/config.toml`; the provider key is referenced by environment name,
 not copied into TOML or project configuration.

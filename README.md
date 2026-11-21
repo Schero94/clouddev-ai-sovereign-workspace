@@ -200,9 +200,9 @@ After a deployment is available for testing:
    the regular Forgejo user. Clone the private repository. The workspace keeps
    the matching private key; do not use the Forgejo administrator token for Git.
 5. From the launchpad, open OmniRoute. Sign in with its generated first-login
-   password, change it, add your provider in the authenticated dashboard, and
-   create a restricted inference API key.
-6. In the workspace terminal, run `ai-setup`. Select a model returned by
+   password, change it, and add your provider in the authenticated dashboard.
+   The workspace creates a restricted inference key on its own.
+6. In the workspace terminal, run `ai-setup`. It selects a model returned by
    `ai-models`, then check the connection with `ai-status`.
 7. Run `ai-codex` or `ai-claude` in the project terminal. These commands use
    the configured OmniRoute endpoint and scoped inference key.

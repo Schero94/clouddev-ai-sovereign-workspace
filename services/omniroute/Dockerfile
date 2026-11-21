@@ -65,7 +65,9 @@ RUN set -eu \
   && openssl version | grep -F 'OpenSSL 3.6.5'
 
 COPY services/omniroute/entrypoint.sh /opt/clouddev-router-entrypoint.sh
-RUN chmod 0555 /opt/clouddev-router-entrypoint.sh
+COPY services/omniroute/provision-workspace-key.mjs /opt/clouddev-router-provision.mjs
+RUN chmod 0555 /opt/clouddev-router-entrypoint.sh \
+  && chmod 0444 /opt/clouddev-router-provision.mjs
 USER root
 ENTRYPOINT ["/opt/clouddev-router-entrypoint.sh"]
 CMD ["node", "dev/run-standalone.mjs"]

@@ -42,6 +42,7 @@ test("generates independent local credentials without printing them and restrict
     "STORAGE_ENCRYPTION_KEY",
     "MACHINE_ID_SALT",
     "OMNIROUTE_WS_BRIDGE_SECRET",
+    "CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET",
   ].map(key => entries[key]);
   assert.ok(secrets.every(secret => typeof secret === "string" && secret.length >= 32));
   assert.ok(secrets.every(secret => /^[a-zA-Z0-9+/=]+$/.test(secret)));

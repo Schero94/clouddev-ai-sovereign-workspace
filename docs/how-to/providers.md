@@ -50,28 +50,23 @@ The OmniRoute upstream guide describes the provider flow as **Dashboard → Prov
 <figcaption><strong>Provider onboarding assistant</strong><span>The local capture shows provider-type choices before any account details are entered.</span></figcaption>
 </figure>
 
-## Create the workspace inference key
+## Workspace inference key
 
-1. In OmniRoute, open **Endpoints** or **API Keys**, depending on the dashboard label in the pinned release, and create a separate key for CloudDev agents.
-2. Restrict it to only the required models and provider connections when the current key policy controls allow this. Do not grant provider-management or dashboard-administration access to an agent key.
-3. Keep the generated value available for the next step. It is an OmniRoute inference credential, not the OpenAI, Anthropic, or DeepSeek provider key.
-4. If you cannot tell which permissions a key receives, stop and inspect the key's policy before using it. Do not assume that a key is inference-only based on its label.
+The router creates one workspace inference key and the IDE stores it. The key can call the connected models. It does not receive provider-management or dashboard-administration access. It is an OmniRoute inference credential, not the OpenAI, Anthropic, or DeepSeek provider key.
 
-OmniRoute's key policy source at v3.8.52 lists model and connection access controls. The project mock test also creates a test key restricted to named models and connections. The actual controls available to an operator should be verified in the deployed dashboard.
+OmniRoute's key policy source at v3.8.52 lists model and connection access controls. The project mock test also creates a test key restricted to named models and connections.
 
 ## Configure CloudDev
 
-1. Open an interactive terminal in the IDE. Run:
+The workspace writes the gateway URL, inference key, and model selections on its own. Run `ai-setup` in a terminal when you want to refresh that file:
 
-   ```sh
-   ai-setup
-   ```
+```sh
+ai-setup
+```
 
-2. Keep the prefilled private OmniRoute URL unless the deployment's service address has changed.
-3. Paste the OmniRoute inference key when prompted. Input is hidden. Do not pass the key as a command-line argument or save it in a project file.
-4. CloudDev checks the authenticated chat-model catalog at `/v1/models?kind=chat`. Select a current listed model for Codex, Claude Code, or both. Choose each model only if its protocol and provider documentation support that agent's request path.
-5. CloudDev stores the gateway URL, inference key, and model selections in the persistent home at `~/.config/clouddev-ai/gateway.json` with mode `0600`. Codex and Claude Code receive the key at process launch through their environment. The provider master key is not copied into the workspace.
-6. If the model list is empty, finish connecting the provider or adjust the key's allowed models in OmniRoute, then run `ai-setup` again.
+CloudDev checks the authenticated chat-model catalog at `/v1/models?kind=chat` and selects the first visible chat model for Codex and Claude Code. It stores the result in `~/.config/clouddev-ai/gateway.json` with mode `0600`. Codex and Claude Code receive the key at process launch through their environment. The provider master key is not copied into the workspace. Do not pass the key as a command-line argument or save it in a project file.
+
+If the model list is empty, finish connecting the provider in OmniRoute, then run `ai-setup` again.
 
 CloudDev's `ai-setup` is its own guided setup command. It is not the same as OmniRoute's upstream `omniroute setup-codex` or `omniroute setup-claude` commands. The upstream commands fetch a live catalog and write CLI profiles; CloudDev configures its wrappers and persistent gateway file instead.
 

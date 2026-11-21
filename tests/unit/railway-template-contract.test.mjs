@@ -66,7 +66,7 @@ test("Composer manifest covers every IaC preserve() variable", () => {
 });
 
 test("fresh template deployments generate all service secrets and request only operator-owned SSH/provider setup", () => {
-  assert.equal(manifest.generatedSecrets.length, 10);
+  assert.equal(manifest.generatedSecrets.length, 11);
   assert.deepEqual(
     manifest.generatedSecrets.map(({ service, name }) => `${service}.${name}`).sort(),
     [
@@ -78,6 +78,7 @@ test("fresh template deployments generate all service secrets and request only o
       "clouddev-router.INITIAL_PASSWORD",
       "clouddev-router.JWT_SECRET",
       "clouddev-router.MACHINE_ID_SALT",
+      "clouddev-router.CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET",
       "clouddev-router.OMNIROUTE_WS_BRIDGE_SECRET",
       "clouddev-router.STORAGE_ENCRYPTION_KEY",
     ].sort(),

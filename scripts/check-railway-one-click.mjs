@@ -29,10 +29,10 @@ expect(source.includes('PORT: "3000"'), "Forgejo must publish its HTTP port beca
 expect(source.includes('PORT: "8080"'), "The workspace must publish its HTTP port because the SSH proxy is also attached.");
 expect(source.includes('PORT: "20128"'), "The router must publish the port Railway healthchecks.");
 expect(!/^\s*domains\s*:/m.test(source), "Generated HTTPS domains stay in the Template Composer.");
-expect(manifest.generatedSecrets.length === 10, "A fresh install needs ten generated secrets.");
+expect(manifest.generatedSecrets.length === 11, "A fresh install needs eleven generated secrets.");
 expect(manifest.generatedSecrets.every(entry => entry.composerValue === '${{secret(64, "0123456789abcdef")}}'), "Generated secrets must use the documented secret() expression.");
 expect(manifest.operatorInputs.length === 1 && manifest.operatorInputs[0].name === "SSH_AUTHORIZED_KEYS" && manifest.operatorInputs[0].required === true, "The only operator secret input is the SSH public key.");
-expect((source.match(/preserve\(\)/g) ?? []).length === 11, "IaC must preserve the ten generated secrets and the operator SSH key.");
+expect((source.match(/preserve\(\)/g) ?? []).length === 12, "IaC must preserve the eleven generated secrets and the operator SSH key.");
 expect(!JSON.stringify(manifest).includes("OPENAI_API_KEY") && !JSON.stringify(manifest).includes("ANTHROPIC_API_KEY"), "Provider master keys are not template inputs.");
 
 if (failures.length > 0) {
