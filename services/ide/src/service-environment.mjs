@@ -42,7 +42,7 @@ function languageEnvironment(source) {
 
 function coderEnvironment({ source, home, projectsDirectory }) {
   const result = {
-    PATH: typeof source.PATH === "string" ? source.PATH : DEFAULT_PATH,
+    PATH: `${home}/.local/bin:${typeof source.PATH === "string" ? source.PATH : DEFAULT_PATH}`,
     HOME: home,
     USER,
     LOGNAME: USER,

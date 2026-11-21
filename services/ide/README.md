@@ -8,7 +8,7 @@ image is built from the repository root so it can package the parent-owned
 ## Runtime layout
 
 The image pins the official `codercom/code-server:4.143.1` and
-`caddy:2.11.6-alpine` images, Node.js `24.22.0`, CloudCLI `1.37.5`, Codex
+`caddy:2.11.6-alpine` images, Node.js `24.22.0`, CloudCLI `1.37.9`, Codex
 `0.164.0`, Claude Code `2.1.310`, and OmniRoute CLI `3.8.52`. npm lockfiles pin
 the CLI dependency trees. It installs Git, OpenSSH client/server, Python 3,
 build tools, tmux, pnpm, and the configured Open VSX extensions.
@@ -114,7 +114,7 @@ terminal task can continue after the SSH client disconnects. Reconnect with
 `clouddev-tasks --attach ID` while the tmux session is running. CloudCLI
 provider runs keep running after a browser/WebSocket disconnect.
 
-CloudCLI 1.37.5's pinned provider-runtime boundary reloads the mode-0600
+CloudCLI 1.37.9's pinned provider-runtime boundary reloads the mode-0600
 gateway file immediately before each Codex or Claude run. It writes the routed
 model into CloudCLI's session row before dispatch, so the model shown when a
 conversation is reopened matches the one sent to the gateway. The Claude Agent

@@ -70,6 +70,7 @@ test("gives CloudCLI only the restricted inference key and required persistent r
     },
   });
   assert.equal(env.HOME, "/workspace/home");
+  assert.match(env.PATH, /^\/workspace\/home\/\.local\/bin:/);
   assert.equal(env.CODEX_HOME, "/workspace/home/.codex");
   assert.equal(env.CLAUDE_CONFIG_DIR, "/workspace/home/.claude");
   assert.equal(env.WORKSPACES_ROOT, "/workspace/projects");

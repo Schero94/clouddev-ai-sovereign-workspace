@@ -108,7 +108,7 @@ after its documented recovery window.
 
 ## Evidence status
 
-- Documented upstream behavior: CloudCLI 1.37.5 stores session data in SQLite
+- Documented upstream behavior: CloudCLI 1.37.9 stores session data in SQLite
   and provider-native files; code-server supports password authentication;
   Railway private networking does not constitute outbound egress filtering.
 - Implemented locally: to be confirmed from the merged runtime, Compose stack,

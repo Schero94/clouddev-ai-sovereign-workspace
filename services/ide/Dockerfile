@@ -127,7 +127,9 @@ COPY services/ide/agent-tools/package.json services/ide/agent-tools/package-lock
 RUN npm ci --prefix /opt/clouddev-ide/agent-tools --no-audit --no-fund
 
 COPY services/ide/cloudcli-ui/package.json services/ide/cloudcli-ui/package-lock.json /opt/clouddev-ide/cloudcli-ui/
-RUN npm ci --prefix /opt/clouddev-ide/cloudcli-ui --omit=dev --no-audit --no-fund
+RUN npm ci --prefix /opt/clouddev-ide/cloudcli-ui --omit=dev --no-audit --no-fund \
+  && npm install -g task-master-ai@0.43.1 --no-audit --no-fund \
+  && task-master --version
 
 COPY services/ide/omniroute-cli/package.json services/ide/omniroute-cli/package-lock.json /opt/clouddev-ide/omniroute-cli/
 # OmniRoute's run integration needs its pinned CLI bundle and platform esbuild

@@ -17,7 +17,7 @@ function requireRuntimePath(name) {
 const home = requireRuntimePath("HOME");
 const cloudcliPackageRoot = requireRuntimePath("CLOUDCLI_PACKAGE_ROOT");
 const manifest = JSON.parse(readFileSync(path.join(cloudcliPackageRoot, "package.json"), "utf8"));
-if (manifest.version !== "1.37.5") throw new Error("CloudCLI runtime package version does not match the pinned release.");
+if (manifest.version !== "1.37.9") throw new Error("CloudCLI runtime package version does not match the pinned release.");
 
 const baseUrl = process.env.CLOUDDEV_OMNIROUTE_BASE_URL || "http://127.0.0.1:20129";
 ensureCodexGatewayConfig({ codexHome: process.env.CODEX_HOME, baseUrl });

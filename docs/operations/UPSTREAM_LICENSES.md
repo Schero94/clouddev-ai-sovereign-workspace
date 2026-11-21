@@ -7,7 +7,7 @@ images. Verify license and version changes whenever a dependency is updated.
 
 | Component | Pinned release | License / terms | Source |
 | --- | --- | --- | --- |
-| CloudCLI UI | `@cloudcli-ai/cloudcli` 1.37.5 | AGPL-3.0-or-later | [Repository](https://github.com/siteboon/claudecodeui), [npm package](https://www.npmjs.com/package/@cloudcli-ai/cloudcli) |
+| CloudCLI UI | `@cloudcli-ai/cloudcli` 1.37.9 | AGPL-3.0-or-later | [Repository](https://github.com/siteboon/claudecodeui), [npm package](https://www.npmjs.com/package/@cloudcli-ai/cloudcli) |
 | OmniRoute dashboard image | 3.8.54 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.54), [image](https://hub.docker.com/r/diegosouzapw/omniroute) |
 | OmniRoute CLI | 3.8.52 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.52) |
 | code-server | 4.143.1 | MIT | [Release](https://github.com/coder/code-server/tree/v4.143.1) |

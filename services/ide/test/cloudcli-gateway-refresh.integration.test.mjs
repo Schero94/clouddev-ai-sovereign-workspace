@@ -46,7 +46,7 @@ afterEach(async () => {
 });
 
 test("reloads a post-startup gateway setup before the pinned CloudCLI provider runtime sends its mock request", {
-  skip: !packageAvailable ? "Install CloudCLI 1.37.5 for the pinned provider-runtime integration test." : false,
+  skip: !packageAvailable ? "Install CloudCLI 1.37.9 for the pinned provider-runtime integration test." : false,
   timeout: 10000,
 }, async () => {
   const home = makeHome();

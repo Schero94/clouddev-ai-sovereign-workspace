@@ -14,7 +14,11 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
-  assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.5");
+  assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.9");
+  assert.match(dockerfile, /task-master-ai@0\.43\.1/);
+  assert.match(read("entrypoint.sh"), /install-cloudcli-plugins\.sh/);
+  assert.match(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-starter\.git/);
+  assert.doesNotMatch(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-ccx/);
   assert.doesNotMatch(dockerfile, /VOLUME /);
   assert.match(dockerfile, /HOME=\/workspace\/home/);
   assert.match(dockerfile, /WORKDIR \/workspace\/projects/);

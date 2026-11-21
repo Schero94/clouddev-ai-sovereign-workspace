@@ -125,6 +125,8 @@ CLOUDDEV_EXTENSION_SEED=/opt/clouddev-ide/extension-seed \
   CLOUDDEV_EXTENSIONS_DIR="$IDE_HOME/.local/share/code-server/extensions" \
   /usr/local/bin/node /opt/clouddev-ide/src/install-editor-seed.mjs
 chown -R "$IDE_UID:$IDE_GID" "$IDE_HOME/.local/share/code-server/extensions"
+CLOUDDEV_HOME="$IDE_HOME" IDE_UID="$IDE_UID" IDE_GID="$IDE_GID" \
+  /opt/clouddev-ide/scripts/install-cloudcli-plugins.sh
 
 # Reassert mount-root permissions after preparing all service-specific paths.
 # The mount root must be traversable by the separate Caddy and launchpad UIDs.

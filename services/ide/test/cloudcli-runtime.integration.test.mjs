@@ -64,7 +64,7 @@ test("CloudCLI run recovery and tmux-disconnected provider transcripts use the p
   try {
     await withEnvironment({ HOME: home, DATABASE_PATH: databasePath }, async () => {
       const manifest = JSON.parse(readFileSync(path.join(cloudCliRoot, "package.json"), "utf8"));
-      assert.equal(manifest.version, "1.37.5");
+      assert.equal(manifest.version, "1.37.9");
       const registryUrl = pathToFileURL(path.join(cloudCliRoot, "dist-server/server/modules/websocket/services/chat-run-registry.service.js")).href;
       const { chatRunRegistry } = await import(registryUrl);
       const databaseUrl = pathToFileURL(path.join(cloudCliRoot, "dist-server/server/modules/database/index.js")).href;
