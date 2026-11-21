@@ -13,10 +13,10 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 21 of 24 gates complete.** The Railway template is
+**Release status: 22 of 24 gates complete.** The Railway template is
 published at
 [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
-G4, G5, and G23 remain open. G15 and G17 are closed for local image
+G4 and G5 remain open. G15 and G17 are closed for local image
 evidence. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
 this project beyond local evaluation.
@@ -406,9 +406,8 @@ open live gates. G4 and G5 still need full cross-device evidence; G13 proves a
 local four-store data-level restore but not Railway recovery. G12 passed on a
 template deployment. G14 is complete: the template is published and a no-input
 test deployment passed. G15 and G17 are closed for
-local image evidence. G20 is complete:
-GitHub Pages serves the reviewed documentation. G23 remains open until the
-repository social preview is uploaded. G24
+local image evidence. G20 and G23 are complete: GitHub Pages serves the
+reviewed documentation, and the repository social preview is uploaded. G24
 passed an isolated application-level restore, while CloudCLI session resume
 remains unverified.
 
