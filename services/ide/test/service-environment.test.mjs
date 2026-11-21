@@ -75,6 +75,7 @@ test("gives CloudCLI only the restricted inference key and required persistent r
   assert.match(env.PATH, /^\/workspace\/home\/\.local\/bin:/);
   assert.equal(env.CODEX_HOME, "/workspace/home/.codex");
   assert.equal(env.CLAUDE_CONFIG_DIR, "/workspace/home/.claude");
+  assert.equal(env.PLAYWRIGHT_BROWSERS_PATH, "/opt/ms-playwright");
   assert.equal(env.WORKSPACES_ROOT, "/workspace/projects");
   assert.equal(env.SERVER_PORT, "3001");
   assert.equal(env.CLAUDE_CLI_PATH, "/opt/clouddev-ide/agent-tools/node_modules/@anthropic-ai/claude-code/bin/claude.exe");

@@ -6,7 +6,8 @@
   "dependencies": {
     "@anthropic-ai/claude-code": "2.1.330",
     "@openai/codex": "0.171.0",
-    "pnpm": "12.21.0"
+    "pnpm": "12.21.0",
+    "opencode-ai": "1.19.6"
   },
   "engines": {
     "node": ">=24.22.0 <27"

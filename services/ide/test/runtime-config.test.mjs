@@ -15,6 +15,10 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.9");
+  assert.equal(cloudcli.dependencies.playwright, "1.65.1", "CloudCLI Browser resolves playwright from its own tree");
+  assert.match(dockerfile, /PLAYWRIGHT_BROWSERS_PATH=\/opt\/ms-playwright/);
+  assert.match(dockerfile, /playwright install-deps chromium/);
+  assert.match(dockerfile, /playwright install chromium/);
   assert.match(dockerfile, /task-master-ai@0\.43\.1/);
   assert.match(dockerfile, /astral-sh\/uv\/releases\/download\/0\.13\.9\//);
   assert.match(dockerfile, /a7fbaff2b9a271d85c1bdb540941090fd1ce011797b4abeb48e4dcd39c2471d5/);

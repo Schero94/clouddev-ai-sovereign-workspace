@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ensureCodexGatewayConfig } from "./codex-config.mjs";
+import { ensureOpenCodeGatewayConfig } from "./opencode-config.mjs";
 
 export const DEFAULT_BASE_URL = "http://127.0.0.1:20129";
 export const API_KEY_ENV = "CLOUDDEV_OMNIROUTE_API_KEY";
@@ -347,6 +348,11 @@ export async function configureGateway({
   } catch {
     stderr.write("Could not save the private gateway config. Check that the persistent home is writable.\n");
     return 1;
+  }
+  try {
+    ensureOpenCodeGatewayConfig({ home, baseUrl: config.baseUrl, apiKey: config.apiKey, model: selected.codex });
+  } catch (error) {
+    stderr.write(`OpenCode was not connected: ${error.message}\n`);
   }
 
   if (models.length === 0) {

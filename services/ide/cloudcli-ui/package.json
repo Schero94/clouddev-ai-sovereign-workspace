@@ -8,6 +8,7 @@
     "node": ">=24.22.0 <27"
   },
   "dependencies": {
-    "@cloudcli-ai/cloudcli": "1.37.9"
+    "@cloudcli-ai/cloudcli": "1.37.9",
+    "playwright": "1.65.1"
   }
 }

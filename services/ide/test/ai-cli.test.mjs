@@ -196,6 +196,8 @@ test("connects a stored inference key and selects the first visible model withou
   assert.equal(saved.models.codex, "openai/gpt-5.4");
   assert.equal(saved.models.claude, "openai/gpt-5.4");
   assert.equal(output.join("").includes(testKey), false);
+  const opencode = JSON.parse(readFileSync(path.join(home, ".config/opencode/opencode.json"), "utf8"));
+  assert.equal(opencode.model, "omniroute/openai/gpt-5.4");
 });
 
 test("keeps a model that is still visible and reports when the catalog is empty", async () => {

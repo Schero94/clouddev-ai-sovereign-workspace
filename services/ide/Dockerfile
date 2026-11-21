@@ -131,6 +131,13 @@ RUN npm ci --prefix /opt/clouddev-ide/cloudcli-ui --omit=dev --no-audit --no-fun
   && npm install -g task-master-ai@0.43.1 --no-audit --no-fund \
   && task-master --version
 
+# CloudCLI Browser needs Chromium and its system libraries. The runtime user
+# cannot install them, so the image ships them read-only.
+RUN PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright /opt/clouddev-ide/cloudcli-ui/node_modules/.bin/playwright install-deps chromium \
+  && PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright /opt/clouddev-ide/cloudcli-ui/node_modules/.bin/playwright install chromium \
+  && chmod -R a+rX /opt/ms-playwright \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY services/ide/omniroute-cli/package.json services/ide/omniroute-cli/package-lock.json /opt/clouddev-ide/omniroute-cli/
 # OmniRoute's run integration needs its pinned CLI bundle and platform esbuild
 # binary, not the CLI's optional local inference/database install features.
@@ -299,6 +306,7 @@ ENV HOME=/workspace/home \
     OMNIROUTE_CLI_HOME=/workspace/home/.config/omniroute \
     CLOUDDEV_OMNIROUTE_BASE_URL=http://127.0.0.1:20129 \
     CLOUDDEV_PROJECTS_DIR=/workspace/projects \
+    PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright \
     PATH=/opt/clouddev-ide/agent-tools/node_modules/.bin:/opt/clouddev-ide/omniroute-cli/node_modules/.bin:/usr/local/bin:/workspace/home/.local/bin:/usr/bin:/bin
 
 WORKDIR /workspace/projects

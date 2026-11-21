@@ -41,6 +41,7 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   assert.equal(agentTools.dependencies["@openai/codex"], "0.171.0");
   assert.equal(agentTools.dependencies["@anthropic-ai/claude-code"], "2.1.330");
   assert.equal(agentTools.dependencies.pnpm, "12.21.0");
+  assert.equal(agentTools.dependencies["opencode-ai"], "1.19.6");
   assert.equal(gatewayCli.dependencies.omniroute, "3.8.52");
   assert.deepEqual(gatewayCli.overrides, { dompurify: "3.4.17", next: "16.4.3", zod: "4.6.6" });
   assert.equal(gatewayLock.packages["node_modules/next"].version, "16.4.3");

@@ -46,7 +46,9 @@ published. See [Release status](../operations/RELEASE_STATUS.md).
 
 ## Tools included in the workspace
 
-- Claude Code and Codex, with pinned versions
+- Claude Code, Codex, and OpenCode, with pinned versions. All three use the
+  OmniRoute gateway without extra setup
+- Playwright with Chromium, so CloudCLI Browser can open web pages for the agents
 - CloudCLI with its Linux plugins, including the terminal, task queue, and
   session manager, plus the TaskMaster CLI
 - Node.js 26.13.1 LTS with npm and pnpm

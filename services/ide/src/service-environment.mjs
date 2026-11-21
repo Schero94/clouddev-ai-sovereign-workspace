@@ -50,6 +50,7 @@ function coderEnvironment({ source, home, projectsDirectory }) {
     CODEX_HOME: `${home}/.codex`,
     CLAUDE_CONFIG_DIR: `${home}/.claude`,
     CLOUDDEV_PROJECTS_DIR: projectsDirectory,
+    PLAYWRIGHT_BROWSERS_PATH: "/opt/ms-playwright",
     CLOUDDEV_OMNIROUTE_BASE_URL: source.CLOUDDEV_OMNIROUTE_BASE_URL || "http://127.0.0.1:20129",
     TMPDIR: "/tmp",
     ...languageEnvironment(source),
