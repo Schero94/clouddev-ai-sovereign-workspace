@@ -1,15 +1,16 @@
 # CloudDev AI Forgejo service
 
-This service runs the official Forgejo `17.0.0-rootless` image. The image is
+This service runs the official Forgejo `17.0.2-rootless` image. The image is
 pinned to its verified multi-platform OCI index digest:
 
 ```text
-codeberg.org/forgejo/forgejo:17.0.0-rootless@sha256:6554520f7574602100b7d6620c6ac5b18cec30325f823777497eac36234f5cf8
+codeberg.org/forgejo/forgejo:17.0.2-rootless@sha256:39362ab93a94c0c9b8b330d2a877ddbb3f02fa8c0cba1b8d686d437b39f36a04
 ```
 
 The upstream rootless image is based on Alpine 3.24. This image installs the
-pinned `postgresql17-client=17.11-r0` package and switches back to UID/GID
-`1000:1000` for normal startup.
+pinned `postgresql17-client=17.12-r0` package and switches back to UID/GID
+`1000:1000` for normal startup. Version 17.0.2 includes the SSH public-key
+exact-match fix used by Forgejo's internal SSH server.
 
 Forgejo runs as UID/GID `1000:1000`. Persist the whole
 `/var/lib/gitea` directory. It contains repositories, user data, configuration,
@@ -146,9 +147,10 @@ running container engine and the complete local stack.
 - [Forgejo v17 Docker installation and rootless image](https://forgejo.org/docs/v17.0/admin/installation/docker)
 - [Forgejo v17 configuration cheat sheet](https://forgejo.org/docs/v17.0/admin/config-cheat-sheet)
 - [Forgejo v17 command-line reference](https://forgejo.org/docs/v17.0/admin/command-line)
-- [Forgejo v17.0.0 rootless Dockerfile](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.0/Dockerfile.rootless)
-- [Forgejo v17.0.0 rootless entrypoint](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.0/docker/rootless/usr/local/bin/docker-entrypoint.sh)
-- [Forgejo v17.0.0 health route and integration test](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.0/tests/integration/api_health_test.go)
+- [Forgejo v17.0.2 rootless Dockerfile](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.2/Dockerfile.rootless)
+- [Forgejo v17.0.2 rootless entrypoint](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.2/docker/rootless/usr/local/bin/docker-entrypoint.sh)
+- [Forgejo v17.0.2 health route and integration test](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.2/tests/integration/api_health_test.go)
+- [Forgejo 17.0.2 release notes](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/17.0.2.md)
 - [PostgreSQL psql and secure password command](https://www.postgresql.org/docs/current/app-psql.html)
 - [Alpine v3.24 PostgreSQL 17 client package](https://pkgs.alpinelinux.org/package/v3.24/main/aarch64/postgresql17-client)
 

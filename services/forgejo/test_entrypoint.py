@@ -595,8 +595,8 @@ class ForgejoEntrypointTests(unittest.TestCase):
         dockerfile = DOCKERFILE.read_text(encoding="utf-8")
 
         self.assertIn(
-            "codeberg.org/forgejo/forgejo:17.0.0-rootless@sha256:"
-            "6554520f7574602100b7d6620c6ac5b18cec30325f823777497eac36234f5cf8",
+            "codeberg.org/forgejo/forgejo:17.0.2-rootless@sha256:"
+            "39362ab93a94c0c9b8b330d2a877ddbb3f02fa8c0cba1b8d686d437b39f36a04",
             dockerfile,
         )
         for config in (
@@ -610,8 +610,8 @@ class ForgejoEntrypointTests(unittest.TestCase):
             with self.subTest(config=config):
                 self.assertIn(config, dockerfile)
         self.assertIn("USER 1000:1000", dockerfile)
-        self.assertIn("postgresql17-client=17.11-r0", dockerfile)
-        self.assertIn("FROM codeberg.org/forgejo/forgejo:17.0.0-rootless", dockerfile)
+        self.assertIn("postgresql17-client=17.12-r0", dockerfile)
+        self.assertIn("FROM codeberg.org/forgejo/forgejo:17.0.2-rootless", dockerfile)
         self.assertIn("USER root", dockerfile)
         self.assertIn('VOLUME ["/var/lib/gitea"]', dockerfile)
         self.assertIn("EXPOSE 3000 2222", dockerfile)

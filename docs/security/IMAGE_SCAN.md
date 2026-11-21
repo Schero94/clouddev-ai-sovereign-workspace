@@ -60,15 +60,24 @@ repositories at that check. This does not establish that either finding is
 unexploitable. Both remain release-blocking under the current policy. Trivy
 found 250 high package findings, including OS and embedded Go records.
 
-The Forgejo 17.0.0 image has no critical findings and four high package
-findings. Three unique IDs are `CVE-2026-111497` in brotli, `CVE-2026-111943`
-in Go's standard library, and `CVE-2026-77214` in libexpat. Its release notes
-also advise against upgrading to 17.0.0 because some push, merge, and other Git
-operations fail in certain cases. The latest published Forgejo release checked
-on 2026-10-25 remained 17.0.0; 17.0.1 was not available. Version 16.0.6 was
-also scanned. It had the same three high CVE identifiers and no critical
-findings, so it did not remove the Go or OS findings. No downgrade was made
-against persistent data.
+On 2026-11-21, Trivy 0.76.2 scanned the published Forgejo 17.0.2 rootless
+amd64 manifest
+`sha256:020d7e5ed6228f147c9681a9c4a3bff485a07c59108e4731a2e94672f0f2202a`
+remotely. The multi-platform index is
+`sha256:39362ab93a94c0c9b8b330d2a877ddbb3f02fa8c0cba1b8d686d437b39f36a04`.
+The scan reported 0 critical findings and 1 high finding, `CVE-2026-86144`
+in `libxml2` 2.13.9-r2, with a fix listed in 2.13.9-r3. The Dockerfile now
+pins that index. This scan did not rebuild the CloudDev overlay or start the
+container. The 17.0.2 release notes include the internal SSH public-key
+exact-match fix.
+
+The 2026-10-26 Forgejo 17.0.0 image had no critical findings and four high
+package findings. Three unique IDs were `CVE-2026-111497` in brotli,
+`CVE-2026-111943` in Go's standard library, and `CVE-2026-77214` in libexpat.
+Its release notes advised against upgrading to 17.0.0 because some push,
+merge, and other Git operations failed in certain cases. That image is no
+longer the pin. Version 16.0.6 had the same three high CVE identifiers and no
+critical findings, so it was not used. No existing volume was changed.
 
 The PostgreSQL 18.6 Alpine image has one critical finding, `CVE-2025-68121`, in
 the embedded `gosu` Go binary (`stdlib` v1.24.6), plus 26 high findings across
