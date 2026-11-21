@@ -23,6 +23,8 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   assert.match(dockerfile, /replace_npm undici 7\.30\.1 /);
   assert.match(dockerfile, /replace_npm follow-redirects 1\.16\.2 /);
   assert.match(dockerfile, /github.com\/go-jose\/go-jose\/v4@v4\.1\.6/);
+  assert.match(dockerfile, /binutils-x86-64-linux-gnu/);
+  assert.match(dockerfile, /binutils-aarch64-linux-gnu/);
   assert.match(dockerfile, /go-jose\/v3 v3\.0\.6/);
   assert.match(readFileSync(path.join(root, "caddy-build/go.mod"), "utf8"), /replace github.com\/go-jose\/go-jose\/v3 v3\.0\.6 => \.\/go-jose-v3/);
   assert.match(readFileSync(path.join(root, "caddy-build/go-jose-v3/jwk.go"), "utf8"), /MaxRSAModulusBits = 4096/);

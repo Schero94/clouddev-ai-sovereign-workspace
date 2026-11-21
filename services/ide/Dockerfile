@@ -3,8 +3,8 @@ FROM --platform=$BUILDPLATFORM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4c
 ARG TARGETARCH
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl patch make perl \
-    gcc-x86-64-linux-gnu libc6-dev-amd64-cross \
-    gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+    binutils gcc-x86-64-linux-gnu binutils-x86-64-linux-gnu libc6-dev-amd64-cross \
+    gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu libc6-dev-arm64-cross \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
@@ -29,8 +29,8 @@ ARG TARGETARCH
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl make perl bison flex m4 \
     gcc libc6-dev \
-    gcc-x86-64-linux-gnu libc6-dev-amd64-cross \
-    gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+    binutils gcc-x86-64-linux-gnu binutils-x86-64-linux-gnu libc6-dev-amd64-cross \
+    gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu libc6-dev-arm64-cross \
   && rm -rf /var/lib/apt/lists/*
 COPY --from=openssl-build /opt/openssl /opt/openssl
 WORKDIR /src

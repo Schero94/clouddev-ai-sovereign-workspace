@@ -15,6 +15,8 @@ test("wraps the pinned upstream router image without mismatching its prebuilt Ne
   assert.match(dockerfile, /FROM diegosouzapw\/omniroute:3\.8\.54@sha256:2c4c755a54f8ce5341bc1856580b71f47a0f16a9afab4a55f84d540810631f68/);
   assert.match(dockerfile, /openssl-3\.6\.5\.tar\.gz/);
   assert.match(dockerfile, /openssl-cve-2026-124709\.patch/);
+  assert.match(dockerfile, /binutils-x86-64-linux-gnu/);
+  assert.match(dockerfile, /binutils-aarch64-linux-gnu/);
   assert.match(dockerfile, /snapshot\.debian\.org\/archive\/debian\/20261121T000000Z\/ sid main/);
   assert.doesNotMatch(dockerfile, /npm (?:install|ci).*\b(?:next|dompurify)@/s);
   assert.match(dockerfile, /healthcheck\.mjs \/opt\/clouddev-healthcheck\.mjs/);
