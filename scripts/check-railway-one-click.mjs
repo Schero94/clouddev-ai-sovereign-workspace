@@ -25,6 +25,9 @@ expect(source.includes("europe-west4-drams3a"), "The install graph must request 
 expect(source.includes('healthcheck: "/healthz"'), "The workspace health check is missing.");
 expect(source.includes('healthcheck: "/api/healthz"'), "The Forgejo health check is missing.");
 expect(source.includes('healthcheck: "/omniroute/healthz"'), "The OmniRoute health check is missing.");
+expect(source.includes('PORT: "3000"'), "Forgejo must publish its HTTP port because the SSH proxy is also attached.");
+expect(source.includes('PORT: "8080"'), "The workspace must publish its HTTP port because the SSH proxy is also attached.");
+expect(source.includes('PORT: "20128"'), "The router must publish the port Railway healthchecks.");
 expect(!/^\s*domains\s*:/m.test(source), "Generated HTTPS domains stay in the Template Composer.");
 expect(manifest.generatedSecrets.length === 10, "A fresh install needs ten generated secrets.");
 expect(manifest.generatedSecrets.every(entry => entry.composerValue === '${{secret(64, "0123456789abcdef")}}'), "Generated secrets must use the documented secret() expression.");

@@ -102,6 +102,7 @@ export default defineRailway(() => {
       FORGEJO__server__DISABLE_SSH: "false",
       FORGEJO__server__START_SSH_SERVER: "true",
       FORGEJO__server__SSH_LISTEN_PORT: "2222",
+      PORT: "3000",
     },
   });
 
@@ -130,6 +131,7 @@ export default defineRailway(() => {
       GIT_PUBLIC_URL: forgejo.env.RAILWAY_PUBLIC_DOMAIN,
       GIT_SSH_PROXY_HOST: forgejo.env.RAILWAY_TCP_PROXY_DOMAIN,
       GIT_SSH_PROXY_PORT: forgejo.env.RAILWAY_TCP_PROXY_PORT,
+      PORT: "8080",
     },
   });
 
