@@ -26,6 +26,14 @@ this project beyond local evaluation.
 [Security hold](docs/security/IMAGE_SCAN.md) ·
 [License](LICENSE)
 
+## Can I code from an iPad?
+
+Yes. Claude Code, Codex, browser VS Code, Node.js 26.13.1 LTS, and Python
+3.15.2 run on your own Railway project. The iPad, iPhone, or Android phone
+only needs a browser. CloudCLI gives both agents a touch-friendly chat, and
+browser VS Code opens the same files. See
+[Code from an iPad](docs/how-to/code-from-ipad.md).
+
 ## Overview
 
 The workspace service keeps the editor, terminal CLIs, mobile interface, SSH
@@ -121,7 +129,7 @@ See [the architecture guide](docs/architecture.md) for the data paths.
 ## Quick start
 
 Local development needs Docker Engine with Docker Compose v2. Node.js 24.22 or
-later and Python 3.13 with `uv` are needed for the repository and documentation
+later and Python 3.13 or later with `uv` are needed for the repository and documentation
 checks.
 
 ```sh

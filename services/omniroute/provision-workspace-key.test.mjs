@@ -49,7 +49,9 @@ test("creates one workspace key, stores it privately, and reuses it while it is 
       const body = JSON.parse(options.body);
       assert.equal(body.name, "clouddev-workspace");
       assert.equal(body.modelAccessMode, "all");
-      assert.equal(body.connectionAccessMode, "all");
+      assert.deepEqual(Object.keys(body).sort(), ["modelAccessMode", "name", "noLog"],
+        "OmniRoute 3.8.54 rejects an empty allowedConnections list");
+      assert.equal(body.noLog, true);
       return response(200, { id: "key-1", key: issuedKey });
     }
     return response(200, { data: [] });

@@ -14,17 +14,25 @@ images. Verify license and version changes whenever a dependency is updated.
 | Forgejo | 17.0.2 rootless | GPL-3.0-or-later | [Release](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.2) |
 | PostgreSQL | Railway managed service; local Compose overlay on 18.7-alpine3.24 | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |
 | Caddy | 2.11.7 Alpine image | Apache-2.0 | [Caddy](https://github.com/caddyserver/caddy/tree/v2.11.7) |
-| Node.js | 24.22.0 bookworm-slim, pinned by digest | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v24.22.0) |
+| Node.js | 26.13.1 LTS bookworm-slim, pinned by digest | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v26.13.1) |
 | shell-quote | 1.11.0, patched into code-server 4.143.1's bundled VS Code dependency tree | MIT | [npm package](https://www.npmjs.com/package/shell-quote) |
 | Git | Distribution package | GPL-2.0-or-later | [Git](https://github.com/git/git) |
 | OpenSSH | Distribution package | BSD-style license and notices | [OpenSSH](https://www.openssh.com/) |
-| Python | Distribution package | PSF-2.0 and bundled notices | [Python](https://github.com/python/cpython) |
+| Python | 3.15.2 standalone build installed by uv; Debian's python3 stays for system tools | PSF-2.0 and bundled notices | [Python](https://github.com/python/cpython), [python-build-standalone](https://github.com/astral-sh/python-build-standalone) |
+| uv | 0.13.9, release archive checked by SHA-256 | Apache-2.0 or MIT | [Repository](https://github.com/astral-sh/uv) |
 | OpenAI Codex CLI | 0.164.0 | Apache-2.0 | [Repository](https://github.com/openai/codex) |
 | Anthropic Claude Code CLI | 2.1.310 | Anthropic proprietary terms; package includes a terms notice, not an OSI license | [Repository](https://github.com/anthropics/claude-code), [legal terms](https://code.claude.com/docs/en/legal-and-compliance) |
 | pnpm | 10.34.8 | MIT | [Repository](https://github.com/pnpm/pnpm) |
-| Red Hat YAML | 2.1.2026102308 | MIT | [Open VSX listing](https://open-vsx.org/extension/redhat/vscode-yaml) |
+| Red Hat YAML | 2.1.2026112008 | MIT | [Open VSX listing](https://open-vsx.org/extension/redhat/vscode-yaml) |
 | Error Lens | 3.30.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/usernamehw/errorlens) |
 | Even Better TOML | 0.21.2 | MIT | [Open VSX listing](https://open-vsx.org/extension/tamasfe/even-better-toml) |
+| Python | 2026.10.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/ms-python/python) |
+| Python Debugger | 2026.6.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/ms-python/debugpy) |
+| ESLint | 3.0.34 | MIT | [Open VSX listing](https://open-vsx.org/extension/dbaeumer/vscode-eslint) |
+| Prettier | 12.4.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/esbenp/prettier-vscode) |
+| Tailwind CSS IntelliSense | 0.16.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/bradlc/vscode-tailwindcss) |
+| Markdown All in One | 3.6.2 | MIT | [Open VSX listing](https://open-vsx.org/extension/yzhang/markdown-all-in-one) |
+| Path IntelliSense | 2.8.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/christian-kohler/path-intellisense) |
 | age CLI | 1.3.2 on the maintainer test host; optional operator tool for local encrypted backups, not included in runtime images | BSD-3-Clause | [Source](https://github.com/FiloSottile/age) |
 
 ## Distribution notes

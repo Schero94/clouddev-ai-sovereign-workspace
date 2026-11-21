@@ -12,7 +12,7 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   const gatewayCli = JSON.parse(readFileSync(path.join(root, "omniroute-cli/package.json"), "utf8"));
   const gatewayLock = JSON.parse(readFileSync(path.join(root, "omniroute-cli/package-lock.json"), "utf8"));
   const esbuildRuntime = JSON.parse(readFileSync(path.join(root, "esbuild-runtime/package.json"), "utf8"));
-  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime$/m);
+  assert.match(dockerfile, /^FROM node:26\.13\.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1 AS node-runtime$/m);
   assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
   assert.match(dockerfile, /grep -F 'v2\.11\.7'/);

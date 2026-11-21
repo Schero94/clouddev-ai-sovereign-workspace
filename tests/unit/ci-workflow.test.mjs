@@ -19,7 +19,7 @@ test("CI workflow checks tests, security, Railway contracts, and docs on main an
   assert.match(source, /workflow_dispatch:/);
   assert.match(source, /^permissions:\s*\n {2}contents: read\s*$/m);
   assert.match(source, /runs-on: ubuntu-24\.04/);
-  assert.match(source, /node-version:\s*["']24\.22\.0["']/);
+  assert.match(source, /node-version:\s*["']26\.13\.1["']/);
   assert.match(source, /python-version:\s*["']3\.13["']/);
   assert.match(source, /actions\/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6\.1\.0/);
   assert.match(source, /actions\/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6\.0\.0/);

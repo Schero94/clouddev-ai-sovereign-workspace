@@ -63,7 +63,7 @@ RUN set -eu \
     NO_GETTEXT=1 NO_TCLTK=1 NO_PERL=1 NO_PYTHON=1 NO_EXPAT=1 NO_RUST=1 NO_INSTALL_HARDLINKS=1 \
     CURL_LIBCURL="-lcurl"
 
-FROM node:24.22.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime
+FROM node:26.13.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1 AS node-runtime
 FROM caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime
 
 # Rebuild only the HTTP modules this workspace uses, with Go 1.27.4 and the
@@ -146,10 +146,37 @@ RUN npm ci --prefix /opt/clouddev-ide/esbuild-runtime --no-audit --no-fund \
   && /opt/clouddev-ide/omniroute-cli/node_modules/.bin/omniroute --version >/dev/null \
   && /usr/bin/caddy version | grep -F 'v2.11.7' >/dev/null
 
+# uv installs a checksum-verified standalone CPython next to Debian's python3,
+# which system tools keep using through /usr/bin/python3.
+RUN set -eu \
+  && case "$(dpkg --print-architecture)" in \
+    amd64) uv_arch=x86_64; uv_sha=a7fbaff2b9a271d85c1bdb540941090fd1ce011797b4abeb48e4dcd39c2471d5 ;; \
+    arm64) uv_arch=aarch64; uv_sha=0797542018e541a9288855df555c8077eed06f7a47d206362030480e8ecc9f3d ;; \
+    *) echo "Unsupported architecture for uv" >&2; exit 1 ;; \
+  esac \
+  && curl -fsSL -o /tmp/uv.tar.gz "https://github.com/astral-sh/uv/releases/download/0.13.9/uv-${uv_arch}-unknown-linux-gnu.tar.gz" \
+  && printf '%s  /tmp/uv.tar.gz\n' "${uv_sha}" | sha256sum -c - \
+  && tar -xzf /tmp/uv.tar.gz -C /tmp \
+  && install -m 0755 "/tmp/uv-${uv_arch}-unknown-linux-gnu/uv" "/tmp/uv-${uv_arch}-unknown-linux-gnu/uvx" /usr/local/bin/ \
+  && rm -rf /tmp/uv.tar.gz "/tmp/uv-${uv_arch}-unknown-linux-gnu" \
+  && UV_PYTHON_INSTALL_DIR=/opt/python UV_PYTHON_BIN_DIR=/usr/local/bin uv python install 3.15.2 --default \
+  && chmod -R a+rX /opt/python \
+  && python3 --version | grep -F 'Python 3.15.2' \
+  && python --version | grep -F 'Python 3.15.2'
+
 RUN install -d -o root -g root -m 0755 /opt/clouddev-ide/extension-seed \
-  && code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension redhat.vscode-yaml@2.1.2026102308 \
-  && code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension usernamehw.errorlens@3.30.0 \
-  && code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension tamasfe.even-better-toml@0.21.2 \
+  && for extension in \
+    redhat.vscode-yaml@2.1.2026112008 \
+    usernamehw.errorlens@3.30.0 \
+    tamasfe.even-better-toml@0.21.2 \
+    ms-python.python@2026.10.0 \
+    ms-python.debugpy@2026.6.0 \
+    dbaeumer.vscode-eslint@3.0.34 \
+    esbenp.prettier-vscode@12.4.0 \
+    bradlc.vscode-tailwindcss@0.16.0 \
+    yzhang.markdown-all-in-one@3.6.2 \
+    christian-kohler.path-intellisense@2.8.0 \
+  ; do code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension "${extension}" ; done \
   && chown -R root:root /opt/clouddev-ide/extension-seed \
   && chmod -R a+rX /opt/clouddev-ide/extension-seed
 

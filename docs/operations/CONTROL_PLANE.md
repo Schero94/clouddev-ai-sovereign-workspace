@@ -35,7 +35,7 @@ Railway Private Networking does not filter outbound traffic. An agent can still 
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` is the repository quality gate. It runs on every pull request to `main` and on every push to `main`, using Ubuntu 24.04, Node.js 24.22.0, and the locked documentation toolchain. The job has read-only contents permission. It installs the pinned Railway IaC packages, then runs `npm test`, `npm run test:forgejo`, `npm run test:security`, `npm run check:railway`, `npm run check:railway-template`, `npm run check:docker-context`, `npm run check:launchpad`, and `npm run docs:check`.
+`.github/workflows/ci.yml` is the repository quality gate. It runs on every pull request to `main` and on every push to `main`, using Ubuntu 24.04, Node.js 26.13.1, and the locked documentation toolchain. The job has read-only contents permission. It installs the pinned Railway IaC packages, then runs `npm test`, `npm run test:forgejo`, `npm run test:security`, `npm run check:railway`, `npm run check:railway-template`, `npm run check:docker-context`, `npm run check:launchpad`, and `npm run docs:check`.
 
 That workflow does not deploy a project, publish a template, or push a container image. `npm run check:one-click` is part of `npm test` through the one-click contract test, and it can also be run directly. It checks the four-service graph locally. A green CI run does not close a live Railway gate.
 

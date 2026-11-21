@@ -8,10 +8,11 @@ image is built from the repository root so it can package the parent-owned
 ## Runtime layout
 
 The image pins the official `codercom/code-server:4.143.1` and
-`caddy:2.11.6-alpine` images, Node.js `24.22.0`, CloudCLI `1.37.9`, Codex
+`caddy:2.11.6-alpine` images, Node.js `26.13.1` LTS, Python `3.15.2` through uv `0.13.9`, CloudCLI `1.37.9`, Codex
 `0.164.0`, Claude Code `2.1.310`, and OmniRoute CLI `3.8.52`. npm lockfiles pin
-the CLI dependency trees. It installs Git, OpenSSH client/server, Python 3,
-build tools, tmux, pnpm, and the configured Open VSX extensions.
+the CLI dependency trees. It installs Git, OpenSSH client/server, build tools, tmux, pnpm, and pinned
+Open VSX extensions for Python, ESLint, Prettier, Tailwind CSS, Markdown, YAML,
+TOML, path completion, and inline errors.
 
 Use one persistent volume at `/workspace`:
 

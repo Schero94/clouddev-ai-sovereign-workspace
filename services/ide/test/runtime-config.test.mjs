@@ -10,12 +10,35 @@ const read = relative => readFileSync(path.join(root, relative), "utf8");
 test("pins images and CLI dependencies and declares one persistent workspace volume", () => {
   const dockerfile = read("Dockerfile");
   const cloudcli = JSON.parse(read("cloudcli-ui/package.json"));
-  assert.match(dockerfile, /^FROM node:24\.22\.0-bookworm-slim@sha256:91acba91b842bec0bf7ea6f5e09c644c7ccad72c4996ed9616d861d1c7cd60d4 AS node-runtime$/m);
+  assert.match(dockerfile, /^FROM node:26\.13\.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1 AS node-runtime$/m);
   assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
   assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.9");
   assert.match(dockerfile, /task-master-ai@0\.43\.1/);
+  assert.match(dockerfile, /astral-sh\/uv\/releases\/download\/0\.13\.9\//);
+  assert.match(dockerfile, /a7fbaff2b9a271d85c1bdb540941090fd1ce011797b4abeb48e4dcd39c2471d5/);
+  assert.match(dockerfile, /0797542018e541a9288855df555c8077eed06f7a47d206362030480e8ecc9f3d/);
+  assert.match(dockerfile, /uv python install 3\.15\.2/);
+  assert.match(dockerfile, /python3 --version \| grep -F 'Python 3\.15\.2'/);
+  for (const extension of [
+    "redhat.vscode-yaml@2.1.2026112008",
+    "usernamehw.errorlens@3.30.0",
+    "tamasfe.even-better-toml@0.21.2",
+    "ms-python.python@2026.10.0",
+    "ms-python.debugpy@2026.6.0",
+    "dbaeumer.vscode-eslint@3.0.34",
+    "esbenp.prettier-vscode@12.4.0",
+    "bradlc.vscode-tailwindcss@0.16.0",
+    "yzhang.markdown-all-in-one@3.6.2",
+    "christian-kohler.path-intellisense@2.8.0",
+  ]) {
+    assert.match(dockerfile, new RegExp(`^ {4}${extension.replace(/\./g, "\\.")} \\\\$`, "m"), extension);
+  }
+  const extensionList = dockerfile.slice(dockerfile.indexOf("for extension in"), dockerfile.indexOf("; do code-server"));
+  for (const entry of extensionList.split("\\").slice(1).map(line => line.trim()).filter(Boolean)) {
+    assert.match(entry, /^[a-z0-9-]+\.[a-z0-9-]+@\d[\w.]*$/, `${entry} is pinned`);
+  }
   assert.match(read("entrypoint.sh"), /install-cloudcli-plugins\.sh/);
   assert.match(read("entrypoint.sh"), /install-gateway-config\.mjs/);
   const supervisorEnv = read("entrypoint.sh").slice(read("entrypoint.sh").indexOf("exec /usr/bin/env -i"));

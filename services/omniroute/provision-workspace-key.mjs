@@ -67,9 +67,6 @@ export async function createWorkspaceKey({ baseUrl, password, fetchImpl }) {
     body: JSON.stringify({
       name: WORKSPACE_KEY_NAME,
       modelAccessMode: "all",
-      allowedModels: [],
-      connectionAccessMode: "all",
-      allowedConnections: [],
       noLog: true,
     }),
   });

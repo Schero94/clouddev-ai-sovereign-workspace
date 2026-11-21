@@ -89,6 +89,7 @@ nav:
   - Product:
       - Features: features.md
   - How to:
+      - Code from an iPad: how-to/code-from-ipad.md
       - Deploy on Railway: how-to/deploy-on-railway.md
       - First login: how-to/first-login.md
       - Connect clients: how-to/connect-clients.md

@@ -1,0 +1,24 @@
+# CloudDev AI: Sovereign Workspace
+
+> A single-user Railway template that runs Claude Code, Codex, browser VS Code, Node.js, and Python on the user's own Railway project, so they can code from an iPad, iPhone, Android phone, or computer. The device only needs a browser.
+
+Key facts:
+
+- Answers "Can I code from an iPad?": yes, the agents and editor run on Railway and the iPad uses Safari. CloudCLI is a touch chat for Claude Code and Codex; browser VS Code shows the same files.
+- Railway's template composer generates the passwords and secrets. The workspace connects its own limited inference key after the user signs in with ChatGPT or Claude in OmniRoute, or adds a DeepSeek API key.
+- Included: Claude Code CLI, Codex CLI, CloudCLI with plugins, TaskMaster CLI, Node.js 26.13.1 LTS, Python 3.15.2 through uv, pnpm, Git, Forgejo for private Git history, and pinned Open VSX extensions.
+- Files and agent sessions persist on one Railway volume. A restart stops running agent processes; saved sessions can be resumed through supported provider actions.
+- Status: the Railway Marketplace template is not published yet. Check the release status page before relying on it.
+
+## Docs
+
+- [Code from an iPad](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/code-from-ipad/): what runs where, setup, limits, and common questions
+- [Deploy on Railway](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/deploy-on-railway/)
+- [First login](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/first-login/)
+- [Connect a provider](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/providers/)
+- [Features](https://schero94.github.io/clouddev-ai-sovereign-workspace/features/)
+- [Release status](https://schero94.github.io/clouddev-ai-sovereign-workspace/operations/RELEASE_STATUS/)
+
+## Source
+
+- [GitHub repository](https://github.com/Schero94/clouddev-ai-sovereign-workspace)

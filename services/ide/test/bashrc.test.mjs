@@ -31,8 +31,8 @@ afterEach(() => {
 test("keeps remote command stdout clean while showing onboarding in an interactive terminal", () => {
   const command = runBash(false);
   assert.equal(command.status, 0);
-  assert.doesNotMatch(command.stdout, /CloudDev AI setup needed/);
+  assert.doesNotMatch(command.stdout, /CloudDev is connecting the AI gateway/);
 
   const interactive = runBash(true);
-  assert.match(interactive.stdout, /CloudDev AI setup needed/);
+  assert.match(interactive.stdout, /CloudDev is connecting the AI gateway/);
 });
