@@ -140,6 +140,38 @@ again. Run the runtime checks on those same images. Record accepted,
 unreachable, or vendor-unfixed findings with evidence rather than hiding them
 with broad suppressions.
 
+## Railway runtime scan
+
+On 2026-11-21, Trivy 0.76.2 scanned the running Railway containers with
+`trivy rootfs`, skipping mounted volumes. The binary was checked against the
+published SHA-256 checksum before use.
+
+The first IDE scan reported 68 high or critical findings. It also showed that
+Railway's runtime kept files that later image layers had deleted: `sudo`, its
+`NOPASSWD` rule, and setuid `fixuid` were present, and UID 1000 could run
+`sudo -n` as root. The IDE image is now one flattened layer, and the
+entrypoint removes those paths and refuses to start if any survives. After
+that deploy, `/usr/bin/sudo` and `fixuid` were absent and `sudo -n` failed for
+UID 1000. The remaining findings were fixed by pinning TaskMaster with a
+lockfile and patched dependencies, removing the Xvfb packages, removing Path
+IntelliSense and the setuid Kerberos `ksu`, and pinning `protobufjs` 8.8.1
+under OpenTelemetry 0.217.
+
+`.trivyignore.yaml` records one exception, `CVE-2025-47273` for
+`pkg:pypi/setuptools@70.3.0`. pip 26.3 lists that release in its vendored SBOM
+because it ships `pkg_resources`. The vulnerable `setuptools.package_index`
+module is not vendored, and no `package_index.py` exists in the IDE image.
+
+The router and Forgejo containers reported 0 high and 0 critical findings.
+Their only setuid binaries are standard Debian or Alpine account tools.
+
+PostgreSQL uses Railway's managed `postgres()` service. On the same day its
+image `ghcr.io/railwayapp-templates/postgres-ssl@sha256:4fc833b43d2aaf6ecc9b18615f5533602b723a32d0e2efe2dae8ca0f7217c863`
+reported 156 high or critical package findings. Railway maintains and patches
+that image. CloudDev does not rebuild it, and it has no public endpoint. Only
+Forgejo connects to it over the private network. This is an accepted
+provider-managed exception, not a passing scan.
+
 ## Reproduce the local scan
 
 Install Trivy from the official package source for the host, then run the

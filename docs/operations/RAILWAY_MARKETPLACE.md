@@ -61,7 +61,7 @@ Run `npm run check:one-click` before creating a draft. It validates the local on
    [RAILWAY_TEMPLATE_VARIABLES.md](RAILWAY_TEMPLATE_VARIABLES.md) using its
    `${{secret(64, "0123456789abcdef")}}` value. `preserve()` in IaC keeps an
    existing Railway value. It does not generate a secret for a fresh template
-   deployment. Keep the twelve secret entries and their descriptions in
+   deployment. Keep the eleven secret entries and their descriptions in
    `.railway/template-variables.json` synchronized with all `preserve()` calls.
 6. Offer `SSH_AUTHORIZED_KEYS` as an optional, empty value. The workspace
    starts without it and SSH then accepts no login. The deploying operator can

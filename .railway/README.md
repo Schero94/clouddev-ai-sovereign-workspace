@@ -14,11 +14,11 @@ keep the file synchronized with every `preserve()` entry. Run
 
 ## Resources declared in IaC
 
-The project graph declares the always-on workspace, Forgejo, PostgreSQL, and
-OmniRoute. Each of the four services has its own volume. PostgreSQL builds the
-hardened overlay in `services/postgres`, not Railway's managed Postgres image,
-because that image failed the release scan. All resources are placed in `europe-west4-drams3a`. The stateful
-services run one replica. IaC sets `sleepApplication: false` on all four
+The project graph declares the always-on workspace, Forgejo, managed
+PostgreSQL, and OmniRoute. The workspace, Forgejo, and OmniRoute data each have
+their own volume. PostgreSQL is provisioned through Railway's managed Postgres
+helper. All resources are placed in `europe-west4-drams3a`. The stateful
+services run one replica. IaC sets `sleepApplication: false` on the application
 services and requests a TCP proxy for workspace SSH on port 2222.
 
 The shared workspace has one 5 GiB volume mounted at `/workspace`. Its home is

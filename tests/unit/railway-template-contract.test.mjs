@@ -66,7 +66,7 @@ test("Composer manifest covers every IaC preserve() variable", () => {
 });
 
 test("fresh template deployments generate all service secrets and request only operator-owned SSH/provider setup", () => {
-  assert.equal(manifest.generatedSecrets.length, 12);
+  assert.equal(manifest.generatedSecrets.length, 11);
   assert.deepEqual(
     manifest.generatedSecrets.map(({ service, name }) => `${service}.${name}`).sort(),
     [
@@ -74,7 +74,6 @@ test("fresh template deployments generate all service secrets and request only o
       "clouddev-git.FORGEJO_POSTGRES_PASSWORD",
       "clouddev-ide.CLOUDDEV_WORKSPACE_AUTH_SECRET",
       "clouddev-ide.CODE_SERVER_PASSWORD",
-      "clouddev-postgres.POSTGRES_PASSWORD",
       "clouddev-router.API_KEY_SECRET",
       "clouddev-router.INITIAL_PASSWORD",
       "clouddev-router.JWT_SECRET",
@@ -99,21 +98,13 @@ test("every stateful service has persistent data, and the Composer does not embe
   assert.match(source, /volumeMounts:\s*\{\s*"\/workspace":\s*workspaceData/);
   assert.match(source, /volumeMounts:\s*\{\s*"\/var\/lib\/gitea":\s*forgejoData/);
   assert.match(source, /volumeMounts:\s*\{\s*"\/app\/data":\s*routerData/);
-  assert.match(source, /volumeMounts:\s*\{\s*"\/var\/lib\/postgresql":\s*postgresData/);
   assert.doesNotMatch(JSON.stringify(manifest), /(?:sk-[A-Za-z0-9]{20,}|OPENAI_API_KEY|ANTHROPIC_API_KEY|OMNIROUTE_MASTER_KEY)/);
   assert.match(source, /sleepApplication:\s*false/);
   assert.match(compose, /clouddev-postgres:[\s\S]*context:\s*\.\/services\/postgres/);
 });
 
-test("Railway IaC builds all four GitHub-backed services from the published main branch", () => {
-  assert.equal((source.match(/source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace"/g) ?? []).length, 4);
-  assert.doesNotMatch(source, /\bpostgres\(/, "the managed Postgres image is not used");
-  assert.match(source, /source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main",\s*rootDirectory:\s*"services\/postgres",\s*\}\)/);
-  const postgresBlock = source.slice(source.indexOf("service(\"clouddev-postgres\""), source.indexOf("const router = "));
-  assert.doesNotMatch(postgresBlock, /tcpProxies|domains/, "Postgres stays private");
-  assert.match(postgresBlock, /POSTGRES_PASSWORD: preserve\(\)/);
-  assert.match(source, /FORGEJO_POSTGRES_ADMIN_HOST: postgresService\.env\.RAILWAY_PRIVATE_DOMAIN/);
-  assert.match(source, /FORGEJO_POSTGRES_ADMIN_PASSWORD: postgresService\.env\.POSTGRES_PASSWORD/);
+test("Railway IaC builds all three GitHub-backed services from the published main branch", () => {
+  assert.equal((source.match(/source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace"/g) ?? []).length, 3);
   assert.match(source, /const router = service\("clouddev-router",\s*\{\s*source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main"\s*\}\)/s);
   assert.match(source, /const ide = service\("clouddev-ide",\s*\{\s*source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main"\s*\}\)/s);
   assert.match(source, /source:\s*github\("Schero94\/clouddev-ai-sovereign-workspace",\s*\{\s*branch:\s*"main",\s*rootDirectory:\s*"services\/forgejo",\s*\}\)/);

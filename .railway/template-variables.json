@@ -14,12 +14,6 @@
       "description": "Independent signing secret for workspace cookies and the private Caddy authentication check. Seal this Railway variable."
     },
     {
-      "service": "clouddev-postgres",
-      "name": "POSTGRES_PASSWORD",
-      "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
-      "description": "Superuser password for the private PostgreSQL service. Forgejo uses it once per boot to provision its own role. Seal this Railway variable."
-    },
-    {
       "service": "clouddev-git",
       "name": "FORGEJO_POSTGRES_PASSWORD",
       "composerValue": "${{secret(64, \"0123456789abcdef\")}}",
