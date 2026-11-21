@@ -13,10 +13,10 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 20 of 24 gates complete.** The Railway template is
+**Release status: 21 of 24 gates complete.** The Railway template is
 published at
 [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
-G4, G5, G12, and G23 remain open. G15 and G17 are closed for local image
+G4, G5, and G23 remain open. G15 and G17 are closed for local image
 evidence. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
 this project beyond local evaluation.
@@ -156,9 +156,10 @@ Deploy the published template from
 [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
 It needs no input. After deployment, read `CODE_SERVER_PASSWORD` from the
 `clouddev-ide` variables to sign in, and change the Forgejo and OmniRoute
-bootstrap passwords after the first sign-in. G14 is complete. G12 remains open
-because SSH login, cross-device handoff, and restart recovery have not been
-proven on Railway.
+bootstrap passwords after the first sign-in. G12 and G14 are complete: a
+template deployment passed SSH key login, a two-way file handoff between SSH
+and CloudCLI, and recovery after a service restart. Those checks used command
+line clients, not a physical iPad or the VS Code Remote-SSH window.
 
 For a maintainer validation deployment from source, use a new test project in the intended
 personal Railway workspace. Never apply an unreviewed plan to an existing
@@ -399,12 +400,12 @@ Claude Code is not relicensed by this repository's MIT license.
 
 ## Release status
 
-This source snapshot reports **20 of 24 acceptance gates complete**. Local
+This source snapshot reports **21 of 24 acceptance gates complete**. Local
 Compose, mock-provider, Git, and security checks are not substitutes for the
-open live gates. G4 and G5 still need full cross-device evidence; G12 needs
-SSH, handoff, and restart evidence on Railway; G13 proves a local four-store
-data-level restore but not Railway recovery. G14 is complete: the template is
-published and a no-input test deployment passed. G15 and G17 are closed for
+open live gates. G4 and G5 still need full cross-device evidence; G13 proves a
+local four-store data-level restore but not Railway recovery. G12 passed on a
+template deployment. G14 is complete: the template is published and a no-input
+test deployment passed. G15 and G17 are closed for
 local image evidence. G20 is complete:
 GitHub Pages serves the reviewed documentation. G23 remains open until the
 repository social preview is uploaded. G24
@@ -433,7 +434,7 @@ changes to the published template.
 - Local tests cover mock Codex and Claude routing, private Git operations,
   authentication checks, and task/session recovery behavior.
 - The Railway template is published and passed a no-input test deployment
-  (G14). G12 remains open. See the
+  (G14). SSH, handoff, and restart recovery passed on Railway (G12). See the
   [release status](docs/operations/RELEASE_STATUS.md) for current evidence.
 - GitHub Actions CI now runs the repository tests, security checks, Railway
   contracts, and documentation build on pull requests and on `main`.

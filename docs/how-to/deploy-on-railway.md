@@ -13,7 +13,7 @@ tags:
 
 ## Current status
 
-CloudDev AI is published on the Railway Marketplace at [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121). A no-input test deployment passed. The template is not yet Railway-verified, and the live deployment gate G12 remains open in the [release status](../operations/RELEASE_STATUS.md) until SSH login, cross-device handoff, and restart recovery are proven on Railway.
+CloudDev AI is published on the Railway Marketplace at [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121). A no-input test deployment passed. A template deployment also passed SSH key login, a two-way file handoff between SSH and CloudCLI, and recovery after a service restart. The template is not yet Railway-verified. The open gates are listed in the [release status](../operations/RELEASE_STATUS.md).
 
 ## Deploy from the Marketplace
 

@@ -256,6 +256,7 @@ test("Railway guide links the published template without claiming Railway verifi
   assert.match(guide, /https:\/\/railway\.com\/deploy\/clouddev-release-20261121/);
   assert.match(guide, /not (?:yet )?Railway-verified/i);
   assert.doesNotMatch(guide, /not yet published to the Railway Marketplace/i);
+  assert.doesNotMatch(guide, /G12 remains open/);
   assert.match(guide, /clouddev-ide[\s\S]*clouddev-git[\s\S]*clouddev-postgres[\s\S]*clouddev-router/);
   assert.match(guide, /europe-west4-drams3a/);
   assert.match(guide, /Serverless|App Sleeping/i);
