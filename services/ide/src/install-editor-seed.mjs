@@ -28,12 +28,11 @@ export function installEditorSeed({
 
   const installed = [];
   for (const name of readdirSync(seed)) {
-    if (!extensionName.test(name)) throw new Error("Editor extension seed contains an unsafe name.");
     const source = path.join(seed, name);
     const sourceMetadata = lstatSync(source);
-    if (sourceMetadata.isSymbolicLink() || !sourceMetadata.isDirectory()) {
-      throw new Error("Editor extension seed entries must be real directories.");
-    }
+    if (sourceMetadata.isSymbolicLink()) throw new Error("Editor extension seed entries must be real directories.");
+    if (!sourceMetadata.isDirectory()) continue;
+    if (!extensionName.test(name)) throw new Error("Editor extension seed contains an unsafe name.");
     const destination = path.join(destinationRoot, name);
     let existing = null;
     try {

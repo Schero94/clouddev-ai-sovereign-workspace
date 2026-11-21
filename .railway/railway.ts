@@ -32,7 +32,7 @@ export default defineRailway(() => {
     replicas: ONE_REPLICA,
     volumeMounts: { "/app/data": routerData },
     healthcheck: "/omniroute/healthz",
-    healthcheckTimeout: 120,
+    healthcheckTimeout: 300,
     deploy: {
       sleepApplication: false,
       restartPolicyType: "ALWAYS",

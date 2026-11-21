@@ -30,6 +30,21 @@ test("installs prepared editor extensions once and leaves an operator copy uncha
   assert.equal(readFileSync(installedFile, "utf8"), "{\"name\":\"operator\"}\n");
 });
 
+test("ignores code-server metadata files in the prepared seed", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "clouddev-editor-seed-"));
+  const seed = path.join(root, "seed");
+  const extensions = path.join(root, "extensions");
+  mkdirSync(seed);
+  mkdirSync(extensions);
+  writeFileSync(path.join(seed, "extensions.json"), "[]\n");
+  writeFileSync(path.join(seed, ".obsolete"), "");
+  seedWith(seed, "redhat.vscode-yaml-2.1.2026102308", "{\"name\":\"yaml\"}\n");
+
+  const installed = installEditorSeed({ seedDirectory: seed, extensionsDirectory: extensions });
+
+  assert.deepEqual(installed, ["redhat.vscode-yaml-2.1.2026102308"]);
+});
+
 test("refuses symlink seeds and symlink extension destinations", () => {
   const root = mkdtempSync(path.join(tmpdir(), "clouddev-editor-seed-"));
   const seed = path.join(root, "seed");
