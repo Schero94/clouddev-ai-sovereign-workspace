@@ -20,7 +20,7 @@ test("wraps the pinned upstream router image without mismatching its prebuilt Ne
   assert.match(dockerfile, /snapshot\.debian\.org\/archive\/debian\/20261121T000000Z\/ sid main/);
   assert.doesNotMatch(dockerfile, /npm (?:install|ci).*\b(?:next|dompurify)@/s);
   assert.match(dockerfile, /healthcheck\.mjs \/opt\/clouddev-healthcheck\.mjs/);
-  assert.match(dockerfile, /ENTRYPOINT \["\/opt\/clouddev-router-entrypoint\.sh"\]\s*$/);
+  assert.match(dockerfile, /ENTRYPOINT \["\/opt\/clouddev-router-entrypoint\.sh"\]\nCMD \["node", "dev\/run-standalone\.mjs"\]\s*$/);
   const entrypoint = readFileSync(path.join(serviceDirectory, "entrypoint.sh"), "utf8");
   assert.match(entrypoint, /exec runuser --preserve-environment -u node -- \/app\/check-permissions\.sh "\$@"/);
 });

@@ -68,3 +68,4 @@ COPY services/omniroute/entrypoint.sh /opt/clouddev-router-entrypoint.sh
 RUN chmod 0555 /opt/clouddev-router-entrypoint.sh
 USER root
 ENTRYPOINT ["/opt/clouddev-router-entrypoint.sh"]
+CMD ["node", "dev/run-standalone.mjs"]
