@@ -23,7 +23,7 @@ After the template is published:
 
 1. Open the CloudDev AI listing from Railway's template Marketplace.
 2. Select **Deploy Now**.
-3. Review any requested values. Supply the operator's Ed25519 public key as `SSH_AUTHORIZED_KEYS`. Do not paste a private key. Railway's template variable functions should generate independent secrets for each deployment.
+3. Review the requested values. Nothing needs typing: `SSH_AUTHORIZED_KEYS` is optional. Leave it empty for iPad, phone, and browser use, or add an Ed25519 public key for desktop Remote-SSH. Do not paste a private key. Railway's template variable functions should generate independent secrets for each deployment.
 4. Select **Deploy** and wait for the project services to report ready.
 5. Open the generated HTTPS domain for `clouddev-ide` and continue with [first login](first-login.md).
 
@@ -50,7 +50,7 @@ Railway's current [Create a Template guide](https://docs.railway.com/templates/c
 3. Generate the deployment secrets with the Railway Template Composer's documented `secret()` function. Use `${{secret(64, "0123456789abcdef")}}` as a separate value for every generated-secret variable in the [variable inventory](../operations/RAILWAY_TEMPLATE_VARIABLES.md). `preserve()` keeps an existing Railway value; it does not generate a value for a first deployment.
 4. Keep first-login bootstrap values readable only long enough to sign in and rotate them. Store them in a password manager, then seal or remove bootstrap values as the variable inventory directs. Provider credentials are never included in the template.
 5. Generate an HTTPS domain for `clouddev-ide` on port `8080` and `clouddev-git` on port `3000`. Configure TCP proxies for SSH port `2222` only where the release checklist requires them. Do not expose the PostgreSQL or OmniRoute listener.
-6. Compare every variable and proxy against [the full Composer inventory](../operations/RAILWAY_TEMPLATE_VARIABLES.md). Keep `SSH_AUTHORIZED_KEYS` as an operator-provided public key, not a maintainer key.
+6. Compare every variable and proxy against [the full Composer inventory](../operations/RAILWAY_TEMPLATE_VARIABLES.md). Keep `SSH_AUTHORIZED_KEYS` optional and empty by default. Never fill it with a maintainer key.
 
 ### Test, then publish
 

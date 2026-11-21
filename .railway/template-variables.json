@@ -73,8 +73,8 @@
       "service": "clouddev-ide",
       "name": "SSH_AUTHORIZED_KEYS",
       "kind": "ed25519-public-key-lines",
-      "required": true,
-      "description": "Enter one or more operator Ed25519 public keys, one per line. Never enter a private key."
+      "required": false,
+      "description": "Optional. Leave empty for iPad, phone, and browser use. To connect desktop VS Code Remote-SSH later, add one or more Ed25519 public keys, one per line. Never enter a private key."
     }
   ],
   "postDeploySetup": [

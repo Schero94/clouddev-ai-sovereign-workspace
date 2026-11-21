@@ -67,7 +67,8 @@ OmniRoute's own login.
 ## SSH and Remote-SSH
 
 OpenSSH accepts Ed25519 public keys only on port 2222. Set
-`SSH_AUTHORIZED_KEYS` to one or more public-key lines. Startup validates them
+`SSH_AUTHORIZED_KEYS` to one or more public-key lines to allow logins. When it
+is empty, the workspace starts and SSH accepts no login. Startup validates keys
 and installs the authorized-keys file outside `/workspace`, owned by root.
 OpenSSH's privilege-separated pre-auth process must be able to traverse the
 path and read public-key material, so parent directories are mode 0755 and the

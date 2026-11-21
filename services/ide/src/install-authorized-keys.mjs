@@ -23,9 +23,9 @@ function ensureDirectory(directory, mode, uid, gid) {
 }
 
 function parsePublicKeys(content, sshKeygenPath) {
-  if (typeof content !== "string") throw new Error("SSH_AUTHORIZED_KEYS must contain one or more Ed25519 public keys.");
+  if (content === undefined || content === null) return [];
+  if (typeof content !== "string") throw new Error("SSH_AUTHORIZED_KEYS must contain Ed25519 public keys.");
   const keys = content.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
-  if (keys.length === 0) throw new Error("SSH_AUTHORIZED_KEYS must contain one or more Ed25519 public keys.");
 
   for (const key of keys) {
     const [algorithm, encodedKey] = key.split(/\s+/, 3);
@@ -82,7 +82,7 @@ export function installAuthorizedKeys({
   let descriptor;
   try {
     descriptor = openSync(temporaryPath, "wx", 0o600);
-    writeSync(descriptor, `${keys.join("\n")}\n`, null, "utf8");
+    writeSync(descriptor, keys.length > 0 ? `${keys.join("\n")}\n` : "", null, "utf8");
     fsyncSync(descriptor);
     closeSync(descriptor);
     descriptor = undefined;

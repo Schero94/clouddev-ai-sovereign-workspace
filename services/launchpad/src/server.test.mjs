@@ -62,7 +62,7 @@ test("serves the launchpad below its base path without creating a second auth ch
   assert.match(html, /id="recovery-summary"/);
   assert.match(html, /Start Codex/);
   assert.match(html, /id="touch-heading"/);
-  assert.match(html, /Step 1/);
+  assert.match(html, /Start in three steps/);
   assert.match(html, /class="guide-step guide-step-current"/);
   const guide = html.slice(html.indexOf('id="touch-heading"'), html.indexOf("</ol>"));
   assert.ok(guide.indexOf('data-link="router"') < guide.indexOf('data-link="cloudcli"'),

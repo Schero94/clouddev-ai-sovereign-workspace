@@ -44,7 +44,7 @@ test("Composer manifest covers every IaC preserve() variable", () => {
 
   const operatorKeys = manifest.operatorInputs.filter(entry => entry.kind === "ed25519-public-key-lines");
   assert.deepEqual(operatorKeys.map(({ service, name, required }) => ({ service, name, required })), [
-    { service: "clouddev-ide", name: "SSH_AUTHORIZED_KEYS", required: true },
+    { service: "clouddev-ide", name: "SSH_AUTHORIZED_KEYS", required: false },
   ]);
   for (const entry of operatorKeys) {
     const names = configured.get(entry.service) ?? [];

@@ -67,11 +67,11 @@ See [GATES.md](GATES.md) for the evidence and limits behind each result.
 
 These captures show the local launchpad build. They do not represent a live Railway deployment.
 
-![CloudDev AI launchpad on desktop with links to CloudCLI, browser VS Code, Forgejo, OmniRoute, Codex, and Claude Code.](docs/assets/screenshots/launchpad-services-desktop.png)
+![CloudDev AI launchpad on desktop with three start steps and live service cards for CloudCLI, browser VS Code, and OmniRoute.](docs/assets/screenshots/launchpad-services-desktop.png)
 
 *Desktop launchpad from the local build.*
 
-![CloudDev AI launchpad on a phone with the same workspace actions stacked for a narrow screen.](docs/assets/screenshots/launchpad-services-mobile.png)
+![CloudDev AI launchpad on a phone with the same steps stacked for a narrow screen.](docs/assets/screenshots/launchpad-services-mobile.png)
 
 *Mobile launchpad from the local build.*
 

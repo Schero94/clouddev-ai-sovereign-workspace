@@ -31,8 +31,7 @@ if [ -z "$caddy_secret" ]; then
   exit 1
 fi
 if [ -z "$operator_keys" ]; then
-  printf '%s\n' "CloudDev requires SSH_AUTHORIZED_KEYS with operator Ed25519 public keys." >&2
-  exit 1
+  printf '%s\n' "No SSH public key is set. Browser and mobile access work; desktop Remote-SSH stays closed until SSH_AUTHORIZED_KEYS is added." >&2
 fi
 case "$workspace_auth_secret" in
   ''|*[!A-Za-z0-9_-]*) printf '%s\n' "CloudDev requires a generated workspace authentication secret." >&2; exit 1 ;;

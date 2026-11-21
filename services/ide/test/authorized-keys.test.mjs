@@ -58,9 +58,12 @@ test("rejects non-Ed25519 keys, key options, and malformed operator input", () =
   assert.throws(() => installAuthorizedKeys({ ...options, content: "not a public key" }), /SSH_AUTHORIZED_KEYS/i);
 });
 
-test("fails closed when no operator key is configured", () => {
+test("installs an empty key list when no operator key is configured, so SSH stays closed", () => {
   const root = makeHome();
-  assert.throws(() => installAuthorizedKeys({ authorizedKeysDirectory: path.join(root, "authorized_keys"), username: "coder", content: "  \n" }), /SSH_AUTHORIZED_KEYS/);
+  for (const content of ["  \n", undefined]) {
+    const filePath = installAuthorizedKeys({ authorizedKeysDirectory: path.join(root, "authorized_keys"), username: "coder", content });
+    assert.equal(readFileSync(filePath, "utf8"), "");
+  }
 });
 
 test("refuses a symlinked authorized_keys file", () => {

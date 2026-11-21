@@ -140,6 +140,19 @@ function setStatusRow(service) {
   return row;
 }
 
+function setServiceStates(services, allReady) {
+  const byId = new Map(services.map(service => [service.id, service.status]));
+  for (const card of document.querySelectorAll("[data-service]")) {
+    const state = card.querySelector(".card-state");
+    const status = byId.get(card.dataset.service);
+    if (!state) continue;
+    state.dataset.state = status ?? "";
+    state.textContent = status ? labels.get(status) ?? "Unknown" : "";
+  }
+  const heroDot = document.querySelector("#hero-dot");
+  if (heroDot) heroDot.className = `status-dot ${allReady ? "ready" : "pending"}`;
+}
+
 async function refreshStatus() {
   summary.textContent = "Checking services…";
   try {
@@ -155,6 +168,7 @@ async function refreshStatus() {
     }
     serviceList.replaceChildren(rows);
     summary.textContent = `${ready} of ${body.services.length} services ready`;
+    setServiceStates(body.services, ready === body.services.length);
     const workspaceLabel = labels.get(body.workspace?.health) ?? "Unknown";
     workspaceHealth.textContent = `Workspace: ${workspaceLabel}`;
     recoveryState.textContent = body.workspace?.recovery === "manual"
@@ -232,7 +246,7 @@ document.querySelectorAll("[data-copy]").forEach(button => {
     if (copied && wantsOpen && opened) {
       message = "Workspace opened and setup copied. In the workspace, open Terminal and paste. Do not paste an account password.";
     } else if (copied && wantsOpen) {
-      message = "Copied. Step 1 is not ready yet. When Open the workspace is active, open it and paste in Terminal. Do not paste an account password.";
+      message = "Copied. The workspace is not ready yet. When Open the workspace is active, open it and paste in Terminal. Do not paste an account password.";
     } else if (copied) {
       message = "Copied. Open Terminal in the workspace and paste. Do not paste an account password.";
     }
@@ -260,7 +274,7 @@ document.querySelectorAll("[data-agent]").forEach(button => {
     const command = button.dataset.agent === "codex" ? "ai-codex" : "ai-claude";
     const vscode = document.querySelector('[data-link="vscode"]');
     if (!vscode?.dataset.ready) {
-      placeNotice(button, notice, "The workspace page is not ready yet. Use Step 1 when it turns green, then try again.");
+      placeNotice(button, notice, "The workspace page is not ready yet. Try again when its card shows Ready.");
       return;
     }
     window.open(vscode.href, "_blank", "noopener,noreferrer");

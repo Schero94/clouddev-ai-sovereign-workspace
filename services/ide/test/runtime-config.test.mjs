@@ -113,6 +113,7 @@ test("isolates Caddy, launchpad, code-server, CloudCLI, and sshd under the agree
   assert.match(entrypoint, /unset caddy_secret CODE_SERVER_PASSWORD/);
   assert.match(entrypoint, /CLOUDDEV_LAUNCHPAD_NODE_ENV=\"\$\{CLOUDDEV_LAUNCHPAD_NODE_ENV:-\}\"/);
   assert.match(entrypoint, /unset operator_keys SSH_AUTHORIZED_KEYS/);
+  assert.doesNotMatch(entrypoint, /requires SSH_AUTHORIZED_KEYS/, "a fresh template starts without an SSH key");
   assert.match(entrypoint, /install-editor-seed\.mjs/);
   assert.match(entrypoint, /CLOUDDEV_WORKSPACE_PASSWORD=\"\$workspace_password\"/);
   assert.match(entrypoint, /CLOUDDEV_WORKSPACE_AUTH_SECRET=\"\$workspace_auth_secret\"/);

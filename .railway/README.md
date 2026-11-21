@@ -82,7 +82,7 @@ set there.
 | `INITIAL_PASSWORD` | Generate independently. Keep it readable for OmniRoute's first sign-in. Change the password, then remove this bootstrap variable. |
 | `FORGEJO_POSTGRES_PASSWORD` | Generate independently and seal it. Only the Forgejo service consumes it. |
 | `JWT_SECRET`, `API_KEY_SECRET`, `STORAGE_ENCRYPTION_KEY`, `MACHINE_ID_SALT`, `OMNIROUTE_WS_BRIDGE_SECRET` | Generate a separate value for each variable and seal them at deployment. Preserve `STORAGE_ENCRYPTION_KEY` in protected backups. |
-| `SSH_AUTHORIZED_KEYS` | Require one or more operator Ed25519 public keys. This is public key material, not a private key. Keep the corresponding private key on the operator's client. |
+| `SSH_AUTHORIZED_KEYS` | Optional. Leave empty for browser and mobile use. Add one or more operator Ed25519 public keys to enable Remote-SSH. This is public key material, not a private key. Keep the corresponding private key on the operator's client. |
 
 Every other service variable is a literal default or a private Railway reference
 in `.railway/railway.ts`. PostgreSQL credentials come from Railway's managed

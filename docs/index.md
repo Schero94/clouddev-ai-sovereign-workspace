@@ -60,15 +60,15 @@ tags:
 <div class="cd-visual-heading">
 <p class="cd-eyebrow">THE WORKSPACE LAUNCHPAD</p>
 <h2 id="cd-launchpad-heading">A clear starting point on desktop and phone</h2>
-<p>The images below are from the local launchpad build. They show the real service cards, not a live Railway deployment.</p>
+<p>The images below are from the local launchpad build. They show the real interface, not a live Railway deployment. Service health in the capture comes from local test endpoints.</p>
 </div>
 <div class="cd-screenshot-grid">
 <figure class="cd-screenshot cd-screenshot--desktop">
-<img src="assets/screenshots/launchpad-services-desktop.png" alt="Desktop launchpad with cards for CloudCLI, browser VS Code, Forgejo, OmniRoute, Codex, and Claude Code." width="980" height="301" loading="lazy" decoding="async">
+<img src="assets/screenshots/launchpad-services-desktop.png" alt="Desktop launchpad with the three start steps on the left and live service cards for CloudCLI, browser VS Code, and OmniRoute on the right." width="980" height="658" loading="lazy" decoding="async">
 <figcaption><strong>Desktop launchpad</strong><span>Captured from the local build. Each destination uses its own service sign-in where required.</span></figcaption>
 </figure>
 <figure class="cd-screenshot cd-screenshot--mobile">
-<img src="assets/screenshots/launchpad-services-mobile.png" alt="Mobile launchpad showing the six workspace service cards stacked for a narrow screen." width="364" height="795" loading="lazy" decoding="async">
+<img src="assets/screenshots/launchpad-services-mobile.png" alt="Mobile launchpad with the headline Code from your iPad and the first start step stacked for a phone screen." width="364" height="788" loading="lazy" decoding="async">
 <figcaption><strong>Mobile layout</strong><span>The same launchpad actions fit a phone screen.</span></figcaption>
 </figure>
 </div>

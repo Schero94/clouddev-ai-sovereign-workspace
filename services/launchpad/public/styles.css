@@ -100,9 +100,31 @@ h2 { margin: 0; font-size: 19px; font-weight: 560; letter-spacing: -.025em; }
 .step-number { color: #788176; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; padding-top: 2px; }
 .setup-list > li > span > strong { display: block; font-size: 12px; font-weight: 600; }
 .setup-list small { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.shell { width: min(100% - 40px, 1180px); }
+.hero { padding: 48px 0 30px; }
+h1 { font-size: clamp(36px, 6vw, 64px); }
+.hero-accent { color: var(--green); }
+.intro { max-width: 640px; font-size: 16px; }
+.hero-status { display: inline-flex; align-items: center; gap: 9px; margin: 20px 0 0; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+.hero-status .health-summary { padding: 0; color: #c5cbd4; font-size: 13px; }
+.layout { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0 36px; align-items: start; }
+.layout > .section { padding-top: 27px; }
+.workspace-section .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.workspace-section .card { min-height: 132px; }
+.card-wide { grid-column: 1 / -1; min-height: 150px; }
+.card-wide .card-title { font-size: 18px; }
+.card-wide .card-copy { font-size: 13px; }
+.card-state { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 12px; color: var(--muted); font-size: 11px; }
+.card-state:empty { display: none; }
+.card-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #626a75; }
+.card-state[data-state="ready"]::before { background: #76d59e; box-shadow: 0 0 9px #76d59e55; }
+.card-state[data-state="unavailable"]::before { background: #e19b85; }
+.card-state[data-state="not-configured"]::before { background: #d8bd79; }
 footer { display: flex; justify-content: space-between; gap: 18px; padding: 18px 0 30px; border-top: 1px solid var(--line); color: #6f7783; font-size: 10px; }
 @media (max-width: 900px) {
-  .cards, .command-row, .setup-list, .guide-actions { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: 1fr; }
+  .cards, .workspace-section .cards, .command-row, .setup-list, .guide-actions { grid-template-columns: 1fr; }
+  .hero { padding: 28px 0 18px; }
   .card { min-height: 88px; }
   .card-title { font-size: 16px; }
   .card-copy, .remote-copy, .setup-list small { font-size: 14px; }

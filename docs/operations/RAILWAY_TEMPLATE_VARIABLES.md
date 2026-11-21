@@ -27,7 +27,7 @@ replace it with a literal password or reuse a value across variables.
 | `clouddev-router` | `MACHINE_ID_SALT` | Generate independently and seal it. |
 | `clouddev-router` | `OMNIROUTE_WS_BRIDGE_SECRET` | Generate independently and seal it. |
 | `clouddev-router` | `CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET` | Generate independently and seal it. The workspace uses it only to fetch its own inference key. It is not passed to agent processes. |
-| `clouddev-ide` | `SSH_AUTHORIZED_KEYS` | Require one or more operator Ed25519 public keys, one per line. Never ask for or store a private key. |
+| `clouddev-ide` | `SSH_AUTHORIZED_KEYS` | Optional, empty by default. Without it the workspace starts normally and SSH accepts no login. Add one or more operator Ed25519 public keys, one per line, to enable desktop Remote-SSH. Never ask for or store a private key. |
 
 Railway's managed Postgres service supplies its own database credentials. The
 Forgejo service uses private reference variables for those values. Other

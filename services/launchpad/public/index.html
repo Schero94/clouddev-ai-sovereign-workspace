@@ -22,13 +22,15 @@
       </header>
 
       <section class="hero">
-        <p class="eyebrow">START HERE</p>
-        <h1>Code from your iPad. Three taps.</h1>
-        <p class="intro">iPhone, iPad, and Android use this same page. The AI key is connected for you. You can skip Git and the computer connection.</p>
+        <p class="eyebrow">YOUR CLOUD WORKSPACE</p>
+        <h1>Code from your iPad.<br><span class="hero-accent">Three taps.</span></h1>
+        <p class="intro">iPhone, iPad, and Android use this same page. Claude Code, Codex, and OpenCode run in your Railway workspace, and the AI key is connected for you. You can skip Git and the computer connection.</p>
+        <p class="hero-status"><span class="status-dot pending" id="hero-dot" aria-hidden="true"></span><span class="health-summary" id="health-summary" role="status">Checking services…</span></p>
       </section>
 
+      <div class="layout">
       <section class="section guide-section" aria-labelledby="touch-heading">
-        <h2 id="touch-heading">Step 1. Connect your AI</h2>
+        <h2 id="touch-heading">Start in three steps</h2>
         <ol class="guide-steps">
           <li class="guide-step guide-step-current">
             <span class="guide-index" aria-hidden="true">1</span>
@@ -42,7 +44,7 @@
             <span class="guide-index" aria-hidden="true">2</span>
             <div class="guide-body">
               <h3>Open the AI chat</h3>
-              <p>CloudCLI is the touch app for Claude Code and Codex. Tell it what to build. On iPhone or iPad, tap Share, then Add to Home Screen.</p>
+              <p>CloudCLI is the touch app for Claude Code, Codex, and OpenCode. Tell it what to build. On iPhone or iPad, tap Share, then Add to Home Screen.</p>
               <a class="guide-button guide-button-primary" data-link="cloudcli" aria-disabled="true" tabindex="-1">Open the AI chat</a>
             </div>
           </li>
@@ -50,12 +52,8 @@
             <span class="guide-index" aria-hidden="true">3</span>
             <div class="guide-body">
               <h3>Open the code editor</h3>
-              <p>VS Code in the browser shows the same files. Use it to read and change code by hand.</p>
-              <div class="guide-actions">
-                <a class="guide-button" data-link="vscode" aria-disabled="true" tabindex="-1">Open the workspace</a>
-                <button class="guide-button" type="button" data-agent="codex">Start Codex</button>
-                <button class="guide-button" type="button" data-agent="claude">Start Claude</button>
-              </div>
+              <p>VS Code in the browser shows the same files, with Node.js, Python, and the terminal ready.</p>
+              <a class="guide-button" data-link="vscode" aria-disabled="true" tabindex="-1">Open the workspace</a>
             </div>
           </li>
         </ol>
@@ -63,42 +61,42 @@
         <p class="notice" id="agent-notice" role="status" hidden></p>
       </section>
 
-      <details class="more-setup">
-        <summary>More, only if you need it</summary>
-        <div class="more-panel">
-      <section class="section" aria-labelledby="workspace-heading">
+      <section class="section workspace-section" aria-labelledby="workspace-heading">
         <div class="section-heading">
-          <div><p class="eyebrow">WORKSPACE</p><h2 id="workspace-heading">Open a service</h2></div>
-          <span class="health-summary" id="health-summary" role="status">Checking services…</span>
+          <div><p class="eyebrow">WORKSPACE</p><h2 id="workspace-heading">Everything in one place</h2></div>
         </div>
         <div class="cards">
-          <a class="card primary" data-link="cloudcli" aria-disabled="true" tabindex="-1">
+          <a class="card primary card-wide" data-link="cloudcli" data-service="ide" aria-disabled="true" tabindex="-1">
             <span class="card-icon" aria-hidden="true">&gt;_</span><span class="card-title">Open CloudCLI</span>
-            <span class="card-copy">Your chats and earlier tasks</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">AI chat for Claude Code, Codex, and OpenCode, with your earlier tasks</span><span class="card-state" aria-hidden="true"></span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
-          <a class="card" data-link="vscode" aria-disabled="true" tabindex="-1">
+          <a class="card" data-link="vscode" data-service="ide" aria-disabled="true" tabindex="-1">
             <span class="card-icon" aria-hidden="true">&lt;/&gt;</span><span class="card-title">Browser VS Code</span>
-            <span class="card-copy">The page where you write, on phone, iPad, or computer</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Editor and terminal on phone, iPad, or computer</span><span class="card-state" aria-hidden="true"></span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
-          <a class="card" data-link="git" aria-disabled="true" tabindex="-1">
-            <span class="card-icon git-icon" aria-hidden="true">G</span><span class="card-title">Open Forgejo</span>
-            <span class="card-copy">Private file history. You can skip Git. Sign in with Forgejo.</span><span class="card-arrow" aria-hidden="true">↗</span>
-          </a>
-          <a class="card" data-link="router" aria-disabled="true" tabindex="-1">
+          <a class="card" data-link="router" data-service="router" aria-disabled="true" tabindex="-1">
             <span class="card-icon ai-icon" aria-hidden="true">✳</span><span class="card-title">Manage AI providers</span>
-            <span class="card-copy">Sign in to ChatGPT and Claude. Add a DeepSeek API key.</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Sign in to ChatGPT and Claude. Add a DeepSeek API key.</span><span class="card-state" aria-hidden="true"></span><span class="card-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="card" data-link="git" data-service="git" aria-disabled="true" tabindex="-1">
+            <span class="card-icon git-icon" aria-hidden="true">G</span><span class="card-title">Open Forgejo</span>
+            <span class="card-copy">Private file history. You can skip Git. Sign in with Forgejo.</span><span class="card-state" aria-hidden="true"></span><span class="card-arrow" aria-hidden="true">↗</span>
           </a>
           <button class="card agent-card" data-agent="codex" type="button">
             <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Codex</span>
-            <span class="card-copy">Opens the workspace and copies the start words</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Opens VS Code and copies the start words for Terminal</span><span class="card-arrow" aria-hidden="true">↗</span>
           </button>
           <button class="card agent-card" data-agent="claude" type="button">
             <span class="card-icon ai-icon" aria-hidden="true">⌘</span><span class="card-title">Start Claude</span>
-            <span class="card-copy">Opens the workspace and copies the start words</span><span class="card-arrow" aria-hidden="true">↗</span>
+            <span class="card-copy">Opens VS Code and copies the start words for Terminal</span><span class="card-arrow" aria-hidden="true">↗</span>
           </button>
         </div>
       </section>
+      </div>
 
+      <details class="more-setup">
+        <summary>More, only if you need it</summary>
+        <div class="more-panel">
       <section class="section remote-section" aria-labelledby="remote-heading">
         <div class="section-heading"><div><p class="eyebrow">OPTIONAL</p><h2 id="remote-heading">Connect with VS Code Remote-SSH</h2></div></div>
         <p class="remote-copy">Skip this on a phone or iPad. Use it only on a Mac or Windows computer if you already use VS Code. The private key stays on that computer.</p>

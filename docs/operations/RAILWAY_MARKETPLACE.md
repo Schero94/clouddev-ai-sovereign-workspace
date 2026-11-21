@@ -61,11 +61,12 @@ Run `npm run check:one-click` before creating a draft. It validates the local on
    [RAILWAY_TEMPLATE_VARIABLES.md](RAILWAY_TEMPLATE_VARIABLES.md) using its
    `${{secret(64, "0123456789abcdef")}}` value. `preserve()` in IaC keeps an
    existing Railway value. It does not generate a secret for a fresh template
-   deployment. Keep the ten secret entries and their descriptions in
+   deployment. Keep the eleven secret entries and their descriptions in
    `.railway/template-variables.json` synchronized with all `preserve()` calls.
-6. Require `SSH_AUTHORIZED_KEYS` as a user-specific value containing one or
-   more operator Ed25519 public keys. This cannot be filled with a maintainer
-   key. Never ask for the matching private key.
+6. Offer `SSH_AUTHORIZED_KEYS` as an optional, empty value. The workspace
+   starts without it and SSH then accepts no login. The deploying operator can
+   add Ed25519 public keys later. Never fill it with a maintainer key, and
+   never ask for the matching private key.
 7. Leave provider credentials out of the template. The deploying owner must
    connect their own provider in the authenticated OmniRoute dashboard, then
    create a scoped inference key through onboarding.
