@@ -70,11 +70,24 @@ Run `npm run check:one-click` before creating a draft. It validates the local on
 7. Leave provider credentials out of the template. The deploying owner must
    connect their own provider in the authenticated OmniRoute dashboard, then
    create a scoped inference key through onboarding.
-8. Check registration, health paths, restart policy, volume mounts, public
+8. A draft generated with `railway templates create` drops every literal
+   variable value and the IaC Dockerfile path. Run
+   `node scripts/railway-template-editor-blocks.mjs <directory>` and paste
+   each `<service>.env` file into that service's **Raw Editor** in the
+   template editor, then apply the changes. The blocks carry the literal
+   defaults, the service references, the `secret()` generators,
+   `RAILWAY_DOCKERFILE_PATH` for the two repository-root services, and
+   Railway's official PostgreSQL defaults. Each line ends in `# description`,
+   which the Raw Editor stores as the variable description. Descriptions live
+   in `.railway/template-descriptions.json` and, for secrets and operator
+   inputs, in `.railway/template-variables.json`. Confirm
+   `SSH_AUTHORIZED_KEYS` stays marked optional, then set a transparent icon
+   per service so the template guidelines show 4 of 4.
+9. Check registration, health paths, restart policy, volume mounts, public
    access, and Serverless/App Sleeping in the draft. The always-on workspace
    must have sleeping disabled. Do not infer this from a local IaC type-check.
-9. Create the template draft only after the configuration is complete. Then
-   deploy that draft into a second fresh project and run the release checks.
+10. Publish nothing until the edited draft has been deployed into a second
+    fresh project with no input and passed the release checks.
 
 ## Publish the tested template
 
