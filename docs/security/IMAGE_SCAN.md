@@ -66,10 +66,11 @@ amd64 manifest
 remotely. The multi-platform index is
 `sha256:39362ab93a94c0c9b8b330d2a877ddbb3f02fa8c0cba1b8d686d437b39f36a04`.
 The scan reported 0 critical findings and 1 high finding, `CVE-2026-86144`
-in `libxml2` 2.13.9-r2, with a fix listed in 2.13.9-r3. The Dockerfile now
-pins that index. This scan did not rebuild the CloudDev overlay or start the
-container. The 17.0.2 release notes include the internal SSH public-key
-exact-match fix.
+in `libxml2` 2.13.9-r2, with a fix listed in 2.13.9-r3. The Dockerfile pins
+that index and installs Alpine's current `libxml2=2.13.9-r3` during the
+overlay build. This scan did not rebuild the CloudDev overlay or start the
+container, so the upgraded package is not yet present in a built image. The
+17.0.2 release notes include the internal SSH public-key exact-match fix.
 
 The 2026-10-26 Forgejo 17.0.0 image had no critical findings and four high
 package findings. Three unique IDs were `CVE-2026-111497` in brotli,
@@ -86,6 +87,15 @@ An older 18.1 database image had two unique critical and 40 unique high
 findings. PostgreSQL 18.6 passed an isolated startup check without a persistent
 volume. The scanner only pulled and inspected the 18.6 candidate; the running
 18.1 service and its data were not changed.
+
+On 2026-11-21, Trivy 0.76.2 remotely scanned the rebuilt 18.6 Alpine amd64
+manifest `sha256:300ebd02c6d4de9ee27ad7f6855d5d21b4d3a4a5117767c1197d284c635d9736`
+and Postgres 18.7 Alpine amd64
+`sha256:68e33adb18d9962952f00d5e3b8644305e10e375f98dd652bf6ee6a1836314ba`.
+Both still contain `CVE-2025-68121` in `stdlib` v1.24.6. The 18.7 scan has 27
+high findings (`stdlib` and `libxml2`) and no longer lists `krb5-libs` or
+`libxslt`. Neither image was started, and the local Compose pin stays on the
+previously started 18.6 digest.
 
 ## Release decision
 

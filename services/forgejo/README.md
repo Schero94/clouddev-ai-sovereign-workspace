@@ -8,7 +8,7 @@ codeberg.org/forgejo/forgejo:17.0.2-rootless@sha256:39362ab93a94c0c9b8b330d2a877
 ```
 
 The upstream rootless image is based on Alpine 3.24. This image installs the
-pinned `postgresql17-client=17.12-r0` package and switches back to UID/GID
+pinned `postgresql17-client=17.12-r0` and `libxml2=2.13.9-r3` packages and switches back to UID/GID
 `1000:1000` for normal startup. Version 17.0.2 includes the SSH public-key
 exact-match fix used by Forgejo's internal SSH server.
 

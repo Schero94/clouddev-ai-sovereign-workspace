@@ -611,6 +611,7 @@ class ForgejoEntrypointTests(unittest.TestCase):
                 self.assertIn(config, dockerfile)
         self.assertIn("USER 1000:1000", dockerfile)
         self.assertIn("postgresql17-client=17.12-r0", dockerfile)
+        self.assertIn("libxml2=2.13.9-r3", dockerfile)
         self.assertIn("FROM codeberg.org/forgejo/forgejo:17.0.2-rootless", dockerfile)
         self.assertIn("USER root", dockerfile)
         self.assertIn('VOLUME ["/var/lib/gitea"]', dockerfile)
