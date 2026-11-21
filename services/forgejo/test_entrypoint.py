@@ -609,7 +609,10 @@ class ForgejoEntrypointTests(unittest.TestCase):
         ):
             with self.subTest(config=config):
                 self.assertIn(config, dockerfile)
-        self.assertIn("USER 1000:1000", dockerfile)
+        self.assertNotIn("USER 1000:1000", dockerfile)
+        entrypoint = (SERVICE_DIR / "entrypoint.sh").read_text(encoding="utf-8")
+        self.assertIn('exec su-exec 1000:1000 "$0" "$@"', entrypoint)
+        self.assertIn("su-exec=0.2-r3", dockerfile)
         self.assertIn("postgresql17-client=17.12-r0", dockerfile)
         self.assertIn("libxml2=2.13.9-r3", dockerfile)
         self.assertIn("FROM codeberg.org/forgejo/forgejo:17.0.2-rootless", dockerfile)

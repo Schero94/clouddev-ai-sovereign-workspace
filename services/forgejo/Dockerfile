@@ -1,7 +1,7 @@
 FROM codeberg.org/forgejo/forgejo:17.0.2-rootless@sha256:39362ab93a94c0c9b8b330d2a877ddbb3f02fa8c0cba1b8d686d437b39f36a04
 
 USER root
-RUN apk add --no-cache postgresql17-client=17.12-r0 libxml2=2.13.9-r3 \
+RUN apk add --no-cache postgresql17-client=17.12-r0 libxml2=2.13.9-r3 su-exec=0.2-r3 \
     && mkdir -p /usr/local/share/clouddev
 
 COPY --chown=root:root entrypoint.sh /usr/local/bin/clouddev-forgejo-entrypoint.sh
@@ -23,5 +23,5 @@ EXPOSE 3000 2222
 HEALTHCHECK --interval=30s --timeout=8s --start-period=90s --retries=3 \
   CMD ["/usr/bin/curl", "--fail", "--silent", "--show-error", "--max-time", "5", "http://127.0.0.1:3000/api/healthz"]
 
-USER 1000:1000
+USER root
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/clouddev-forgejo-entrypoint.sh"]

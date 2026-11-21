@@ -10,6 +10,14 @@ fail() {
   exit 1
 }
 
+# Railway volumes are root-owned. Claim the data directory, then continue as
+# the unprivileged Forgejo user. The long-running process is never root.
+if [ "$(id -u)" -eq 0 ]; then
+  install -d -o 1000 -g 1000 -m 0750 /var/lib/gitea
+  chown 1000:1000 /var/lib/gitea
+  exec su-exec 1000:1000 "$0" "$@"
+fi
+
 require_value() {
   if [ -z "$2" ]; then
     fail "$1 is required; no credentials or configuration values were printed."
