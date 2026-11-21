@@ -9,8 +9,9 @@ unverified upstream dependencies in the public OmniRoute dashboard. The local
 runtime has separate browser-cookie and SSH-key entry points, but it is not a
 sandbox for hostile code. The local OmniRoute overlay was rebuilt and scanned
 on 2026-11-21 with no high or critical findings, and its private runtime check
-passed. The Marketplace template is still unpublished, so this model does not
-treat that image as a verified Railway release.
+passed. The published Marketplace template builds that overlay from source on
+Railway, and the running Railway router container also reported no high or
+critical findings. Neither result is a Railway verification of the image.
 
 ## Scope and assumptions
 

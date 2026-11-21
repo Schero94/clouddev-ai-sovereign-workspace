@@ -79,11 +79,11 @@ test("README reports verified capabilities separately from open deployment gates
   expectMatch(/mock (?:LLM )?provider tests/i, "mock-provider evidence should be explicit");
   expectMatch(/Forgejo[\s\S]{0,180}(?:private|repository|push)/i, "private Git evidence should be explicit");
   expectMatch(/same persistent (?:workspace|filesystem|project tree)/i, "shared persistent files should be explicit");
-  expectMatch(/(?:19 of 24|19\/24) gates complete/i, "release status should match the checked root ledger");
+  expectMatch(/(?:20 of 24|20\/24) gates complete/i, "release status should match the checked root ledger");
   expectMatch(/G20 (?:is )?(?:complete|passed)[\s\S]{0,160}G23 remains open/i, "the public README must distinguish the published docs gate from the pending repository social preview");
   expectMatch(/G15 and G17 are closed for that local evidence/i, "closed local image gates must stay distinct from publication");
-  expectMatch(/G12 and G14[\s\S]{0,120}release hold/i, "the unpublished Railway deployment must remain the release hold");
-  expectMatch(/not (?:a )?(?:published|one-click-verified)|not a published or one-click-verified/i, "the template must not be presented as published");
+  expectMatch(/G14 (?:is )?(?:complete|closed)[\s\S]{0,200}G12 remains open/i, "the published template must stay distinct from the open live deployment gate");
+  expectMatch(/not (?:yet )?Railway-verified/i, "Railway's verified badge must not be claimed");
   expectMatch(/Markdown[\s\S]{0,180}(?:build contexts|\.dockerignore)/i, "Docker build-context exclusions must be disclosed");
   expectMatch(/do not remove files from Git history/i, "build-context exclusions must not be described as history deletion");
   expectMatch(/existing image\s+layers/i, "existing image layers must not be described as purged");
@@ -144,8 +144,8 @@ test("README provides click-through setup, troubleshooting, and upstream license
 
 test("README contains no fabricated Railway template URL or unsafe marketing claims", () => {
   assert.doesNotMatch(readme, /railway\.com\/new\/template\//i);
+  assert.doesNotMatch(readme, /railway\.com\/deploy\/(?!clouddev-release-20261121\b)/i, "only the published template code may appear");
   assert.doesNotMatch(readme, /<\s*TEMPLATE_(?:ID|CODE)\s*>/i);
-  expectMatch(/No template ID|no Railway template ID/i, "the absent template identifier should be explicit");
 
   for (const unsafeClaim of [
     /military[ -]grade/i,

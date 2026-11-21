@@ -8,7 +8,7 @@ Key facts:
 - Railway's template composer generates the passwords and secrets. The workspace connects its own limited inference key after the user signs in with ChatGPT or Claude in OmniRoute, or adds a DeepSeek API key.
 - Included: Claude Code CLI, Codex CLI, OpenCode CLI, Playwright with Chromium for agent browser sessions, CloudCLI with plugins, TaskMaster CLI, Node.js 26.13.1 LTS, Python 3.15.2 through uv, pnpm, Git, Forgejo for private Git history, and pinned Open VSX extensions.
 - Files and agent sessions persist on one Railway volume. A restart stops running agent processes; saved sessions can be resumed through supported provider actions.
-- Status: the Railway Marketplace template is not published yet. Check the release status page before relying on it.
+- Status: the Railway Marketplace template is published at https://railway.com/deploy/clouddev-release-20261121 and is not yet Railway-verified. Check the release status page for open gates.
 
 ## Docs
 

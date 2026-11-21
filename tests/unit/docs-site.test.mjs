@@ -246,22 +246,23 @@ test("landing page uses only the supplied real launchpad captures with accessibl
   assert.doesNotMatch(home, /screenshot placeholder|image coming soon|src=""/i);
 });
 
-test("Railway guide gives a click-by-click path without claiming a live template or one-click verification", () => {
+test("Railway guide links the published template without claiming Railway verification", () => {
   const guide = readDoc("how-to/deploy-on-railway.md");
   const releaseStatus = readDoc("operations/RELEASE_STATUS.md");
 
   for (const phrase of ["Templates", "New Template", "Template Composer", "Create Template", "Publish", "Deploy Now", "Deploy"]) {
     assert.ok(guide.includes(phrase), `Railway guide is missing the ${phrase} action or state`);
   }
-  assert.match(guide, /not (?:yet )?(?:published|verified)|no (?:live )?Railway template ID/i);
-  assert.match(guide, /one-click.{0,80}(?:not|unverified)|not.{0,80}one-click/i);
+  assert.match(guide, /https:\/\/railway\.com\/deploy\/clouddev-release-20261121/);
+  assert.match(guide, /not (?:yet )?Railway-verified/i);
+  assert.doesNotMatch(guide, /not yet published to the Railway Marketplace/i);
   assert.match(guide, /clouddev-ide[\s\S]*clouddev-git[\s\S]*clouddev-postgres[\s\S]*clouddev-router/);
   assert.match(guide, /europe-west4-drams3a/);
   assert.match(guide, /Serverless|App Sleeping/i);
   assert.match(guide, /SSH_AUTHORIZED_KEYS/);
   assert.match(guide, /secret\(64/);
   assert.match(guide, /provider credentials.{0,100}(?:not|never).{0,60}template/i);
-  assert.doesNotMatch(guide, /railway\.com\/new\/template\/[A-Za-z0-9]{6,}/, "do not invent a Railway template code");
+  assert.doesNotMatch(guide, /railway\.com\/(?:new\/template|deploy)\/(?!clouddev-release-20261121\b)[A-Za-z0-9-]{6,}/, "only the published template code may appear");
   assert.match(releaseStatus, /not|open|pending/i);
 
   for (const href of localMarkdownLinks(guide)) {

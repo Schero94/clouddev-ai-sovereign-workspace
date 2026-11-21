@@ -12,7 +12,7 @@ tags:
 
 # First login and workspace setup
 
-Use this guide after deploying a tested instance. The current Railway template is not published or verified, so these steps do not imply a working Marketplace deployment. Start with the [release status](../operations/RELEASE_STATUS.md) and the [Railway deployment guide](deploy-on-railway.md).
+Use this guide after deploying the [published Railway template](https://railway.com/deploy/clouddev-release-20261121) or a tested instance. The template is not yet Railway-verified. Check the [release status](../operations/RELEASE_STATUS.md) for open gates and the [Railway deployment guide](deploy-on-railway.md) for the deploy steps.
 
 ## 1. Sign in to the workspace
 

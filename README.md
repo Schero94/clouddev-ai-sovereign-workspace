@@ -13,9 +13,11 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 19 of 24 gates complete.** The Railway Marketplace release
-is not ready. G4, G5, G12, G14, and G23 remain open. G15 and G17 are closed
-for local image evidence. See
+**Release status: 20 of 24 gates complete.** The Railway template is
+published at
+[railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
+G4, G5, G12, and G23 remain open. G15 and G17 are closed for local image
+evidence. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
 this project beyond local evaluation.
 
@@ -41,9 +43,9 @@ server, and launchpad together. Forgejo, PostgreSQL, and OmniRoute run as
 separate services. Each deployment has its own data and credentials.
 
 The checked-in Railway configuration describes the four services and their
-private references. It is not a published Marketplace template. A real template
-URL, a verified badge, and a successful fresh-project Railway deployment do
-not exist yet. This is not a published or one-click-verified template.
+private references. The published Marketplace template deploys the same four
+services without any input. It is not yet Railway-verified: Railway has not
+granted the verified badge.
 
 ## Verified features
 
@@ -150,12 +152,15 @@ and the OmniRoute inference listener remain on the Compose network.
 
 ## Railway deployment
 
-There is no published template to deploy today. Do not treat the configuration
-as a production-ready or one-click-verified release. G12 and G14, the fresh
-Railway deployment and Marketplace test, remain the release hold. They are not
-a warning to click through.
+Deploy the published template from
+[railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
+It needs no input. After deployment, read `CODE_SERVER_PASSWORD` from the
+`clouddev-ide` variables to sign in, and change the Forgejo and OmniRoute
+bootstrap passwords after the first sign-in. G14 is complete. G12 remains open
+because SSH login, cross-device handoff, and restart recovery have not been
+proven on Railway.
 
-For a maintainer validation deployment, use a new test project in the intended
+For a maintainer validation deployment from source, use a new test project in the intended
 personal Railway workspace. Never apply an unreviewed plan to an existing
 project.
 
@@ -394,29 +399,29 @@ Claude Code is not relicensed by this repository's MIT license.
 
 ## Release status
 
-This source snapshot reports **19 of 24 acceptance gates complete**. Local
+This source snapshot reports **20 of 24 acceptance gates complete**. Local
 Compose, mock-provider, Git, and security checks are not substitutes for the
-open live gates. G4 and G5 still need full cross-device evidence; G12 needs a
-fresh Railway deployment; G13 proves a local four-store data-level restore but
-not Railway recovery; G14 needs a published and test-deployed Marketplace
-template. G15 and G17 are closed for local image evidence. G20 is complete:
+open live gates. G4 and G5 still need full cross-device evidence; G12 needs
+SSH, handoff, and restart evidence on Railway; G13 proves a local four-store
+data-level restore but not Railway recovery. G14 is complete: the template is
+published and a no-input test deployment passed. G15 and G17 are closed for
+local image evidence. G20 is complete:
 GitHub Pages serves the reviewed documentation. G23 remains open until the
 repository social preview is uploaded. G24
 passed an isolated application-level restore, while CloudCLI session resume
 remains unverified.
 
 Read the generated [release status](docs/operations/RELEASE_STATUS.md) and
-[acceptance ledger](GATES.md). The Marketplace template is not published, and
-no Railway template ID or verified badge is claimed.
+[acceptance ledger](GATES.md). No Railway verified badge is claimed.
 
 ## Railway deploy button
 
-There is no button here because Railway has not assigned a published template
-URL. The button must use the exact URL Railway returns after publication. Do
-not use a placeholder template ID. Run `npm run check:one-click` to confirm
-the four-service install graph before that later publication. Follow the
-[Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) after the
-security and deployment gates are closed.
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/clouddev-release-20261121)
+
+Run `npm run check:one-click` to confirm the four-service install graph before
+a new template version. Follow the
+[Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) for
+changes to the published template.
 
 ## Changelog
 
@@ -427,7 +432,8 @@ security and deployment gates are closed.
   service definition.
 - Local tests cover mock Codex and Claude routing, private Git operations,
   authentication checks, and task/session recovery behavior.
-- Railway publication remains open. G12 and G14 are the release hold. See the
+- The Railway template is published and passed a no-input test deployment
+  (G14). G12 remains open. See the
   [release status](docs/operations/RELEASE_STATUS.md) for current evidence.
 - GitHub Actions CI now runs the repository tests, security checks, Railway
   contracts, and documentation build on pull requests and on `main`.

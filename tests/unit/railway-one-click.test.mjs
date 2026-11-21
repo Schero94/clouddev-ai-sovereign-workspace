@@ -22,11 +22,11 @@ test("the one-click checker passes and never calls Railway", () => {
   assert.match(output, /clouddev-git/);
   assert.match(output, /clouddev-postgres/);
   assert.match(output, /clouddev-router/);
-  assert.match(output, /publication is held/);
-  assert.doesNotMatch(output, /railway\.com\/new\/template\//i);
+  assert.match(output, /Published template: https:\/\/railway\.com\/deploy\/clouddev-release-20261121/);
+  assert.doesNotMatch(output, /publication is held/);
 });
 
-test("the held publication commands match the Marketplace runbook and stay unpublished", () => {
+test("the publication commands match the Marketplace runbook and the README links the published template", () => {
   const runbook = read("docs/operations/RAILWAY_MARKETPLACE.md");
   const controlPlane = read("docs/operations/CONTROL_PLANE.md");
   const readme = read("README.md");
@@ -41,6 +41,22 @@ test("the held publication commands match the Marketplace runbook and stay unpub
   assert.match(runbook, /npm run check:one-click/);
   assert.match(controlPlane, /\.github\/workflows\/ci\.yml/);
   assert.match(readme, /npm run check:one-click/);
-  assert.match(readme, /not a published or one-click-verified/);
-  assert.doesNotMatch(readme, /railway\.com\/new\/template\//i);
+  assert.match(readme, /https:\/\/railway\.com\/deploy\/clouddev-release-20261121/);
+  assert.match(readme, /not (?:yet )?Railway-verified/);
+  assert.doesNotMatch(readme, /not a published or one-click-verified/);
+});
+
+test("the Marketplace overview has every section Railway's publish check requires", () => {
+  const overview = read("docs/operations/RAILWAY_TEMPLATE_OVERVIEW.md");
+  for (const heading of [
+    /^# Deploy and Host CloudDev AI on Railway$/m,
+    /^## About Hosting CloudDev AI$/m,
+    /^## Common Use Cases$/m,
+    /^## Dependencies for CloudDev AI Hosting$/m,
+    /^### Deployment Dependencies$/m,
+    /^## Why Deploy CloudDev AI on Railway\?$/m,
+  ]) {
+    assert.match(overview, heading);
+  }
+  assert.doesNotMatch(overview, /Template Composer must still set/);
 });

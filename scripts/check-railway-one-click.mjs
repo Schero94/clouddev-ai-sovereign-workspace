@@ -41,8 +41,8 @@ if (failures.length > 0) {
 } else {
   console.log("One-click contract passed.");
   console.log("Services: clouddev-ide, clouddev-git, clouddev-postgres, clouddev-router.");
-  console.log("Marketplace publication is held until image-security and live deployment gates pass.");
-  console.log("Held commands, not executed:");
+  console.log("Published template: https://railway.com/deploy/clouddev-release-20261121");
+  console.log("Release commands for a new template version, not executed:");
   console.log('npx --yes @railway/cli@5.71.0 templates create --project <FRESH_PROJECT> --json');
   console.log('npx --yes @railway/cli@5.71.0 templates publish <TEMPLATE_CODE> --category AI/ML --description "Deploy and Host CloudDev AI on Railway" --readme-file docs/operations/RAILWAY_TEMPLATE_OVERVIEW.md --json');
   process.exitCode = 0;

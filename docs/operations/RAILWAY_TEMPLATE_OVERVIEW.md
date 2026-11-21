@@ -4,9 +4,10 @@ CloudDev AI deploys a private, single-user development workspace. It runs
 code-server, key-only OpenSSH, CloudCLI, Codex CLI, Claude Code, Forgejo, and
 OmniRoute as a Railway project. Persistent volumes hold project files, Git
 repositories, provider configuration, and recoverable agent-session history.
-Owners add their own SSH public key and provider accounts during setup.
+The template needs no input. Owners connect their own provider accounts after
+deployment and can add an SSH public key later for desktop VS Code.
 
-## About hosting CloudDev AI
+## About Hosting CloudDev AI
 
 CloudDev AI keeps the editor, terminal agents, and CloudCLI mobile interface in
 one always-on workspace service. VS Code Desktop connects through an explicit
@@ -19,7 +20,7 @@ agent can be resumed after a restart. Provider accounts and keys are not
 included. Each owner connects their account through the authenticated
 OmniRoute dashboard and gives coding agents only a scoped inference key.
 
-## Common use cases
+## Common Use Cases
 
 - Edit the same projects from native VS Code, a desktop browser, or a phone.
 - Run Codex CLI and Claude Code against the owner's authenticated OmniRoute
@@ -31,7 +32,9 @@ OmniRoute dashboard and gives coding agents only a scoped inference key.
 - Continue work after a restart by reviewing the durable task registry and
   manually resuming sessions supported by the relevant upstream agent.
 
-## Deployment dependencies
+## Dependencies for CloudDev AI Hosting
+
+### Deployment Dependencies
 
 - [Railway](https://railway.com) runs the four-service project and persistent
   volumes.
@@ -46,21 +49,22 @@ OmniRoute dashboard and gives coding agents only a scoped inference key.
 - [Forgejo](https://forgejo.org) stores private Git repositories. A separate
   [PostgreSQL](https://www.postgresql.org/) service stores Forgejo metadata.
 
-## Implementation details
+### Implementation Details
 
-The checked-in Railway IaC file declares service resources, private variable
-references, health checks, volumes, region, SSH TCP proxies, and the no-sleep
-setting. The Railway Template Composer must still set GitHub sources, generated
-HTTPS domains, per-deployment `secret()` variables, and the operator's SSH
-public key. Use the exact values in
-[RAILWAY_TEMPLATE_VARIABLES.md](RAILWAY_TEMPLATE_VARIABLES.md). Provider
+Railway generates every password and signing secret for each deployment. No
+value is shared between installs. After deployment, read
+`CODE_SERVER_PASSWORD` from the `clouddev-ide` variables and sign in at the
+workspace domain. Forgejo and OmniRoute keep their own accounts; their
+bootstrap passwords are `FORGEJO_ADMIN_PASSWORD` and `INITIAL_PASSWORD`.
+Change them after the first sign-in. `SSH_AUTHORIZED_KEYS` is optional. Add
+Ed25519 public keys there to enable desktop VS Code Remote-SSH. Provider
 credentials are added after deployment and are never part of the template.
 
-## Why deploy CloudDev AI on Railway?
+## Why Deploy CloudDev AI on Railway?
 
 Railway provisions the workspace, Git service, database, gateway, and their
 private networking in one project. The project configuration is kept in
-`.railway/railway.ts`, while the Template Composer holds generated domains and
+`.railway/railway.ts`, and the template adds generated domains and
 per-deployment secrets. Volume-backed services stay at one replica. Railway
 Private Networking does not restrict outbound connections from the workspace.
 Review the threat model, data flows, and restore procedure before placing

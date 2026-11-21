@@ -13,15 +13,11 @@ tags:
 
 ## Current status
 
-CloudDev AI is not yet published to the Railway Marketplace, and there is no live Railway template ID. The Railway deployment and Marketplace gates remain open in the [release status](../operations/RELEASE_STATUS.md). This guide does not make CloudDev AI a verified one-click deployment. Do not use a guessed `Deploy on Railway` button or template code.
+CloudDev AI is published on the Railway Marketplace at [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121). A no-input test deployment passed. The template is not yet Railway-verified, and the live deployment gate G12 remains open in the [release status](../operations/RELEASE_STATUS.md) until SSH login, cross-device handoff, and restart recovery are proven on Railway.
 
-The steps below are the release and onboarding path. A normal user can follow the Marketplace steps only after Railway publishes a real listing. Until then, maintainers must test the configuration in a dedicated fresh Railway project and complete the Composer and release gates.
+## Deploy from the Marketplace
 
-## For a future Marketplace deployment
-
-After the template is published:
-
-1. Open the CloudDev AI listing from Railway's template Marketplace.
+1. Open [the CloudDev AI listing](https://railway.com/deploy/clouddev-release-20261121).
 2. Select **Deploy Now**.
 3. Review the requested values. Nothing needs typing: `SSH_AUTHORIZED_KEYS` is optional. Leave it empty for iPad, phone, and browser use, or add an Ed25519 public key for desktop Remote-SSH. Do not paste a private key. Railway's template variable functions should generate independent secrets for each deployment.
 4. Select **Deploy** and wait for the project services to report ready.
@@ -58,9 +54,9 @@ Railway's current [Create a Template guide](https://docs.railway.com/templates/c
 2. Deploy only to that test project. Verify region, public domains, SSH TCP proxy, private networking, volume mounts, health checks, generated secrets, and the no-sleep setting from the live Railway dashboard.
 3. Complete the [release checklist](../operations/CONTROL_PLANE.md#release-readiness), including a fresh deploy, client handoff, and a restore drill. A local test or IaC type-check is not a Railway deployment result.
 4. From the Railway workspace **Templates** page, choose **Publish** beside the reviewed draft. Complete the Marketplace form with the product description, source repository, documentation, license, and support details.
-5. Wait for Railway's result. Publication does not itself establish Railway verification or a partner badge. Do not add a Deploy button until Railway returns the actual template URL and code.
+5. Wait for Railway's result. Publication does not itself establish Railway verification or a partner badge.
 
-Railway's [Publish and Share guide](https://docs.railway.com/templates/publish-and-share) explains the publication form, template URL, and button. The real template code belongs in that button URL; this repository does not have one yet.
+Railway's [Publish and Share guide](https://docs.railway.com/templates/publish-and-share) explains the publication form, template URL, and button. The published template code is `clouddev-release-20261121`.
 
 ## Screenshots still needed
 
