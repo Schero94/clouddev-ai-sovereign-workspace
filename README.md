@@ -1,5 +1,7 @@
 # CloudDev AI: Sovereign Workspace
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/clouddev-release-20261121)
+
 CloudDev AI gives one developer a persistent workspace on Railway. VS Code
 Desktop, the browser IDE, and CloudCLI's mobile web interface connect to the
 same persistent project tree and supported agent-session history.
@@ -416,15 +418,6 @@ part of that restore.
 Read the generated [release status](docs/operations/RELEASE_STATUS.md) and
 [acceptance ledger](GATES.md). No Railway verified badge is claimed.
 
-## Railway deploy button
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/clouddev-release-20261121)
-
-Run `npm run check:one-click` to confirm the four-service install graph before
-a new template version. Follow the
-[Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) for
-changes to the published template.
-
 ## Changelog
 
 ### Unreleased
@@ -439,3 +432,12 @@ changes to the published template.
   [release status](docs/operations/RELEASE_STATUS.md) for current evidence.
 - GitHub Actions CI now runs the repository tests, security checks, Railway
   contracts, and documentation build on pull requests and on `main`.
+
+## Railway deploy button
+
+The template needs no input. Run `npm run check:one-click` to confirm the
+four-service install graph before a new template version, and follow the
+[Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) for
+changes to the published template.
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/clouddev-release-20261121)

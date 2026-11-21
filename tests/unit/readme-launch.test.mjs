@@ -143,6 +143,14 @@ test("README provides click-through setup, troubleshooting, and upstream license
   );
 });
 
+test("README shows the Deploy on Railway button at the top and at the end", () => {
+  const button = "[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/clouddev-release-20261121)";
+  const lines = readme.trimEnd().split("\n");
+  assert.equal(lines[0], "# CloudDev AI: Sovereign Workspace");
+  assert.equal(lines.slice(1).find(line => line.trim() !== ""), button, "the button must be the first element under the title");
+  assert.equal(lines.at(-1), button, "the button must be the last line of the README");
+});
+
 test("README contains no fabricated Railway template URL or unsafe marketing claims", () => {
   assert.doesNotMatch(readme, /railway\.com\/new\/template\//i);
   assert.doesNotMatch(readme, /railway\.com\/deploy\/(?!clouddev-release-20261121\b)/i, "only the published template code may appear");
