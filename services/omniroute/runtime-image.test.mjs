@@ -24,6 +24,7 @@ test("wraps the pinned upstream router image without mismatching its prebuilt Ne
   const entrypoint = readFileSync(path.join(serviceDirectory, "entrypoint.sh"), "utf8");
   assert.match(entrypoint, /exec runuser --preserve-environment -u node -- \/opt\/clouddev-router-entrypoint\.sh "\$@"/);
   assert.match(entrypoint, /node \/opt\/clouddev-router-provision\.mjs/);
+  assert.match(entrypoint, /find "\$data" -xdev ! -user node -exec chown -h node:node \{\} \+/);
   assert.match(entrypoint, /exec \/app\/check-permissions\.sh "\$@"/);
   assert.match(dockerfile, /provision-workspace-key\.mjs \/opt\/clouddev-router-provision\.mjs/);
 });

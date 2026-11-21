@@ -6,7 +6,7 @@ set -eu
 if [ "$(id -u)" -eq 0 ]; then
   data="${DATA_DIR:-/app/data}"
   install -d -o node -g node -m 0750 "$data"
-  chown node:node "$data"
+  find "$data" -xdev ! -user node -exec chown -h node:node {} +
   cd /app
   exec runuser --preserve-environment -u node -- /opt/clouddev-router-entrypoint.sh "$@"
 fi

@@ -23,43 +23,36 @@
 
       <section class="hero">
         <p class="eyebrow">START HERE</p>
-        <h1>Four steps. One button each.</h1>
-        <p class="intro">iPhone, iPad, and Android use this same page. Each button opens the next page or copies the words you paste. You can skip Git and the computer connection.</p>
+        <h1>Code from your iPad. Three taps.</h1>
+        <p class="intro">iPhone, iPad, and Android use this same page. The AI key is connected for you. You can skip Git and the computer connection.</p>
       </section>
 
       <section class="section guide-section" aria-labelledby="touch-heading">
-        <h2 id="touch-heading">Step 1. Open the workspace</h2>
+        <h2 id="touch-heading">Step 1. Connect your AI</h2>
         <ol class="guide-steps">
           <li class="guide-step guide-step-current">
             <span class="guide-index" aria-hidden="true">1</span>
             <div class="guide-body">
-              <h3>Open the workspace</h3>
-              <p>This is the page where you write. On iPhone or iPad, tap Share, then Add to Home Screen. It opens like an app the next time.</p>
-              <a class="guide-button guide-button-primary" data-link="vscode" aria-disabled="true" tabindex="-1">Open the workspace</a>
+              <h3>Sign in to ChatGPT or Claude</h3>
+              <p>Choose Sign in with ChatGPT or Sign in with Claude. For DeepSeek, add its API key. The workspace picks up the model on its own.</p>
+              <a class="guide-button" data-link="router" aria-disabled="true" tabindex="-1">Open sign-in</a>
             </div>
           </li>
           <li class="guide-step">
             <span class="guide-index" aria-hidden="true">2</span>
             <div class="guide-body">
-              <h3>Sign in to ChatGPT and Claude</h3>
-              <p>This button opens the sign-in page. Choose Sign in with ChatGPT and Sign in with Claude. DeepSeek has no login. Add its API key only if you already have one.</p>
-              <a class="guide-button" data-link="router" aria-disabled="true" tabindex="-1">Open sign-in</a>
+              <h3>Open the AI chat</h3>
+              <p>CloudCLI is the touch app for Claude Code and Codex. Tell it what to build. On iPhone or iPad, tap Share, then Add to Home Screen.</p>
+              <a class="guide-button guide-button-primary" data-link="cloudcli" aria-disabled="true" tabindex="-1">Open the AI chat</a>
             </div>
           </li>
           <li class="guide-step">
             <span class="guide-index" aria-hidden="true">3</span>
             <div class="guide-body">
-              <h3>Connect one key</h3>
-              <p>On the sign-in page, create one limited key. This button opens the workspace and copies the setup words. Paste them in Terminal. Do not paste your ChatGPT or Claude password.</p>
-              <button class="guide-button" type="button" data-copy="ai-setup" data-open="vscode">Copy setup</button>
-            </div>
-          </li>
-          <li class="guide-step">
-            <span class="guide-index" aria-hidden="true">4</span>
-            <div class="guide-body">
-              <h3>Start writing</h3>
-              <p>Pick one assistant. The button opens the workspace and copies the start words. Paste them in Terminal.</p>
+              <h3>Open the code editor</h3>
+              <p>VS Code in the browser shows the same files. Use it to read and change code by hand.</p>
               <div class="guide-actions">
+                <a class="guide-button" data-link="vscode" aria-disabled="true" tabindex="-1">Open the workspace</a>
                 <button class="guide-button" type="button" data-agent="codex">Start Codex</button>
                 <button class="guide-button" type="button" data-agent="claude">Start Claude</button>
               </div>
@@ -125,6 +118,7 @@
         <div class="guide-actions">
           <button class="guide-button" type="button" data-copy="git-setup">Copy Git setup</button>
           <button class="guide-button" type="button" data-copy="ai-status">Copy a status check</button>
+          <button class="guide-button" type="button" data-copy="ai-setup">Copy an AI refresh</button>
         </div>
       </section>
 

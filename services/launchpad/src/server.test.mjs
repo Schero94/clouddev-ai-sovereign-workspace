@@ -64,9 +64,13 @@ test("serves the launchpad below its base path without creating a second auth ch
   assert.match(html, /id="touch-heading"/);
   assert.match(html, /Step 1/);
   assert.match(html, /class="guide-step guide-step-current"/);
-  assert.match(html, /Open the workspace/);
-  assert.match(html, /data-copy="ai-setup" data-open="vscode"/);
-  assert.match(html, /Copy setup/);
+  const guide = html.slice(html.indexOf('id="touch-heading"'), html.indexOf("</ol>"));
+  assert.ok(guide.indexOf('data-link="router"') < guide.indexOf('data-link="cloudcli"'),
+    "provider sign-in comes before the mobile chat app");
+  assert.match(guide, /class="guide-button guide-button-primary" data-link="cloudcli"/);
+  assert.match(guide, /Open the AI chat/);
+  assert.match(guide, /data-link="vscode"/);
+  assert.doesNotMatch(guide, /Copy setup|limited key/);
   assert.match(html, /You can skip Git/);
   assert.match(html, /Skip this on a phone or iPad/);
   assert.match(html, /data-copy="git-setup"/);
