@@ -2,7 +2,7 @@
 set -eu
 
 services="clouddev-router clouddev-ide clouddev-git clouddev-postgres"
-build_services="clouddev-router clouddev-ide clouddev-git"
+build_services="clouddev-router clouddev-ide clouddev-git clouddev-postgres"
 status=0
 clouddev_trivy_tmp_dir=${CLOUDDEV_TRIVY_TMP_DIR:-}
 
@@ -22,10 +22,6 @@ for service in $build_services; do
   printf 'Building Compose candidate for %s\n' "$service"
   docker compose build --pull "$service"
 done
-
-# The database is a registry image pinned by digest in Compose. Pull that exact
-# candidate instead of inspecting an older container that may still be running.
-docker compose pull clouddev-postgres
 
 if [ -n "$clouddev_trivy_tmp_dir" ]; then
   mkdir -p "$clouddev_trivy_tmp_dir"

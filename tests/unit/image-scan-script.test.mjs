@@ -19,7 +19,7 @@ test("image scan builds and pulls current Compose candidates, then scans their c
     "clouddev-router": "clouddev-local-clouddev-router",
     "clouddev-ide": "clouddev-local-clouddev-ide",
     "clouddev-git": "clouddev-local-clouddev-git",
-    "clouddev-postgres": "postgres:18.6-alpine3.24@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "clouddev-postgres": "clouddev-local-clouddev-postgres",
   };
   const imageIds = Object.fromEntries(Object.keys(imageReferences).map((service, index) => [
     service,
@@ -31,7 +31,7 @@ test("image scan builds and pulls current Compose candidates, then scans their c
       "clouddev-router": { build: { context: "." } },
       "clouddev-ide": { build: { context: "." } },
       "clouddev-git": { build: { context: "services/forgejo" } },
-      "clouddev-postgres": { image: imageReferences["clouddev-postgres"] },
+      "clouddev-postgres": { build: { context: "services/postgres" } },
     },
   });
   const dockerLog = path.join(temp, "docker.log");
@@ -46,7 +46,7 @@ elif [ "$1" = image ] && [ "$2" = inspect ]; then
     clouddev-local-clouddev-router) printf '%s\\n' '${imageIds["clouddev-router"]}' ;;
     clouddev-local-clouddev-ide) printf '%s\\n' '${imageIds["clouddev-ide"]}' ;;
     clouddev-local-clouddev-git) printf '%s\\n' '${imageIds["clouddev-git"]}' ;;
-    postgres:*) printf '%s\\n' '${imageIds["clouddev-postgres"]}' ;;
+    clouddev-local-clouddev-postgres) printf '%s\\n' '${imageIds["clouddev-postgres"]}' ;;
     *) exit 2 ;;
   esac
 fi
@@ -79,7 +79,7 @@ printf '%s\\n' "$*" >> "$CLOUDDEV_TRIVY_LOG"
   for (const service of ["clouddev-router", "clouddev-ide", "clouddev-git"]) {
     assert.ok(dockerCalls.includes(`compose build --pull ${service}`), `${service} must be rebuilt from the current checked-out Dockerfile`);
   }
-  assert.ok(dockerCalls.includes("compose pull clouddev-postgres"), "the pinned database candidate must be pulled before scanning");
+  assert.ok(dockerCalls.includes("compose build --pull clouddev-postgres"), "the database overlay must be rebuilt from the current checked-out Dockerfile");
   assert.ok(dockerCalls.includes("compose config --format json"), "scan targets must come from the current Compose graph");
   assert.doesNotMatch(dockerCalls, /compose (?:images|up|down|restart)/, "the scan must not use running container IDs or change running services");
   for (const [service, image] of Object.entries(imageReferences)) {

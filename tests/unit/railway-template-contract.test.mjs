@@ -99,7 +99,7 @@ test("every stateful service has persistent data, and the Composer does not embe
   assert.match(source, /volumeMounts:\s*\{\s*"\/app\/data":\s*routerData/);
   assert.doesNotMatch(JSON.stringify(manifest), /(?:sk-[A-Za-z0-9]{20,}|OPENAI_API_KEY|ANTHROPIC_API_KEY|OMNIROUTE_MASTER_KEY)/);
   assert.match(source, /sleepApplication:\s*false/);
-  assert.match(compose, /image:\s*postgres:18\.6-alpine3\.24@sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5/);
+  assert.match(compose, /clouddev-postgres:[\s\S]*context:\s*\.\/services\/postgres/);
 });
 
 test("Railway IaC builds all three GitHub-backed services from the published main branch", () => {

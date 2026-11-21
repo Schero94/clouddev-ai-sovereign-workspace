@@ -12,7 +12,7 @@ images. Verify license and version changes whenever a dependency is updated.
 | OmniRoute CLI | 3.8.52 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.52) |
 | code-server | 4.143.1 | MIT | [Release](https://github.com/coder/code-server/tree/v4.143.1) |
 | Forgejo | 17.0.2 rootless | GPL-3.0-or-later | [Release](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.2) |
-| PostgreSQL | Railway managed service; local Compose 18.6-alpine3.24 pinned by multi-platform digest | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |
+| PostgreSQL | Railway managed service; local Compose overlay on 18.7-alpine3.24 | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |
 | Caddy | 2.11.7 Alpine image | Apache-2.0 | [Caddy](https://github.com/caddyserver/caddy/tree/v2.11.7) |
 | Node.js | 24.22.0 bookworm-slim, pinned by digest | MIT and bundled third-party notices | [Node.js](https://github.com/nodejs/node/tree/v24.22.0) |
 | shell-quote | 1.11.0, patched into code-server 4.143.1's bundled VS Code dependency tree | MIT | [npm package](https://www.npmjs.com/package/shell-quote) |

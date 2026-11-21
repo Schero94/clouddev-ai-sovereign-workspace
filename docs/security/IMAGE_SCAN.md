@@ -94,17 +94,24 @@ and Postgres 18.7 Alpine amd64
 `sha256:68e33adb18d9962952f00d5e3b8644305e10e375f98dd652bf6ee6a1836314ba`.
 Both still contain `CVE-2025-68121` in `stdlib` v1.24.6. The 18.7 scan has 27
 high findings (`stdlib` and `libxml2`) and no longer lists `krb5-libs` or
-`libxslt`. Neither image was started, and the local Compose pin stays on the
-previously started 18.6 digest.
+`libxslt`. The local Compose database is now an overlay on that 18.7 digest.
+It rebuilds gosu 1.20 with Go 1.27.4 and installs `libxml2=2.13.9-r3`. A local
+Trivy 0.76.2 scan of that built amd64 image reported 0 high and 0 critical
+findings. The container was not started.
 
 ## Release decision
 
-Do not call these images clean and do not publish the Railway template as
-verified. The router pin is now the scanned OmniRoute 3.8.54 index. Its
-critical Next.js findings are gone, and 49 high Debian findings remain. G15
-stays open until that exact image passes health, authentication, inference,
-and persistence checks. G17 stays open for every service image. No Railway
-service or volume was created for this pin change.
+Do not call the set of release images clean and do not publish the Railway
+template as verified. On 2026-11-21 the rebuilt amd64 Postgres, Forgejo, and
+OmniRoute candidates scanned with 0 high and 0 critical findings. OmniRoute
+reaches that result by upgrading from the Debian sid snapshot
+`20261121T000000Z` and replacing OpenSSL 3.6.5 with the same release plus
+commit `f3acb0a` for `CVE-2026-124709`. The IDE candidate still has 104 high
+findings in Kerberos, Git, wget, bundled Node packages, and the Caddy binary.
+G15 stays open until the router image passes health, authentication,
+inference, and persistence checks. G17 stays open until the IDE candidate is
+clean and `npm run scan:images` passes as one command. No Railway service or
+volume was created.
 
 Before deployment, scan the rebuilt overlay and the other three release images
 again. Run the runtime checks on those same images. Record accepted,

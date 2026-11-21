@@ -34,7 +34,7 @@ CloudDev AI is a single-user, always-on cross-device workspace. Native VS Code R
 - `npm run test:security`
 - `docker compose config --quiet`
 - `docker compose build`
-- `npm run scan:images` (rebuilds the three Compose Dockerfile candidates and pulls pinned PostgreSQL without starting or restarting existing services; scans the resulting immutable image IDs)
+- `npm run scan:images` (rebuilds the four Compose Dockerfile candidates, including the local Postgres overlay, without starting or restarting existing services; scans the resulting immutable image IDs)
 - `./scripts/verify-local.sh` (requires a working Docker Engine)
 
 `.github/workflows/ci.yml` runs these repository checks on pull requests and on `main`. It does not deploy a Railway project or publish a template.

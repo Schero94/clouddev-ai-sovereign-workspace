@@ -88,7 +88,7 @@ The always-on cross-device flow is a release-blocking product requirement.
 - [ ] G17: All four local Compose images are scanned, high and critical findings are triaged, and the exact release images pass the documented deployment security criteria.
   CHECK: npm run scan:images
   EXPECT: /No HIGH or CRITICAL vulnerabilities were found in the configured Compose candidate images/
-  EVIDENCE: Open on 2026-11-21. The 2026-10-26 local four-image scan still stands for the IDE and PostgreSQL candidates. The router pin is now OmniRoute 3.8.54 and the Forgejo pin is 17.0.2. Remote Trivy 0.76.2 scans of those upstream amd64 manifests found 0 critical / 49 high for OmniRoute and 0 critical / 1 high for Forgejo. Those scans did not rebuild the CloudDev overlays or start containers. `npm run scan:images` has not been rerun. Details are in `docs/security/IMAGE_SCAN.md`.
+  EVIDENCE: Open on 2026-11-21. Trivy 0.76.2 scanned the rebuilt amd64 candidates. Postgres overlay and Forgejo overlay reported 0 high and 0 critical. The router overlay, after the Debian sid snapshot upgrade and the OpenSSL 3.6.5 build plus commit `f3acb0a`, also reported 0 high and 0 critical. The IDE candidate still reported 104 high findings, including Kerberos, Git, wget, bundled Node packages, and the Caddy binary. `npm run scan:images` has not been rerun as one command. Details are in `docs/security/IMAGE_SCAN.md`.
 
 - [x] G22: Off-platform backup artifacts are encrypted to an operator-controlled recipient without plaintext archives on durable storage, and an isolated restore validates all four local stores.
   CHECK: npm run test:encrypted-backup
