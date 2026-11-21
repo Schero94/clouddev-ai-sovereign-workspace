@@ -79,7 +79,8 @@ test("README reports verified capabilities separately from open deployment gates
   expectMatch(/mock (?:LLM )?provider tests/i, "mock-provider evidence should be explicit");
   expectMatch(/Forgejo[\s\S]{0,180}(?:private|repository|push)/i, "private Git evidence should be explicit");
   expectMatch(/same persistent (?:workspace|filesystem|project tree)/i, "shared persistent files should be explicit");
-  expectMatch(/(?:22 of 24|22\/24) gates complete/i, "release status should match the checked root ledger");
+  expectMatch(/(?:24 of 24|24\/24) gates complete/i, "release status should match the checked root ledger");
+  expectMatch(/G4 and G5[\s\S]{0,200}operator[\s\S]{0,200}not on an agent-recorded run/i, "operator-confirmed gates must be labelled as such");
   expectMatch(/G20 and G23 are complete[\s\S]{0,200}social preview/i, "the README must record the uploaded repository social preview");
   expectMatch(/G15 and G17 are closed for that local evidence/i, "closed local image gates must stay distinct from publication");
   expectMatch(/G12 and G14 are complete[\s\S]{0,300}physical (?:iPad|device)/i, "the Railway evidence must name its client boundary");

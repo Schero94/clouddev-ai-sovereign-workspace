@@ -41,8 +41,8 @@ computer.
 3. **Open the AI chat.** Tap **Open the AI chat** on the start page, then
    tap Share and **Add to Home Screen**. It opens like an app from then on.
 
-The release status page lists what is still open before the template is
-published. See [Release status](../operations/RELEASE_STATUS.md).
+The template is published. See [Release status](../operations/RELEASE_STATUS.md)
+for how each gate was verified.
 
 ## Tools included in the workspace
 

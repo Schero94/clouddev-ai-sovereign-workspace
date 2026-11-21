@@ -13,11 +13,11 @@ resume actions.
 
 This illustration is not a product screenshot. Product captures are shown in the documentation.
 
-**Release status: 22 of 24 gates complete.** The Railway template is
+**Release status: 24 of 24 gates complete.** The Railway template is
 published at
 [railway.com/deploy/clouddev-release-20261121](https://railway.com/deploy/clouddev-release-20261121).
-G4 and G5 remain open. G15 and G17 are closed for local image
-evidence. See
+G4 and G5 rest on the operator's own Railway test, not on an agent-recorded
+run. G15 and G17 are closed for local image evidence. See
 [the current release status](docs/operations/RELEASE_STATUS.md) before using
 this project beyond local evaluation.
 
@@ -56,8 +56,8 @@ publication have passed acceptance.
 | Capability | Current evidence and boundary |
 | --- | --- |
 | Shared development workspace | One persistent `/workspace` volume holds projects, home data, editor settings, CLI configuration, and session artifacts. Runtime tests check the mount and unprivileged application processes. |
-| Browser and mobile clients | The workspace provides code-server, CloudCLI, and an authenticated launchpad. Local proxy tests cover cookie checks, CloudCLI bearer-token handling, and WebSocket upgrades. Railway HTTPS and physical-device acceptance remain open. |
-| Native VS Code connection | An explicit key-only OpenSSH service is configured for Remote-SSH. Local SSH checks pass. The desktop-to-phone-to-desktop flow on a live Railway deployment is not verified. |
+| Browser and mobile clients | The workspace provides code-server, CloudCLI, and an authenticated launchpad. Local proxy tests cover cookie checks, CloudCLI bearer-token handling, and WebSocket upgrades. On Railway, the HTTPS cookie gate was agent-tested; the WebSocket and physical-device use rest on the operator's own test. |
+| Native VS Code connection | An explicit key-only OpenSSH service is configured for Remote-SSH. Local SSH checks pass. On Railway, key-only SSH login and a two-way file handoff with CloudCLI were agent-tested; the session handoff from VS Code Desktop rests on the operator's own test. |
 | Codex and Claude Code routing | Both CLIs are installed in the workspace. Mock LLM provider tests verify authenticated model listing and request forwarding through OmniRoute without paid API calls. |
 | Forgejo Git | A private repository round-trip has been tested with a regular, non-admin user. The test clones, commits, pushes, fetches, and checks data after a local restart. |
 | Task recovery | A local restart test verifies that running task records become interrupted and that supported session history remains available. The process itself does not survive a restart and prompts are not replayed automatically. |
@@ -400,16 +400,18 @@ Claude Code is not relicensed by this repository's MIT license.
 
 ## Release status
 
-This source snapshot reports **21 of 24 acceptance gates complete**. Local
-Compose, mock-provider, Git, and security checks are not substitutes for the
-open live gates. G4 and G5 still need full cross-device evidence; G13 proves a
-local four-store data-level restore but not Railway recovery. G12 passed on a
+This source snapshot reports **24 of 24 acceptance gates complete**. Local
+Compose, mock-provider, Git, and security checks are not substitutes for live
+evidence. G4 and G5 are closed on the operator's own test of a Railway
+deployment on 2026-11-21, not on an agent-recorded run with logs in this
+repository. G13 proves a local four-store data-level restore but not Railway
+recovery. G12 passed on a
 template deployment. G14 is complete: the template is published and a no-input
 test deployment passed. G15 and G17 are closed for
 local image evidence. G20 and G23 are complete: GitHub Pages serves the
 reviewed documentation, and the repository social preview is uploaded. G24
-passed an isolated application-level restore, while CloudCLI session resume
-remains unverified.
+passed an isolated application-level restore; CloudCLI session resume was not
+part of that restore.
 
 Read the generated [release status](docs/operations/RELEASE_STATUS.md) and
 [acceptance ledger](GATES.md). No Railway verified badge is claimed.

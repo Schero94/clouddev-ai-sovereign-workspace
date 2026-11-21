@@ -36,11 +36,11 @@ The always-on cross-device flow is a release-blocking product requirement.
   EXPECT: pass
   EVIDENCE: `npm run test:security` passed across 89 source files. `CLOUDDEV_VERIFY_RESTART=1 node scripts/verify-local.mjs` also passed live local browser auth, anonymous inference denial, key-only SSH and isolated environment checks.
 
-- [ ] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work on the Railway HTTPS domain.
-  EVIDENCE: Partial local evidence only. `npm run test:cross-device` passed the pinned Caddy cookie gate, CloudCLI Bearer-token handling and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge have not been tested.
+- [x] G4: CloudCLI is protected by authenticated TLS proxying and serves alongside VS Code at `/vscode/`; WebSocket upgrades work on the Railway HTTPS domain.
+  EVIDENCE: Operator-confirmed on 2026-11-21: the operator reported that CloudCLI and VS Code worked on a Railway HTTPS deployment. The agent did not re-run a WebSocket check there, and no log of it is stored here. Agent-recorded Railway evidence from G12 covers the authenticated HTTPS edge: CloudCLI, VS Code, launchpad and OmniRoute redirected to sign-in without the session cookie and opened with it. Earlier local evidence: `npm run test:cross-device` passed the pinned Caddy cookie gate, CloudCLI Bearer-token handling and WebSocket upgrade over local HTTP. Railway-generated HTTPS and the deployed auth edge have not been tested.
 
-- [ ] G5: Starting Codex or Claude from native VS Code produces a session CloudCLI can discover and resume, and follow-up changes share the same project files.
-  EVIDENCE: Partial local evidence only. `npm run test:session-handoff` passed the pinned CloudCLI session-indexing integration, but the current mobile follow-up was not started from native VS Code Desktop and the full handoff has not been tested on Railway.
+- [x] G5: Starting Codex or Claude from native VS Code produces a session CloudCLI can discover and resume, and follow-up changes share the same project files.
+  EVIDENCE: Operator-confirmed on 2026-11-21: the operator reported testing a session started from native VS Code and resumed in CloudCLI. The agent did not re-run it with a provider account, and no log of it is stored here. Agent-recorded Railway evidence from G12 shows the shared project files between SSH and CloudCLI. Earlier local evidence: `npm run test:session-handoff` passed the pinned CloudCLI session-indexing integration, but the current mobile follow-up was not started from native VS Code Desktop and the full handoff has not been tested on Railway.
 
 - [x] G6: Agent activity continues after browser/desktop disconnect. Restart handling marks in-flight work interrupted and exposes supported recovery without claiming a killed process continued.
   CHECK: npm run test:recovery
