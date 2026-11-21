@@ -24,6 +24,7 @@ images. Verify license and version changes whenever a dependency is updated.
 | Anthropic Claude Code CLI | 2.1.330 | Anthropic proprietary terms; package includes a terms notice, not an OSI license | [Repository](https://github.com/anthropics/claude-code), [legal terms](https://code.claude.com/docs/en/legal-and-compliance) |
 | pnpm | 12.21.0 | MIT | [Repository](https://github.com/pnpm/pnpm) |
 | OpenCode CLI | 1.19.6 | MIT | [Repository](https://github.com/anomalyco/opencode) |
+| TaskMaster CLI | 0.43.1, lockfile-pinned with patched `simple-git`, `undici`, and OpenTelemetry | MIT with Commons Clause | [Repository](https://github.com/eyaltoledano/claude-task-master) |
 | Playwright and Chromium | Playwright 1.65.1 with its pinned Chromium build | Apache-2.0; Chromium BSD-3-Clause and bundled notices | [Playwright](https://github.com/microsoft/playwright) |
 | Red Hat YAML | 2.1.2026112008 | MIT | [Open VSX listing](https://open-vsx.org/extension/redhat/vscode-yaml) |
 | Error Lens | 3.30.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/usernamehw/errorlens) |
@@ -34,7 +35,6 @@ images. Verify license and version changes whenever a dependency is updated.
 | Prettier | 12.4.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/esbenp/prettier-vscode) |
 | Tailwind CSS IntelliSense | 0.16.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/bradlc/vscode-tailwindcss) |
 | Markdown All in One | 3.6.2 | MIT | [Open VSX listing](https://open-vsx.org/extension/yzhang/markdown-all-in-one) |
-| Path IntelliSense | 2.8.0 | MIT | [Open VSX listing](https://open-vsx.org/extension/christian-kohler/path-intellisense) |
 | age CLI | 1.3.2 on the maintainer test host; optional operator tool for local encrypted backups, not included in runtime images | BSD-3-Clause | [Source](https://github.com/FiloSottile/age) |
 
 ## Distribution notes

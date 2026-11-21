@@ -7,6 +7,14 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+# The upstream base image grants coder passwordless root. Remove those paths
+# on every boot and refuse to start if any of them survives.
+rm -f /usr/local/bin/fixuid /usr/bin/sudo /etc/sudoers.d/nopasswd
+if [ -e /usr/bin/sudo ] || [ -e /usr/local/bin/fixuid ] || [ -e /etc/sudoers.d/nopasswd ]; then
+  printf '%s\n' "CloudDev refuses to start while sudo or fixuid is present." >&2
+  exit 1
+fi
+
 IDE_UID=1000
 IDE_GID=1000
 CADDY_UID=1001

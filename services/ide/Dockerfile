@@ -82,7 +82,7 @@ RUN go get github.com/go-jose/go-jose/v4@v4.1.6 golang.org/x/net@v0.62.0 \
   && printf '%s\n' "${mods}" | grep -F 'github.com/go-jose/go-jose/v4 v4.1.6' \
   && printf '%s\n' "${mods}" | grep -F 'golang.org/x/net v0.62.0'
 
-FROM codercom/code-server:4.143.1@sha256:377b66bec5645510ed52549bb00e648c273edc604d230a3f90fd2b2433afcb97
+FROM codercom/code-server:4.143.1@sha256:377b66bec5645510ed52549bb00e648c273edc604d230a3f90fd2b2433afcb97 AS assembled
 
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
@@ -127,13 +127,22 @@ COPY services/ide/agent-tools/package.json services/ide/agent-tools/package-lock
 RUN npm ci --prefix /opt/clouddev-ide/agent-tools --no-audit --no-fund
 
 COPY services/ide/cloudcli-ui/package.json services/ide/cloudcli-ui/package-lock.json /opt/clouddev-ide/cloudcli-ui/
-RUN npm ci --prefix /opt/clouddev-ide/cloudcli-ui --omit=dev --no-audit --no-fund \
-  && npm install -g task-master-ai@0.43.1 --no-audit --no-fund \
-  && task-master --version
+RUN npm ci --prefix /opt/clouddev-ide/cloudcli-ui --omit=dev --no-audit --no-fund
+
+# TaskMaster's Gemini provider pulls extract-zip, which has no fixed release.
+# It only unpacks Windows ripgrep archives; Linux downloads use tar.
+COPY services/ide/task-master/ /opt/clouddev-ide/task-master/
+RUN npm ci --prefix /opt/clouddev-ide/task-master --no-audit --no-fund \
+  && rm -rf /opt/clouddev-ide/task-master/node_modules/extract-zip \
+  && cp -R /opt/clouddev-ide/task-master/disabled-extract-zip /opt/clouddev-ide/task-master/node_modules/extract-zip \
+  && ln -s /opt/clouddev-ide/task-master/node_modules/.bin/task-master /usr/local/bin/task-master \
+  && task-master --version | grep -F '0.43.1'
 
 # CloudCLI Browser needs Chromium and its system libraries. The runtime user
-# cannot install them, so the image ships them read-only.
+# cannot install them, so the image ships them read-only. Headless Chromium
+# needs no X server, so the Xvfb packages from install-deps are removed.
 RUN PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright /opt/clouddev-ide/cloudcli-ui/node_modules/.bin/playwright install-deps chromium \
+  && apt-get purge -y xvfb xserver-common libxfont2 libfontenc1 xfonts-utils \
   && PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright /opt/clouddev-ide/cloudcli-ui/node_modules/.bin/playwright install chromium \
   && chmod -R a+rX /opt/ms-playwright \
   && rm -rf /var/lib/apt/lists/*
@@ -182,7 +191,6 @@ RUN install -d -o root -g root -m 0755 /opt/clouddev-ide/extension-seed \
     esbenp.prettier-vscode@12.4.0 \
     bradlc.vscode-tailwindcss@0.16.0 \
     yzhang.markdown-all-in-one@3.6.2 \
-    christian-kohler.path-intellisense@2.8.0 \
   ; do code-server --extensions-dir /opt/clouddev-ide/extension-seed --install-extension "${extension}" ; done \
   && chown -R root:root /opt/clouddev-ide/extension-seed \
   && chmod -R a+rX /opt/clouddev-ide/extension-seed
@@ -298,7 +306,15 @@ RUN set -eu \
   || { cat /tmp/git-ldd.txt; exit 1; } \
   && rm -rf /tmp/clouddev-openssl /tmp/clouddev-openssl-lib
 
-ENV HOME=/workspace/home \
+# Railway's runtime has resurfaced files that later layers deleted, including
+# sudo, its NOPASSWD rule, and setuid fixuid. Ship one flattened layer so no
+# deletion depends on layer whiteouts.
+FROM scratch
+COPY --from=assembled / /
+
+USER root
+ENV LANG=en_US.UTF-8 \
+    HOME=/workspace/home \
     USER=coder \
     LOGNAME=coder \
     CODEX_HOME=/workspace/home/.codex \

@@ -1,0 +1,8 @@
+{
+  "name": "clouddev-disabled-extract-zip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Replaces extract-zip, which TaskMaster's Gemini provider only uses for Windows ripgrep archives.",
+  "license": "UNLICENSED",
+  "main": "index.js"
+}

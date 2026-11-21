@@ -12,14 +12,30 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   const cloudcli = JSON.parse(read("cloudcli-ui/package.json"));
   assert.match(dockerfile, /^FROM node:26\.13\.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1 AS node-runtime$/m);
   assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
-  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
+  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64} AS assembled$/m);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.equal(cloudcli.dependencies["@cloudcli-ai/cloudcli"], "1.37.9");
   assert.equal(cloudcli.dependencies.playwright, "1.65.1", "CloudCLI Browser resolves playwright from its own tree");
   assert.match(dockerfile, /PLAYWRIGHT_BROWSERS_PATH=\/opt\/ms-playwright/);
   assert.match(dockerfile, /playwright install-deps chromium/);
   assert.match(dockerfile, /playwright install chromium/);
-  assert.match(dockerfile, /task-master-ai@0\.43\.1/);
+  assert.match(dockerfile, /apt-get purge -y xvfb xserver-common libxfont2 libfontenc1 xfonts-utils/, "headless Chromium needs no X server");
+  const taskMaster = JSON.parse(read("task-master/package.json"));
+  const taskMasterLock = JSON.parse(read("task-master/package-lock.json"));
+  assert.equal(taskMaster.dependencies["task-master-ai"], "0.43.1");
+  assert.equal(taskMasterLock.packages["node_modules/task-master-ai"].version, "0.43.1");
+  assert.equal(taskMaster.overrides["simple-git"], "4.1.0");
+  assert.match(dockerfile, /cp -R \/opt\/clouddev-ide\/task-master\/disabled-extract-zip \/opt\/clouddev-ide\/task-master\/node_modules\/extract-zip/);
+  for (const [name, entry] of Object.entries(taskMasterLock.packages)) {
+    if (name.endsWith("node_modules/simple-git")) assert.equal(entry.version, "4.1.0", name);
+    if (name.endsWith("node_modules/undici")) assert.notEqual(entry.version.split(".")[0], "5", name);
+    if (name.endsWith("node_modules/@opentelemetry/sdk-node")) assert.equal(entry.version, "0.217.0", name);
+  }
+  assert.match(read("task-master/disabled-extract-zip/index.js"), /throw new Error/);
+  assert.match(dockerfile, /npm ci --prefix \/opt\/clouddev-ide\/task-master /);
+  assert.match(dockerfile, /ln -s \/opt\/clouddev-ide\/task-master\/node_modules\/\.bin\/task-master \/usr\/local\/bin\/task-master/);
+  assert.doesNotMatch(dockerfile, /npm install -g task-master-ai/);
+  assert.doesNotMatch(dockerfile, /path-intellisense/, "its bundled minimatch, json5, and brace-expansion are vulnerable");
   assert.match(dockerfile, /astral-sh\/uv\/releases\/download\/0\.13\.9\//);
   assert.match(dockerfile, /a7fbaff2b9a271d85c1bdb540941090fd1ce011797b4abeb48e4dcd39c2471d5/);
   assert.match(dockerfile, /0797542018e541a9288855df555c8077eed06f7a47d206362030480e8ecc9f3d/);
@@ -35,7 +51,6 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
     "esbenp.prettier-vscode@12.4.0",
     "bradlc.vscode-tailwindcss@0.16.0",
     "yzhang.markdown-all-in-one@3.6.2",
-    "christian-kohler.path-intellisense@2.8.0",
   ]) {
     assert.match(dockerfile, new RegExp(`^ {4}${extension.replace(/\./g, "\\.")} \\\\$`, "m"), extension);
   }

@@ -14,7 +14,7 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   const esbuildRuntime = JSON.parse(readFileSync(path.join(root, "esbuild-runtime/package.json"), "utf8"));
   assert.match(dockerfile, /^FROM node:26\.13\.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1 AS node-runtime$/m);
   assert.match(dockerfile, /^FROM caddy:2\.11\.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f AS caddy-runtime$/m);
-  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64}$/m);
+  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64} AS assembled$/m);
   assert.match(dockerfile, /grep -F 'v2\.11\.7'/);
   assert.match(dockerfile, /shell-quote-1\.11\.0\.tgz/);
   assert.match(dockerfile, /krb5-1\.22\.3\.tar\.gz/);
@@ -53,12 +53,32 @@ test("pins official code-server and Node 24 LTS images and CLI dependencies", ()
   assert.equal(dockerfile.includes(":latest"), false);
 });
 
+test("ships the IDE as one flattened layer so build-time deletions cannot reappear", () => {
+  const dockerfile = readFileSync(path.join(root, "Dockerfile"), "utf8");
+  assert.match(dockerfile, /^FROM codercom\/code-server:4\.143\.1@sha256:[a-f0-9]{64} AS assembled$/m);
+  const finalStage = dockerfile.slice(dockerfile.lastIndexOf("\nFROM "));
+  assert.match(finalStage, /^\nFROM scratch\n/);
+  assert.match(finalStage, /^COPY --from=assembled \/ \/$/m);
+  assert.match(finalStage, /^ENTRYPOINT \["\/usr\/local\/bin\/clouddev-ide-entrypoint"\]$/m);
+  assert.match(finalStage, /^USER root$/m);
+  assert.match(finalStage, /PATH=\/opt\/clouddev-ide\/agent-tools\/node_modules\/\.bin:/);
+  assert.match(finalStage, /PLAYWRIGHT_BROWSERS_PATH=\/opt\/ms-playwright/);
+  assert.match(finalStage, /LANG=en_US\.UTF-8/);
+  assert.match(finalStage, /HEALTHCHECK /);
+});
+
 test("drops the upstream sudo/fixuid escalation paths and starts the IDE with reduced privileges", () => {
   const dockerfile = readFileSync(path.join(root, "Dockerfile"), "utf8");
   const entrypoint = readFileSync(path.join(root, "entrypoint.sh"), "utf8");
   const serviceCommand = readFileSync(path.join(root, "src/run-service.mjs"), "utf8");
   assert.match(dockerfile, /apt-get purge -y sudo/);
   assert.match(dockerfile, /rm -f \/usr\/local\/bin\/fixuid/);
+  assert.match(entrypoint, /rm -f \/usr\/local\/bin\/fixuid \/usr\/bin\/sudo \/etc\/sudoers\.d\/nopasswd/);
+  assert.match(entrypoint, /\[ -e \/usr\/bin\/sudo \] \|\| \[ -e \/usr\/local\/bin\/fixuid \]/);
+  assert.ok(
+    entrypoint.indexOf("/usr/bin/sudo") < entrypoint.indexOf("caddy_secret="),
+    "escalation leftovers are removed before any secret is read"
+  );
   assert.match(serviceCommand, /"code-server": \{ uid: 1000, gid: 1000 \}/);
   assert.match(serviceCommand, /caddy: \{ uid: 1001, gid: 1001 \}/);
   assert.match(serviceCommand, /launchpad: \{ uid: 1002, gid: 1002 \}/);

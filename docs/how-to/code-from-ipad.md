@@ -54,8 +54,8 @@ published. See [Release status](../operations/RELEASE_STATUS.md).
 - Node.js 26.13.1 LTS with npm and pnpm
 - Python 3.15.2 through uv. Debian's own `python3` stays for system tools
 - VS Code extensions from Open VSX: Python, Python Debugger, ESLint, Prettier,
-  Tailwind CSS IntelliSense, Markdown All in One, YAML, Even Better TOML, Path
-  IntelliSense, and Error Lens
+  Tailwind CSS IntelliSense, Markdown All in One, YAML, Even Better TOML, and
+  Error Lens
 
 ## Limits to know before you start
 
