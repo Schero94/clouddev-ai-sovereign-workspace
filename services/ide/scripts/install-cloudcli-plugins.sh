@@ -15,6 +15,10 @@ https://github.com/strykereye2/cloudcli-plugin-session-manager.git
 https://github.com/NightmareAway/cloudcli-plugin-token-cost-calculator.git
 https://github.com/TadMSTR/cloudcli-plugin-task-queue.git
 https://github.com/szmidtpiotr/claude-github-issue.git
+https://github.com/HandyS11/cloudcli-plugin-claude-usage.git
+https://github.com/dongwook-chan/cloudcli-plugin-codex-usage.git
+https://github.com/realjustinwu/CloudCLI-GLM-Usage.git
+https://github.com/notetook/cloudcli-plugin-agent-monitor.git
 "
 
 for url in $urls; do

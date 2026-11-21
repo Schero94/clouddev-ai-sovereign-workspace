@@ -44,7 +44,23 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
   const supervisorEnv = read("entrypoint.sh").slice(read("entrypoint.sh").indexOf("exec /usr/bin/env -i"));
   assert.doesNotMatch(supervisorEnv, /CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET/);
   assert.doesNotMatch(supervisorEnv, /INITIAL_PASSWORD/);
-  assert.match(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-starter\.git/);
+  const pluginScript = read("scripts/install-cloudcli-plugins.sh");
+  for (const repository of [
+    "cloudcli-ai/cloudcli-plugin-starter",
+    "cloudcli-ai/cloudcli-plugin-terminal",
+    "grostim/cloudcli-cron",
+    "jakeefr/cloudcli-plugin-prism",
+    "strykereye2/cloudcli-plugin-session-manager",
+    "NightmareAway/cloudcli-plugin-token-cost-calculator",
+    "TadMSTR/cloudcli-plugin-task-queue",
+    "szmidtpiotr/claude-github-issue",
+    "HandyS11/cloudcli-plugin-claude-usage",
+    "dongwook-chan/cloudcli-plugin-codex-usage",
+    "realjustinwu/CloudCLI-GLM-Usage",
+    "notetook/cloudcli-plugin-agent-monitor",
+  ]) {
+    assert.ok(pluginScript.includes(`https://github.com/${repository}.git\n`), repository);
+  }
   assert.doesNotMatch(read("scripts/install-cloudcli-plugins.sh"), /cloudcli-plugin-ccx/);
   assert.doesNotMatch(dockerfile, /VOLUME /);
   assert.match(dockerfile, /HOME=\/workspace\/home/);
