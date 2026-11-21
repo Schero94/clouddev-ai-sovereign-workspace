@@ -8,6 +8,7 @@ node_modules/
 **/.venv/
 .docs-site/
 docs/operations/RELEASE_STATUS.md
+docs/llms-full.txt
 __pycache__/
 **/__pycache__/
 *.py[cod]

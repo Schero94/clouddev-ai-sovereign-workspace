@@ -94,9 +94,12 @@ test("artifact checker accepts a small static site and rejects hidden or secret-
       <meta property="og:image" content="https://example.com/assets/clouddev-social-preview.png">
       <meta property="og:image:alt" content="Illustration of the workspace">
       <meta name="twitter:card" content="summary_large_image">
+      <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"CloudDev Docs"}]}</script>
       </head><body></body></html>`;
     writeFileSync(path.join(site, "index.html"), validIndex);
     writeFileSync(path.join(site, "robots.txt"), "User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml\n");
+    writeFileSync(path.join(site, "llms.txt"), "# CloudDev AI\n");
+    writeFileSync(path.join(site, "llms-full.txt"), "# CloudDev AI full\n");
     writeFileSync(path.join(site, "sitemap.xml"), "<urlset><url><loc>https://example.com/</loc></url></urlset>");
     writeFileSync(path.join(site, "assets", "clouddev-social-preview.png"), Buffer.from("png-fixture"));
     writeFileSync(path.join(site, "operations", "release-status", "index.html"), validIndex.replace(/https:\/\/example\.com\//g, "https://example.com/operations/release-status/"));
@@ -108,6 +111,15 @@ test("artifact checker accepts a small static site and rejects hidden or secret-
     rmSync(path.join(site, "robots.txt"));
     assert.match(inspectDocsArtifact(site).join("\n"), /missing required discovery asset: robots\.txt/);
     writeFileSync(path.join(site, "robots.txt"), "User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml\n");
+
+    writeFileSync(path.join(site, "index.html"), validIndex.replace('"@graph":[', '"@graph":[,'));
+    assert.match(inspectDocsArtifact(site).join("\n"), /Invalid JSON-LD in index\.html/);
+    writeFileSync(path.join(site, "index.html"), validIndex.replace(/<script type="application\/ld\+json">.*<\/script>/, ""));
+    assert.match(inspectDocsArtifact(site).join("\n"), /JSON-LD structured data is missing from index\.html/);
+    writeFileSync(path.join(site, "index.html"), validIndex);
+    rmSync(path.join(site, "llms-full.txt"));
+    assert.match(inspectDocsArtifact(site).join("\n"), /missing required discovery asset: llms-full\.txt/);
+    writeFileSync(path.join(site, "llms-full.txt"), "# CloudDev AI full\n");
 
     writeFileSync(path.join(site, ".env"), "NOT_A_SECRET=example");
     assert.match(inspectDocsArtifact(site).join("\n"), /forbidden path/i);
@@ -336,7 +348,8 @@ test("Pages workflow pins actions, isolates write permissions, and never deploys
   const workflow = readFileSync(path.join(root, ".github/workflows/docs.yml"), "utf8");
   const actionRefs = [...workflow.matchAll(/^\s+uses:\s+([^\s]+)(?:\s+#.*)?$/gm)].map(match => match[1]);
   const buildJob = workflow.split("  deploy:")[0];
-  const deployJob = workflow.split("  deploy:")[1] ?? "";
+  const deployJob = (workflow.split("  deploy:")[1] ?? "").split("  indexnow:")[0];
+  const indexNowJob = workflow.split("  indexnow:")[1] ?? "";
 
   assert.ok(actionRefs.length >= 3, "workflow should use the Pages build and deployment actions");
   for (const reference of actionRefs) {
@@ -349,7 +362,10 @@ test("Pages workflow pins actions, isolates write permissions, and never deploys
   assert.match(deployJob, /permissions:\s*\n\s+contents:\s*read\s+pages:\s*write\s+id-token:\s*write/s);
   assert.match(deployJob, /needs:\s*build/);
   assert.match(deployJob, /if:\s*>-[\s\S]*github\.ref == 'refs\/heads\/main'/);
-  assert.equal((workflow.match(/runs-on: ubuntu-24\.04/g) ?? []).length, 2, "runner image should be pinned for build and deploy");
+  assert.equal((workflow.match(/runs-on: ubuntu-24\.04/g) ?? []).length, 3, "runner image should be pinned for build, deploy and IndexNow");
+  assert.match(indexNowJob, /needs:\s*deploy/);
+  assert.match(indexNowJob, /permissions:\s*\n\s+contents:\s*read\s/);
+  assert.doesNotMatch(indexNowJob, /pages:\s*write|id-token:\s*write|secrets\./);
   assert.match(deployJob, /github\.event_name == 'workflow_dispatch' && github\.ref == 'refs\/heads\/main'/);
   assert.doesNotMatch(workflow, /pull_request_target/);
   assert.doesNotMatch(workflow, /pull_request[^\n]*\n[\s\S]{0,800}deploy:\s*if:\s*always\(\)/);

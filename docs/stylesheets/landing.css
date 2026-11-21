@@ -650,6 +650,21 @@ body:has(.cd-home-title) .cd-guardrail-link::after {
   content: "→";
 }
 
+body:has(.cd-home-title) .cd-faq {
+  max-width: 48rem;
+  margin: 3rem auto 0;
+}
+
+body:has(.cd-home-title) .cd-faq p {
+  margin: 0 0 1.1rem;
+  line-height: 1.6;
+}
+
+body:has(.cd-home-title) .cd-faq p > strong:first-child {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
 body:has(.cd-home-title) .cd-home-footer {
   margin: 1.7rem 0 0;
   color: var(--md-default-fg-color--lighter);

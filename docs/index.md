@@ -1,13 +1,29 @@
 ---
-title: CloudDev AI documentation
-description: Learn how the single-user CloudDev AI workspace connects VS Code Desktop, browser VS Code, and CloudCLI to one persistent project tree.
+title: "Claude Code and Codex on Railway, from any device"
+description: Run Claude Code, Codex and VS Code in your own Railway workspace and use them from an iPad, phone or computer. One-click template, MIT licensed.
 tags:
   - CloudDev AI
-  - Railway workspace
+  - Claude Code in the cloud
+  - Codex in the browser
+  - Railway template
+  - cloud development environment
   - VS Code Remote-SSH
-  - browser IDE
+  - browser VS Code
   - CloudCLI mobile
   - OmniRoute
+faq:
+  - q: "What is CloudDev AI?"
+    a: "CloudDev AI is an MIT-licensed Railway template that runs Claude Code, Codex, browser VS Code, Node.js and Python in one persistent single-user workspace that you open from an iPad, phone or computer."
+  - q: "How do I deploy CloudDev AI?"
+    a: "Use the Deploy on Railway button. The template needs no input: Railway generates every password and secret, deploys four services and gives the workspace an HTTPS domain."
+  - q: "Can I code from an iPad with Claude Code or Codex?"
+    a: "Yes. The agents run on Railway, and the iPad only needs Safari. CloudCLI gives a touch-friendly chat for Claude Code and Codex, and browser VS Code opens the same files."
+  - q: "Which AI providers can I use?"
+    a: "You sign in to ChatGPT or Claude through OmniRoute, or add a DeepSeek API key. Provider master keys stay in OmniRoute, and the workspace uses its own limited inference key."
+  - q: "What does CloudDev AI cost?"
+    a: "The software is free under the MIT license. Railway bills the always-on services by usage, and each AI provider bills under its own plan or API pricing."
+  - q: "Is CloudDev AI a team service?"
+    a: "No. It is a single-user workspace. VS Code Desktop, browser VS Code and CloudCLI share the same files and supported session history, not editor-window state."
 ---
 
 <div class="cd-home" markdown="1">
@@ -24,7 +40,8 @@ tags:
 
 <div class="cd-actions" markdown="1">
 
-[See how deployment works](how-to/deploy-on-railway.md){ .cd-button .cd-button--primary }
+[Deploy on Railway](https://railway.com/deploy/clouddev-release-20261121){ .cd-button .cd-button--primary }
+[See how deployment works](how-to/deploy-on-railway.md){ .cd-button .cd-button--quiet }
 [Explore the features](features.md){ .cd-button .cd-button--quiet }
 
 </div>
@@ -52,7 +69,7 @@ tags:
 
 <div class="cd-release-note" markdown="1">
 <span class="cd-release-note__icon" aria-hidden="true">↗</span>
-<p><strong>Railway release status</strong><br>No live Railway template or verified one-click deployment is available yet. Check the open gates before using this as a production deployment guide.</p>
+<p><strong>Railway release status</strong><br>The template is published on the Railway Marketplace and deploys with no input. Railway has not granted it a verified badge. The release evidence shows how each gate was checked.</p>
 [Review release evidence](operations/RELEASE_STATUS.md){ .cd-inline-link }
 </div>
 
@@ -72,7 +89,7 @@ tags:
 <figcaption><strong>Mobile layout</strong><span>The same launchpad actions fit a phone screen.</span></figcaption>
 </figure>
 </div>
-<p class="cd-evidence-note">The captures document the local interface only. Railway domains, service health, Remote-SSH, and Marketplace publication still require live acceptance checks.</p>
+<p class="cd-evidence-note">The captures document the local interface only. Live Railway checks are listed in the release evidence.</p>
 </section>
 
 <h2 class="cd-section-title">Choose a path <span>START HERE</span></h2>
@@ -90,7 +107,7 @@ Review the workspace surfaces, persistent data, provider routing, and the limits
 <div class="cd-route-card" markdown="1">
 <p class="cd-route-card__index">02 <span>DEPLOY</span></p>
 ## Prepare a Railway project
-Follow the Composer steps and distinguish the documented setup from a verified live template.
+Deploy the published template with one click, or review each Composer step first.
 
 [Read the Railway guide](how-to/deploy-on-railway.md){ .cd-route-card__link }
 </div>
@@ -110,6 +127,30 @@ Set up key-only Remote-SSH, browser VS Code, and the CloudCLI mobile interface.
 
 [Connect desktop and mobile](how-to/connect-clients.md){ .cd-route-card__link }
 </div>
+
+</div>
+
+<div class="cd-faq" markdown="1">
+
+## Questions people ask
+
+**What is CloudDev AI?**
+CloudDev AI is an MIT-licensed Railway template that runs Claude Code, Codex, browser VS Code, Node.js and Python in one persistent single-user workspace that you open from an iPad, phone or computer.
+
+**How do I deploy CloudDev AI?**
+Use the [Deploy on Railway](https://railway.com/deploy/clouddev-release-20261121) button. The template needs no input: Railway generates every password and secret, deploys four services and gives the workspace an HTTPS domain.
+
+**Can I code from an iPad with Claude Code or Codex?**
+Yes. The agents run on Railway, and the iPad only needs Safari. CloudCLI gives a touch-friendly chat for Claude Code and Codex, and browser VS Code opens the same files.
+
+**Which AI providers can I use?**
+You sign in to ChatGPT or Claude through OmniRoute, or add a DeepSeek API key. Provider master keys stay in OmniRoute, and the workspace uses its own limited inference key.
+
+**What does CloudDev AI cost?**
+The software is free under the MIT license. Railway bills the always-on services by usage, and each AI provider bills under its own plan or API pricing.
+
+**Is CloudDev AI a team service?**
+No. It is a single-user workspace. VS Code Desktop, browser VS Code and CloudCLI share the same files and supported session history, not editor-window state.
 
 </div>
 

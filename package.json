@@ -26,7 +26,7 @@
     "check:railway": "./scripts/check-railway-iac.sh",
     "check:railway-template": "node --test tests/unit/railway-template-contract.test.mjs",
     "check:one-click": "node scripts/check-railway-one-click.mjs",
-    "docs:generate": "node scripts/generate-docs-status.mjs",
+    "docs:generate": "node scripts/generate-docs-status.mjs && node scripts/generate-llms-full.mjs",
     "docs:build": "npm run docs:generate && uv run --project docs-site --locked mkdocs build --strict",
     "docs:check": "npm run docs:generate && node --test tests/unit/docs-site.test.mjs tests/unit/docs-seo.test.mjs tests/unit/docs-screenshots.test.mjs tests/unit/readme-launch.test.mjs && uv run --project docs-site --locked mkdocs build --strict && node scripts/check-docs-artifact.mjs .docs-site/site",
     "check:launchpad": "node --check services/launchpad/src/server.mjs && node --check services/launchpad/public/app.js",

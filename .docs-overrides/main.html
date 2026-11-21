@@ -20,4 +20,53 @@
   <meta name="twitter:description" content="{{ social_description | e }}">
   <meta name="twitter:image" content="{{ social_image | e }}">
   <meta name="twitter:image:alt" content="Illustration of one CloudDev AI workspace shared by VS Code Desktop, browser VS Code, and CloudCLI mobile.">
+  {% set page_url = page.canonical_url if page.canonical_url else config.site_url %}
+  {% set repository_url = "https://github.com/Schero94/clouddev-ai-sovereign-workspace" %}
+  {% set author = {"@type": "Person", "name": "Schero94", "url": "https://github.com/Schero94"} %}
+  {% set website = {"@type": "WebSite", "@id": config.site_url ~ "#website", "name": config.site_name, "url": config.site_url, "description": config.site_description, "inLanguage": "en"} %}
+  {% if page.is_homepage %}
+    {% set graph = [website, {
+      "@type": "SoftwareApplication",
+      "@id": config.site_url ~ "#software",
+      "name": "CloudDev AI",
+      "alternateName": "CloudDev AI: Sovereign Workspace",
+      "description": social_description,
+      "url": config.site_url,
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "Cloud development environment",
+      "operatingSystem": "Web browser, iPadOS, iOS, Android, macOS, Windows, Linux",
+      "featureList": ["Claude Code CLI", "Codex CLI", "Browser VS Code (code-server)", "VS Code Remote-SSH", "CloudCLI mobile chat", "Forgejo private Git", "OmniRoute AI provider routing", "Persistent Railway volume"],
+      "image": social_image,
+      "screenshot": config.site_url ~ "assets/screenshots/launchpad-services-desktop.png",
+      "license": "https://spdx.org/licenses/MIT.html",
+      "isAccessibleForFree": true,
+      "codeRepository": repository_url,
+      "installUrl": "https://railway.com/deploy/clouddev-release-20261121",
+      "downloadUrl": repository_url,
+      "author": author,
+      "sameAs": [repository_url, "https://railway.com/deploy/clouddev-release-20261121"]
+    }] %}
+  {% else %}
+    {% set graph = [website, {
+      "@type": "TechArticle",
+      "@id": page_url ~ "#article",
+      "headline": page.meta.title if page.meta and page.meta.title else (page.title if page.title else config.site_name),
+      "description": social_description,
+      "url": page_url,
+      "image": social_image,
+      "inLanguage": "en",
+      "isPartOf": {"@id": config.site_url ~ "#website"},
+      "about": {"@id": config.site_url ~ "#software"},
+      "author": author,
+      "keywords": page.meta.tags if page.meta and page.meta.tags else []
+    }] %}
+  {% endif %}
+  {% if page.meta and page.meta.faq %}
+    {% set questions = [] %}
+    {% for entry in page.meta.faq %}
+      {% set _ = questions.append({"@type": "Question", "name": entry.q, "acceptedAnswer": {"@type": "Answer", "text": entry.a}}) %}
+    {% endfor %}
+    {% set _ = graph.append({"@type": "FAQPage", "@id": page_url ~ "#faq", "mainEntity": questions}) %}
+  {% endif %}
+  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@graph": graph} | tojson }}</script>
 {% endblock %}

@@ -50,7 +50,7 @@ export function inspectDocsArtifact(siteDirectory) {
   if (!entries.some(entry => entry.kind === "file" && entry.relative === "index.html")) {
     errors.push("Artifact is missing index.html at its root.");
   }
-  for (const required of ["robots.txt", "sitemap.xml", "assets/clouddev-social-preview.png"]) {
+  for (const required of ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt", "assets/clouddev-social-preview.png"]) {
     if (!entries.some(entry => entry.kind === "file" && entry.relative === required)) {
       errors.push(`Artifact is missing required discovery asset: ${required}`);
     }
@@ -73,6 +73,15 @@ export function inspectDocsArtifact(siteDirectory) {
       ["Canonical URL", /<link\s+rel="canonical"\s+href="https:\/\//i],
     ]) {
       if (!pattern.test(html)) errors.push(`${label} is missing from ${page.relative}`);
+    }
+    const structuredData = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+    if (structuredData.length === 0) errors.push(`JSON-LD structured data is missing from ${page.relative}`);
+    for (const [, json] of structuredData) {
+      try {
+        if (JSON.parse(json)["@context"] !== "https://schema.org") errors.push(`JSON-LD without schema.org context in ${page.relative}`);
+      } catch {
+        errors.push(`Invalid JSON-LD in ${page.relative}`);
+      }
     }
   }
 

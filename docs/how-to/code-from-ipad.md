@@ -8,6 +8,15 @@ tags:
   - Codex on iPad
   - VS Code on iPad
   - Railway workspace
+faq:
+  - q: "Can I use Claude Code on an iPad?"
+    a: "Yes, through a server. Claude Code runs in this Railway workspace, and you use it from CloudCLI or the VS Code terminal in Safari."
+  - q: "Can I use VS Code on an iPad?"
+    a: "Yes. Browser VS Code runs in the workspace and opens in Safari. Desktop VS Code Remote-SSH is for computers only."
+  - q: "Do I need a Mac?"
+    a: "No. A Railway account and an AI provider account are enough."
+  - q: "Which AI models work?"
+    a: "ChatGPT and Claude through their official sign-in in OmniRoute, and DeepSeek with its API key."
 ---
 
 # Code from an iPad with Claude Code and Codex

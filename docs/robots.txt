@@ -1,4 +1,13 @@
+# Public MIT-licensed documentation. Search engines, AI answer engines and
+# AI training crawlers may all read it.
+
 User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 User-agent: OAI-SearchBot
@@ -8,12 +17,6 @@ User-agent: ChatGPT-User
 Allow: /
 
 User-agent: GPTBot
-Disallow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Perplexity-User
 Allow: /
 
 User-agent: Claude-SearchBot
@@ -23,9 +26,30 @@ User-agent: Claude-User
 Allow: /
 
 User-agent: ClaudeBot
-Disallow: /
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
 
 User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: meta-externalagent
 Allow: /
 
 Sitemap: https://schero94.github.io/clouddev-ai-sovereign-workspace/sitemap.xml

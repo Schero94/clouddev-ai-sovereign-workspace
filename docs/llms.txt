@@ -12,6 +12,9 @@ Key facts:
 
 ## Docs
 
+- [Full documentation as one text file](https://schero94.github.io/clouddev-ai-sovereign-workspace/llms-full.txt): every main guide with its canonical URL
+- [Deploy on Railway (one click, no input)](https://railway.com/deploy/clouddev-release-20261121)
+
 - [Code from an iPad](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/code-from-ipad/): what runs where, setup, limits, and common questions
 - [Deploy on Railway](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/deploy-on-railway/)
 - [First login](https://schero94.github.io/clouddev-ai-sovereign-workspace/how-to/first-login/)
