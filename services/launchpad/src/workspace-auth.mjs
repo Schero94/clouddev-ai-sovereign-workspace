@@ -80,7 +80,7 @@ function cookieHeader(value, secureCookies, maxAge = SESSION_SECONDS) {
 function responseHeaders(response) {
   response.setHeader("Cache-Control", "no-store");
   response.setHeader("X-Content-Type-Options", "nosniff");
-  response.setHeader("Referrer-Policy", "no-referrer");
+  response.setHeader("Referrer-Policy", "same-origin");
   response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'");
 }
 
@@ -92,7 +92,13 @@ function sendText(response, status, body, headers = {}) {
 function requestOriginMatches(request, secureCookies) {
   const originHeader = request.headers.origin;
   const expectedHost = String(request.headers["x-forwarded-host"] ?? request.headers.host ?? "").split(",")[0].trim();
-  if (typeof originHeader !== "string" || !expectedHost) return false;
+  if (!expectedHost) return false;
+  // Safari sends Origin: null for a same-page form when the page asked for no referrer.
+  if (typeof originHeader !== "string" || originHeader === "null") {
+    if (request.headers["sec-fetch-site"] !== "same-origin") return false;
+    if (!secureCookies) return true;
+    return String(request.headers["x-forwarded-proto"] ?? "").split(",")[0].trim() === "https";
+  }
   try {
     const origin = new URL(originHeader);
     if (origin.host !== expectedHost || origin.username || origin.password || origin.pathname !== "/" || origin.search || origin.hash) return false;

@@ -92,6 +92,30 @@ test("rejects wrong passwords and cross-origin login, and clamps return paths to
   }), crossOrigin);
   assert.equal(crossOrigin.statusCode, 403);
 
+  const safari = response();
+  await auth.handle(request({
+    method: "POST",
+    path: "/auth/login",
+    headers: {
+      origin: "null",
+      "sec-fetch-site": "same-origin",
+      "x-forwarded-proto": "https",
+      "content-type": "application/x-www-form-urlencoded",
+      "x-clouddev-auth-key": internalKey,
+    },
+    body: new URLSearchParams({ password, returnTo: "/" }).toString(),
+  }), safari);
+  assert.equal(safari.statusCode, 303);
+
+  const missingOrigin = response();
+  await auth.handle(request({
+    method: "POST",
+    path: "/auth/login",
+    headers: { "content-type": "application/x-www-form-urlencoded", "x-clouddev-auth-key": internalKey },
+    body: new URLSearchParams({ password, returnTo: "/" }).toString(),
+  }), missingOrigin);
+  assert.equal(missingOrigin.statusCode, 403);
+
   const openRedirect = response();
   await auth.handle(request({
     method: "POST",
