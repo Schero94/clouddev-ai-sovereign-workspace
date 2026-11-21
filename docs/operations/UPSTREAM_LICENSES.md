@@ -8,7 +8,8 @@ images. Verify license and version changes whenever a dependency is updated.
 | Component | Pinned release | License / terms | Source |
 | --- | --- | --- | --- |
 | CloudCLI UI | `@cloudcli-ai/cloudcli` 1.37.5 | AGPL-3.0-or-later | [Repository](https://github.com/siteboon/claudecodeui), [npm package](https://www.npmjs.com/package/@cloudcli-ai/cloudcli) |
-| OmniRoute | 3.8.52 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.52), [image](https://hub.docker.com/r/diegosouzapw/omniroute) |
+| OmniRoute dashboard image | 3.8.54 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.54), [image](https://hub.docker.com/r/diegosouzapw/omniroute) |
+| OmniRoute CLI | 3.8.52 | MIT | [Release](https://github.com/cheaper-inference/OmniRoute/tree/v3.8.52) |
 | code-server | 4.143.1 | MIT | [Release](https://github.com/coder/code-server/tree/v4.143.1) |
 | Forgejo | 17.0.0 rootless | GPL-3.0-or-later | [Release](https://codeberg.org/forgejo/forgejo/src/tag/v17.0.0) |
 | PostgreSQL | Railway managed service; local Compose 18.6-alpine3.24 pinned by multi-platform digest | PostgreSQL License | [PostgreSQL licensing](https://www.postgresql.org/about/licence/) |

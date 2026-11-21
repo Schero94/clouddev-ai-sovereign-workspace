@@ -12,7 +12,7 @@ const railwayPath = path.join(repositoryDirectory, ".railway/railway.ts");
 
 test("wraps the pinned upstream router image without mismatching its prebuilt Next.js artifacts", () => {
   const dockerfile = readFileSync(dockerfilePath, "utf8");
-  assert.match(dockerfile, /FROM diegosouzapw\/omniroute:3\.8\.52@sha256:[a-f0-9]{64}/);
+  assert.match(dockerfile, /FROM diegosouzapw\/omniroute:3\.8\.54@sha256:2c4c755a54f8ce5341bc1856580b71f47a0f16a9afab4a55f84d540810631f68/);
   assert.doesNotMatch(dockerfile, /npm (?:install|ci).*\b(?:next|dompurify)@/s);
   assert.match(dockerfile, /healthcheck\.mjs \/opt\/clouddev-healthcheck\.mjs/);
   assert.match(dockerfile, /USER node\s*$/);

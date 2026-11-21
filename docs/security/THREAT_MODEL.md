@@ -64,7 +64,7 @@ another person.
   by default, and PostgreSQL for its relational state. Its Git SSH service is
   separate from the workspace shell.
 - `clouddev-postgres` has no public listener.
-- `clouddev-router` is an upstream OmniRoute 3.8.52 image pinned by digest,
+- `clouddev-router` is an upstream OmniRoute 3.8.54 image pinned by digest,
   wrapped to include the local health probe. It stores encrypted provider
   configuration in a persistent SQLite volume. The inference port remains
   private and requires an API key.

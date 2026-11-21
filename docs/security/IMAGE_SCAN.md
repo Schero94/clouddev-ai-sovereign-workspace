@@ -24,23 +24,30 @@ as exploitability scores.
 | Forgejo 17.0.0 rootless candidate | `sha256:9c7edcf4ddcc7bac6cc25930968bca44def6898adea458f138c50e7e10eb2405` | 0 / 0 | 4 / 3 | 3 medium, 4 unknown |
 | PostgreSQL 18.6 Alpine 3.24 exact multi-platform digest | `sha256:898c60cb390d1085bc97bdd6a1ae968757421df394b071848b52b1c09c89d6a5` | 1 / 1 | 26 / 26 | 31 medium, 3 low, 1 unknown |
 
-The router image's two critical findings are Next.js 16.3.8 advisories
-`GHSA-2464-fhr4-w9xw` and `GHSA-673q-mjm6-r5xr`. Trivy reports fixes in Next.js
-16.4.1 and later. The router also has high findings for Next.js, undici, and
-other dependencies. The newest published OmniRoute release checked is 3.8.52,
-and its release image still declares Next.js 16.3.8 and DOMPurify `^3.4.14`.
-The `release/v3.8.53` source currently declares Next.js 16.4.2 and DOMPurify
-3.4.17, but its image publication was still pending when checked. The
-unversioned `next` image also contained Next.js 16.3.8. Do not substitute that
-moving tag for the pinned release. G15 stays open until an immutable patched
-release image is published, scanned, and passes authenticated health, inference,
-and persistence checks. The upstream `Release acceptance` run for
-`release/v3.8.53` was still queued at the last read-back:
-[run 40238715433](https://github.com/cheaper-inference/OmniRoute/actions/runs/40238715433).
-Check the [upstream releases](https://github.com/cheaper-inference/OmniRoute/releases),
-[3.8.53 dependency source](https://github.com/cheaper-inference/OmniRoute/blob/release/v3.8.53/package-lock.json),
-and [published image tags](https://hub.docker.com/r/diegosouzapw/omniroute/tags)
-again before selecting a router image.
+## Current router pin
+
+On 2026-11-21, Trivy 0.76.2 scanned the published amd64 image
+`diegosouzapw/omniroute@sha256:2be638c210c7a559643e8f68bdcac2167e4eacfef370fdd9eabb825eebe56d32`
+with `--image-src remote`. Docker was not used. The multi-platform index is
+`sha256:2c4c755a54f8ce5341bc1856580b71f47a0f16a9afab4a55f84d540810631f68`, also
+published as `cheaperinference/omniroute:3.8.54`. The image contains `next`
+16.4.2 and `zod` 4.6.7. The scan reported 0 critical and 49 high findings.
+The high findings are Debian 13.7 packages, principally util-linux, SQLite,
+and OpenSSL. No Next.js advisory was reported at high or critical, and
+DOMPurify was not detected as a separate package.
+
+The Dockerfile now pins that index. This is a scan of the upstream image, not
+a rebuilt CloudDev overlay, and the container was not started. Health,
+authentication, inference, and persistence checks have not been run on 3.8.54.
+G15 and G17 stay open.
+
+## 2026-10-26 local overlay scan
+
+The 2026-10-26 local overlay scan below used OmniRoute 3.8.52. Its two critical
+findings were Next.js 16.3.8 advisories `GHSA-2464-fhr4-w9xw` and
+`GHSA-673q-mjm6-r5xr`. That image is no longer the pinned release. The table
+remains the last full four-image local scan. The IDE, Forgejo, and PostgreSQL
+rows have not been repeated.
 
 The IDE candidate updates bundled `shell-quote` to 1.11.0 and pins Node and
 Caddy by verified digests. Trivy reports four critical package findings across
@@ -74,19 +81,16 @@ volume. The scanner only pulled and inspected the 18.6 candidate; the running
 ## Release decision
 
 Do not call these images clean and do not publish the Railway template as
-verified. G15 remains open for OmniRoute. G17 remains open for all service
-images. The local Docker daemon has a 4 GiB memory limit. The pinned OmniRoute
-upstream Dockerfile documents a 9 GiB working set for its one-worker full
-source build, so a patched source rebuild was not attempted on this daemon. A
-runtime-only Next.js overlay previously failed startup and is not used. The
-fresh personal Railway project received a reviewed plan only; no service or
-volume was created there.
+verified. The router pin is now the scanned OmniRoute 3.8.54 index. Its
+critical Next.js findings are gone, and 49 high Debian findings remain. G15
+stays open until that exact image passes health, authentication, inference,
+and persistence checks. G17 stays open for every service image. No Railway
+service or volume was created for this pin change.
 
-Before deployment, obtain patched upstream images or build and test patched
-images on a builder with sufficient memory. Scan the exact release image
-digests again. Run health, authentication, inference, and persistence tests on
-those same images. Record accepted, unreachable, or vendor-unfixed findings
-with evidence rather than hiding them with broad suppressions.
+Before deployment, scan the rebuilt overlay and the other three release images
+again. Run the runtime checks on those same images. Record accepted,
+unreachable, or vendor-unfixed findings with evidence rather than hiding them
+with broad suppressions.
 
 ## Reproduce the local scan
 

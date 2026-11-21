@@ -1,19 +1,22 @@
 # OmniRoute service
 
-CloudDev AI uses the published OmniRoute `3.8.52` Docker image, pinned by its registry digest. This is the latest image tag verified in the registry during implementation. The package registry reported the same release. A newer source branch existed but had not been published as an image, so it is not used here.
+CloudDev AI uses the published OmniRoute `3.8.54` Docker image, pinned by its multi-platform registry digest. The workspace CLI remains OmniRoute `3.8.52`. The image pin follows a remote Trivy scan of the amd64 manifest, which found Next.js 16.4.2 and no critical findings. That scan did not start the container.
 
 ```text
-diegosouzapw/omniroute:3.8.52@sha256:b08a12e876baa8a5ccadd1ebbe346fe7267dba3b1c9f4fd6bb02070fae41ab6c
+diegosouzapw/omniroute:3.8.54@sha256:2c4c755a54f8ce5341bc1856580b71f47a0f16a9afab4a55f84d540810631f68
 ```
 
 OmniRoute's published project is now maintained at [cheaper-inference/OmniRoute](https://github.com/cheaper-inference/OmniRoute). The project documentation is at [omniroute.hagicode.com](https://omniroute.hagicode.com/en-US/).
 
 ## Security release hold
 
-The pinned router image contains Next.js `16.3.8`. Trivy 0.76.1 reports two
-critical Next.js advisories. The fixed Next.js release listed in the scan data
-is `16.4.1` or later. The pinned OmniRoute source package declares DOMPurify
-`^3.4.14`; npm reports critical/high DOMPurify findings through `3.4.16`.
+The pinned router image is OmniRoute 3.8.54. Trivy 0.76.2 scanned its amd64
+manifest on 2026-11-21 and found Next.js 16.4.2, zero critical findings, and
+49 high Debian package findings. The previous 3.8.52 image contained Next.js
+16.3.8 and two critical Next.js advisories. This remote scan did not rebuild
+the CloudDev overlay or exercise health, authentication, inference, or
+persistence. G15 stays open for those runtime checks, and G17 stays open while
+high findings remain.
 
 CloudDev's separate OmniRoute CLI dependency tree now overrides Next.js to
 `16.4.3`, DOMPurify to `3.4.17`, and Zod to `4.6.6`. `npm run
@@ -81,4 +84,4 @@ No provider account is included. Do not use multiple provider accounts to work a
 - [OmniRoute Docker guide](https://omniroute.hagicode.com/en-US/guides/setup-guide)
 - [OmniRoute environment reference](https://github.com/cheaper-inference/OmniRoute/blob/v3.8.52/docs/reference/ENVIRONMENT.md)
 - [OmniRoute CLI integrations at v3.8.52](https://github.com/cheaper-inference/OmniRoute/blob/v3.8.52/docs/guides/CLI-INTEGRATIONS.md)
-- [Docker image tag](https://hub.docker.com/layers/diegosouzapw/omniroute/3.8.52/images/sha256-b08a12e876baa8a5ccadd1ebbe346fe7267dba3b1c9f4fd6bb02070fae41ab6c)
+- [Docker image tag](https://hub.docker.com/layers/diegosouzapw/omniroute/3.8.54/images/sha256-2c4c755a54f8ce5341bc1856580b71f47a0f16a9afab4a55f84d540810631f68)
