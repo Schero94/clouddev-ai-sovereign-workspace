@@ -24,6 +24,10 @@ Open the authenticated OmniRoute dashboard and check the provider connection. Cr
 
 Check `clouddev-tasks list` and CloudCLI's recent sessions. A browser or SSH client disconnect does not stop a detached task. A workspace process restart does stop it and marks the registry row `interrupted`. Resume only from an upstream session that the provider supports. Prompts are not replayed automatically.
 
+## The CI workflow fails
+
+Open the failed `CI` workflow run. Reproduce it locally with `npm test`, `npm run test:forgejo`, `npm run test:security`, `npm run check:railway`, `npm run check:railway-template`, `npm run check:docker-context`, `npm run check:launchpad`, and `npm run docs:check`. `npm run check:one-click` checks the local install graph only. CI does not deploy or publish.
+
 ## The GitHub Pages workflow fails
 
 Open the failed `Documentation` workflow run. `npm run docs:check` reproduces the local checks. Strict mode fails on a missing navigation page or broken internal link. For the deploy job, confirm the repository Pages publishing source is **GitHub Actions** and that the run targets `main`. Pull requests build and check the site but do not deploy it.

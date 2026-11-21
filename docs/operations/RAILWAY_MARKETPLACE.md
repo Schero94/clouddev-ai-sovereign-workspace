@@ -13,6 +13,8 @@ Template Composer, then publish it from the template page. The `railway
 templates create` CLI command creates an unpublished draft from a project. It
 does not publish a Marketplace template by itself.
 
+Run `npm run check:one-click` before creating a draft. It validates the local one-install contract and does not call Railway. The command prints the held `templates create` and `templates publish` invocations. Do not run them until the image-security gates and a fresh deployment are accepted.
+
 ## Release gates before creating the template
 
 1. Keep the public source repository free of `.env`, SSH private keys, Railway

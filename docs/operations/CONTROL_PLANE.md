@@ -15,6 +15,7 @@ Use this page to find the source of truth before changing a deployment. Several 
 | Git identity and private repository | Workspace Git key plus a non-admin Forgejo user | Run `git-setup`, add its public key to the regular Forgejo user, and clone a private repository | Commit, push, fetch, and confirm the file in Forgejo |
 | Files, sessions, and task recovery | `/workspace` persistent volume and upstream provider session files | Edit files in any client; use the provider's supported manual resume after an interruption | Check the shared tree, session history, task registry, and restore procedure |
 | Public documentation | `docs/`, `mkdocs.yml`, and `.github/workflows/docs.yml` | Edit Markdown, preview with `npm run docs:build`, then merge to `main` | Require the workflow's strict build and artifact scan before Pages deploys |
+| Repository test gate | `.github/workflows/ci.yml` | Open a pull request or merge to `main` | CI runs the unit suite, Forgejo tests, static security checks, Railway contracts, Docker-context checks, launchpad syntax, and `npm run docs:check` |
 | Docker build inputs | Root `.dockerignore`, `services/ide/.dockerignore`, and `services/forgejo/.dockerignore` | Keep Markdown, docs, local browser traces, and local agent metadata out of each service context | Run `npm run check:docker-context`; Docker Hub lookup for the intended image returned 404 and the repository has no container-push workflow |
 | Release claims | `GATES.md` | Update only with evidence from an actually run check | The generated [release-status page](RELEASE_STATUS.md) summarizes gate titles and states, not evidence |
 
@@ -31,6 +32,12 @@ Use this page to find the source of truth before changing a deployment. Several 
 The live [release status](RELEASE_STATUS.md) is built from the gate checklist. A green local test cannot close a Railway, Marketplace, physical-device, or restore gate. The main unresolved product risks remain separately visible in the [image scan](../security/IMAGE_SCAN.md), [backup and restore guide](../security/BACKUP_RESTORE.md), and [Marketplace release runbook](RAILWAY_MARKETPLACE.md).
 
 Railway Private Networking does not filter outbound traffic. An agent can still make external connections from the workspace. Do not describe a proxy setting or a private service address as an egress sandbox.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` is the repository quality gate. It runs on every pull request to `main` and on every push to `main`, using Ubuntu 24.04, Node.js 24.22.0, and the locked documentation toolchain. The job has read-only contents permission. It installs the pinned Railway IaC packages, then runs `npm test`, `npm run test:forgejo`, `npm run test:security`, `npm run check:railway`, `npm run check:railway-template`, `npm run check:docker-context`, `npm run check:launchpad`, and `npm run docs:check`.
+
+That workflow does not deploy a project, publish a template, or push a container image. `npm run check:one-click` is part of `npm test` through the one-click contract test, and it can also be run directly. It checks the four-service graph locally. A green CI run does not close a live Railway gate.
 
 ## Pages deployment controls
 

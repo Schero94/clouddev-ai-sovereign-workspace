@@ -404,7 +404,8 @@ no Railway template ID or verified badge is claimed.
 
 There is no button here because Railway has not assigned a published template
 URL. The button must use the exact URL Railway returns after publication. Do
-not use a placeholder template ID. Follow the
+not use a placeholder template ID. Run `npm run check:one-click` to confirm
+the four-service install graph before that later publication. Follow the
 [Marketplace release runbook](docs/operations/RAILWAY_MARKETPLACE.md) after the
 security and deployment gates are closed.
 
@@ -419,3 +420,5 @@ security and deployment gates are closed.
   authentication checks, and task/session recovery behavior.
 - Railway publication and the security release hold remain open. See the
   [release status](docs/operations/RELEASE_STATUS.md) for current evidence.
+- GitHub Actions CI now runs the repository tests, security checks, Railway
+  contracts, and documentation build on pull requests and on `main`.
