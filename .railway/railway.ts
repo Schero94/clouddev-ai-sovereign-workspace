@@ -1,7 +1,6 @@
 import {
   defineRailway,
   github,
-  postgres,
   preserve,
   project,
   service,
@@ -11,8 +10,10 @@ import {
 const EU_WEST = "europe-west4-drams3a";
 const ONE_REPLICA = { [EU_WEST]: 1 };
 export default defineRailway(() => {
-  const postgresService = postgres("clouddev-postgres", { region: EU_WEST });
-
+  const postgresData = volume("clouddev-postgres-data", {
+    region: EU_WEST,
+    sizeMB: 1024,
+  });
   const workspaceData = volume("clouddev-workspace-data", {
     region: EU_WEST,
     sizeMB: 5120,
@@ -24,6 +25,25 @@ export default defineRailway(() => {
   const routerData = volume("clouddev-router-data", {
     region: EU_WEST,
     sizeMB: 1024,
+  });
+
+  const postgresService = service("clouddev-postgres", {
+    source: github("Schero94/clouddev-ai-sovereign-workspace", {
+      branch: "main",
+      rootDirectory: "services/postgres",
+    }),
+    build: { builder: "DOCKERFILE", dockerfilePath: "Dockerfile" },
+    replicas: ONE_REPLICA,
+    volumeMounts: { "/var/lib/postgresql": postgresData },
+    deploy: {
+      sleepApplication: false,
+      restartPolicyType: "ALWAYS",
+    },
+    env: {
+      POSTGRES_DB: "postgres",
+      POSTGRES_USER: "postgres",
+      POSTGRES_PASSWORD: preserve(),
+    },
   });
 
   const router = service("clouddev-router", {
@@ -85,12 +105,12 @@ export default defineRailway(() => {
     },
     env: {
       FORGEJO__database__DB_TYPE: "postgres",
-      FORGEJO__database__HOST: postgresService.env.PGHOST,
-      FORGEJO_POSTGRES_ADMIN_HOST: postgresService.env.PGHOST,
-      FORGEJO_POSTGRES_ADMIN_PORT: postgresService.env.PGPORT,
-      FORGEJO_POSTGRES_ADMIN_DATABASE: postgresService.env.PGDATABASE,
-      FORGEJO_POSTGRES_ADMIN_USER: postgresService.env.PGUSER,
-      FORGEJO_POSTGRES_ADMIN_PASSWORD: postgresService.env.PGPASSWORD,
+      FORGEJO__database__HOST: postgresService.env.RAILWAY_PRIVATE_DOMAIN,
+      FORGEJO_POSTGRES_ADMIN_HOST: postgresService.env.RAILWAY_PRIVATE_DOMAIN,
+      FORGEJO_POSTGRES_ADMIN_PORT: "5432",
+      FORGEJO_POSTGRES_ADMIN_DATABASE: postgresService.env.POSTGRES_DB,
+      FORGEJO_POSTGRES_ADMIN_USER: postgresService.env.POSTGRES_USER,
+      FORGEJO_POSTGRES_ADMIN_PASSWORD: postgresService.env.POSTGRES_PASSWORD,
       FORGEJO_POSTGRES_ROLE: "clouddev_forgejo",
       FORGEJO_POSTGRES_DATABASE: "forgejo",
       FORGEJO_POSTGRES_PASSWORD: preserve(),
@@ -146,6 +166,7 @@ export default defineRailway(() => {
       workspaceData,
       forgejoData,
       routerData,
+      postgresData,
     ],
   });
 });

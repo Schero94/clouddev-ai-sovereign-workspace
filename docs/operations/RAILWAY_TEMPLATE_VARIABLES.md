@@ -5,7 +5,7 @@ The Railway Template Composer must add the generated values listed in
 `.railway/template-variables.json`. Railway IaC's `preserve()` function keeps
 an existing value. It does not generate a value for a new deployment.
 
-Use this Composer value for each of the eleven generated secrets:
+Use this Composer value for each of the twelve generated secrets:
 
 ```text
 ${{secret(64, "0123456789abcdef")}}
@@ -18,6 +18,7 @@ replace it with a literal password or reuse a value across variables.
 | --- | --- | --- |
 | `clouddev-ide` | `CODE_SERVER_PASSWORD` | Generate it. The operator needs the value for the workspace's first browser sign-in. After recording it safely, seal the variable. |
 | `clouddev-ide` | `CLOUDDEV_WORKSPACE_AUTH_SECRET` | Generate independently and seal it. The service uses it to sign browser cookies and authenticate the private Caddy check. |
+| `clouddev-postgres` | `POSTGRES_PASSWORD` | Generate independently and seal it. Forgejo uses it at boot to provision its own database role. |
 | `clouddev-git` | `FORGEJO_POSTGRES_PASSWORD` | Generate independently and seal it. |
 | `clouddev-git` | `FORGEJO_ADMIN_PASSWORD` | Generate it. Keep it readable for the first administrator sign-in. Then change the password and remove or seal the bootstrap variable. |
 | `clouddev-router` | `INITIAL_PASSWORD` | Generate it. Keep it readable for the OmniRoute dashboard's first sign-in. Change the dashboard password, then remove this bootstrap variable. |
@@ -29,8 +30,9 @@ replace it with a literal password or reuse a value across variables.
 | `clouddev-router` | `CLOUDDEV_GATEWAY_BOOTSTRAP_SECRET` | Generate independently and seal it. The workspace uses it only to fetch its own inference key. It is not passed to agent processes. |
 | `clouddev-ide` | `SSH_AUTHORIZED_KEYS` | Optional, empty by default. Without it the workspace starts normally and SSH accepts no login. Add one or more operator Ed25519 public keys, one per line, to enable desktop Remote-SSH. Never ask for or store a private key. |
 
-Railway's managed Postgres service supplies its own database credentials. The
-Forgejo service uses private reference variables for those values. Other
+`clouddev-postgres` builds the hardened Postgres overlay in `services/postgres`
+instead of Railway's managed Postgres image. Forgejo reads its private domain
+and superuser credentials through reference variables. Other
 application defaults, ports, private host references and TCP proxy references
 are declared in `.railway/railway.ts`.
 
@@ -40,6 +42,12 @@ The lists below cover every application variable declared in `.railway/railway.t
 The generated secrets and `SSH_AUTHORIZED_KEYS` above are the only Composer or
 operator inputs. All other application values are fixed defaults or private
 references in the IaC file.
+
+`clouddev-postgres`:
+
+```text
+POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
+```
 
 `clouddev-router`:
 
@@ -83,9 +91,8 @@ GIT_SSH_PROXY_HOST, GIT_SSH_PROXY_PORT
 
 Railway also injects its service values. CloudDev uses the public domain and
 TCP proxy domain/port on the two exposed services, and private domains for
-service-to-service references. The managed Postgres helper supplies its
-connection values, including `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`,
-`PGPASSWORD`, and `DATABASE_URL`.
+service-to-service references. Forgejo reaches Postgres at its private domain
+on port `5432`.
 
 ## Networking values to set in Composer
 

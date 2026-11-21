@@ -1,0 +1,8 @@
+vulnerabilities:
+  - id: CVE-2025-47273
+    purls:
+      - pkg:pypi/setuptools@70.3.0
+    statement: >-
+      pip 26.3 lists setuptools 70.3.0 in its vendored SBOM because it ships
+      pkg_resources from that release. The vulnerable setuptools.package_index
+      module is not vendored, and no package_index.py exists in the IDE image.

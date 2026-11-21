@@ -11,7 +11,7 @@ in Europe West only when every service and volume is actually provisioned in
 | --- | --- | --- |
 | Shared workspace | Source files, shell history, editor settings, CLI configuration, SSH host identity, Git identity, CloudCLI session index, task status | One Railway volume mounted at `/workspace` |
 | Forgejo | Accounts, repositories, issues, pull requests, Git SSH host identity, application configuration | Forgejo volume at `/var/lib/gitea` and PostgreSQL database |
-| PostgreSQL | Forgejo relational state and authentication metadata | Railway managed PostgreSQL storage |
+| PostgreSQL | Forgejo relational state and authentication metadata | Railway volume of the private `clouddev-postgres` service |
 | OmniRoute | Provider connections, encrypted provider keys, inference keys, dashboard settings, request and usage metadata | OmniRoute volume at `/app/data`; encryption key must also be backed up |
 | Railway | Service configuration, environment variables, deployment events, resource metrics, network metadata | Railway control plane |
 | AI providers | Prompts, relevant project context, tool outputs, and provider request metadata | Provider-controlled systems under the selected account and contract |

@@ -304,6 +304,7 @@ RUN set -eu \
   && grep -F 'libcurl.so' /tmp/git-ldd.txt | grep -v 'not found' \
   && grep -F 'libgssapi_krb5.so' /tmp/git-ldd.txt | grep -v 'not found' \
   || { cat /tmp/git-ldd.txt; exit 1; } \
+  && rm -f /opt/krb5/bin/ksu \
   && rm -rf /tmp/clouddev-openssl /tmp/clouddev-openssl-lib
 
 # Railway's runtime has resurfaced files that later layers deleted, including

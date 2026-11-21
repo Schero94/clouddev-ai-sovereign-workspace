@@ -30,11 +30,13 @@ test("pins images and CLI dependencies and declares one persistent workspace vol
     if (name.endsWith("node_modules/simple-git")) assert.equal(entry.version, "4.1.0", name);
     if (name.endsWith("node_modules/undici")) assert.notEqual(entry.version.split(".")[0], "5", name);
     if (name.endsWith("node_modules/@opentelemetry/sdk-node")) assert.equal(entry.version, "0.217.0", name);
+    if (name.endsWith("node_modules/protobufjs")) assert.doesNotMatch(entry.version, /^(?:8\.0\.|7\.[0-5]\.)/, name);
   }
   assert.match(read("task-master/disabled-extract-zip/index.js"), /throw new Error/);
   assert.match(dockerfile, /npm ci --prefix \/opt\/clouddev-ide\/task-master /);
   assert.match(dockerfile, /ln -s \/opt\/clouddev-ide\/task-master\/node_modules\/\.bin\/task-master \/usr\/local\/bin\/task-master/);
   assert.doesNotMatch(dockerfile, /npm install -g task-master-ai/);
+  assert.match(dockerfile, /rm -f \/opt\/krb5\/bin\/ksu/, "the source-built Kerberos ksu is setuid root and unused");
   assert.doesNotMatch(dockerfile, /path-intellisense/, "its bundled minimatch, json5, and brace-expansion are vulnerable");
   assert.match(dockerfile, /astral-sh\/uv\/releases\/download\/0\.13\.9\//);
   assert.match(dockerfile, /a7fbaff2b9a271d85c1bdb540941090fd1ce011797b4abeb48e4dcd39c2471d5/);

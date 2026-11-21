@@ -5,6 +5,7 @@ services="clouddev-router clouddev-ide clouddev-git clouddev-postgres"
 build_services="clouddev-router clouddev-ide clouddev-git clouddev-postgres"
 status=0
 clouddev_trivy_tmp_dir=${CLOUDDEV_TRIVY_TMP_DIR:-}
+ignore_file=$(cd "$(dirname "$0")/.." && pwd)/.trivyignore.yaml
 
 if ! command -v trivy >/dev/null 2>&1; then
   printf '%s\n' 'Trivy is required. Install it with the official package manager for this host.' >&2
@@ -66,10 +67,10 @@ process.stdin.on("end", () => {
 
   printf '\nScanning Compose service %s (%s; %s)\n' "$service" "$image_reference" "$image_id"
   if [ -n "$clouddev_trivy_tmp_dir" ]; then
-    if ! TMPDIR="$clouddev_trivy_tmp_dir" trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 "$image_id"; then
+    if ! TMPDIR="$clouddev_trivy_tmp_dir" trivy image --scanners vuln --severity HIGH,CRITICAL --ignorefile "$ignore_file" --exit-code 1 "$image_id"; then
       status=1
     fi
-  elif ! trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 "$image_id"; then
+  elif ! trivy image --scanners vuln --severity HIGH,CRITICAL --ignorefile "$ignore_file" --exit-code 1 "$image_id"; then
     status=1
   fi
 done

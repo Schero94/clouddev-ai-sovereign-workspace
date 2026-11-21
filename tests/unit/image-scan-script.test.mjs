@@ -84,6 +84,15 @@ printf '%s\\n' "$*" >> "$CLOUDDEV_TRIVY_LOG"
   assert.doesNotMatch(dockerCalls, /compose (?:images|up|down|restart)/, "the scan must not use running container IDs or change running services");
   for (const [service, image] of Object.entries(imageReferences)) {
     assert.ok(dockerCalls.includes(`image inspect --format {{.Id}} ${image}`), `${image} must resolve to its immutable local image ID`);
-    assert.ok(trivyCalls.includes(`image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 ${imageIds[service]}`), `${service} must be scanned by its immutable candidate ID`);
+    assert.ok(trivyCalls.includes(`image --scanners vuln --severity HIGH,CRITICAL --ignorefile ${path.join(root, ".trivyignore.yaml")} --exit-code 1 ${imageIds[service]}`), `${service} must be scanned by its immutable candidate ID`);
   }
+});
+
+test("the scan ignore file holds only evidenced, package-pinned exceptions", () => {
+  const ignore = readFileSync(path.join(root, ".trivyignore.yaml"), "utf8");
+  const ids = [...ignore.matchAll(/^  - id: (\S+)$/gm)].map(match => match[1]);
+  assert.deepEqual(ids, ["CVE-2025-47273"]);
+  assert.match(ignore, /purls:\n      - pkg:pypi\/setuptools@70\.3\.0\n/);
+  assert.match(ignore, /statement: >-\n[\s\S]*package_index/);
+  assert.doesNotMatch(ignore, /severity|^\s*-\s*CVE-\d+-\d+\s*$/m, "no blanket or unexplained suppressions");
 });
